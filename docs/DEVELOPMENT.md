@@ -1,5 +1,5 @@
-<a name="meltype-の開発"></a>
-<img src="images/headings/development/title.svg" alt="Meltype の開発" height="80">
+<a name="galtype-の開発"></a>
+<img src="images/headings/development/title.svg" alt="Galtype の開発" height="80">
 
 
 ソースからのビルド、テスト、配布用のパッケージ、動作の仕組みです。
@@ -13,18 +13,18 @@
 
 | フォルダー | 中身 |
 |---|---|
-| `src/Meltype.Core/` | OS に依存しない部分 (Windows・Mac・Linux 共通)。英語 / 日本語の判定・ローマ字・変換ボックスの中身・辞書・学習・設定 |
-| `src/Meltype/` | Windows 版 (キーボードフック・変換ボックスの画面・Microsoft IME の変換エンジン・IMM32 / TSF・UI Automation・スペルチェッカー・トレイ) |
-| `src/Meltype.Mac.Native/` | Mac 版の IME から呼ぶ C の関数 (Meltype.Core を NativeAOT で dylib にする) |
+| `src/Galtype.Core/` | OS に依存しない部分 (Windows・Mac・Linux 共通)。英語 / 日本語の判定・ローマ字・変換ボックスの中身・辞書・学習・設定 |
+| `src/Galtype/` | Windows 版 (キーボードフック・変換ボックスの画面・Microsoft IME の変換エンジン・IMM32 / TSF・UI Automation・スペルチェッカー・トレイ) |
+| `src/Galtype.Mac.Native/` | Mac 版の IME から呼ぶ C の関数 (Galtype.Core を NativeAOT で dylib にする) |
 | `mac/` | Mac 版の IME (Swift、Input Method Kit。漢字変換は azooKey) |
 | `linux/` | Linux 版 (IBus・fcitx5 のエンジン) |
-| `native/` | Meltype IME (Windows の TSF の DLL) と Mozc のヘルパー ([native/mozc/README.md](../native/mozc/README.md)。Mozc-UT の辞書は [MOZC-UT.md](MOZC-UT.md)) |
-| `src/Meltype.Core.Tests/` | 共通部分のテスト (判定・変換ボックス・学習・品質テスト)。Mac・Linux でも動く |
-| `src/Meltype.Tests/` | Windows 版のテストと調査用の道具 (共通部分のテストもまとめて流す) |
+| `native/` | Galtype IME (Windows の TSF の DLL) と Mozc のヘルパー ([native/mozc/README.md](../native/mozc/README.md)。Mozc-UT の辞書は [MOZC-UT.md](MOZC-UT.md)) |
+| `src/Galtype.Core.Tests/` | 共通部分のテスト (判定・変換ボックス・学習・品質テスト)。Mac・Linux でも動く |
+| `src/Galtype.Tests/` | Windows 版のテストと調査用の道具 (共通部分のテストもまとめて流す) |
 | `dictionaries/` | 組み込みの辞書 |
 | `packaging/` | 配布用のファイル (インストーラー・Install.cmd など) |
 
-`src/Meltype.Core/` の中は、`Composition/` (変換ボックスの中身: 英語の区間の判定・変換の流れ・候補・文脈・学習・ユーザー辞書・もしかして)、`Detection/` (ローマ字・英語・辞書・かな・打ち間違いの判定)、`Input/` (キーの表し方・コードの行の判定)、`Config/`・`Diagnostics/` (設定・ログ) に分かれています。
+`src/Galtype.Core/` の中は、`Composition/` (変換ボックスの中身: 英語の区間の判定・変換の流れ・候補・文脈・学習・ユーザー辞書・もしかして)、`Detection/` (ローマ字・英語・辞書・かな・打ち間違いの判定)、`Input/` (キーの表し方・コードの行の判定)、`Config/`・`Diagnostics/` (設定・ログ) に分かれています。
 
 <br>
 
@@ -33,17 +33,17 @@
 
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\Install-Meltype.ps1
+powershell -ExecutionPolicy Bypass -File .\Install-Galtype.ps1
 ```
 
 ビルドしてスタートアップに登録し、起動します。タスクトレイに「あ」のアイコンが出れば動いています。
 `-ExecutionPolicy Bypass` はこのコマンドにだけ効き、PC 全体の設定は変えません。
 
-アンインストールは次のとおりです。Meltype IME を登録してあれば、その登録も外します (管理者権限の確認が出ます)。
+アンインストールは次のとおりです。Galtype IME を登録してあれば、その登録も外します (管理者権限の確認が出ます)。
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\Uninstall-Meltype.ps1            # 止めて、スタートアップから外す
-powershell -ExecutionPolicy Bypass -File .\Uninstall-Meltype.ps1 -RemoveData # 設定と学習データも消す
+powershell -ExecutionPolicy Bypass -File .\Uninstall-Galtype.ps1            # 止めて、スタートアップから外す
+powershell -ExecutionPolicy Bypass -File .\Uninstall-Galtype.ps1 -RemoveData # 設定と学習データも消す
 ```
 
 必要なもの:
@@ -51,7 +51,7 @@ powershell -ExecutionPolicy Bypass -File .\Uninstall-Meltype.ps1 -RemoveData # �
 - Windows 10 / 11 (x64 / ARM64)
 - .NET 10 SDK
 - Microsoft IME (漢字変換に使います)
-- Meltype IME も入れるときは、Visual Studio Build Tools の「C++ によるデスクトップ開発」(MSVC と Windows SDK)。無ければ Meltype IME を入れずに続けます (ARM64 では入れません)
+- Galtype IME も入れるときは、Visual Studio Build Tools の「C++ によるデスクトップ開発」(MSVC と Windows SDK)。無ければ Galtype IME を入れずに続けます (ARM64 では入れません)
 
 <br>
 
@@ -69,36 +69,36 @@ powershell -ExecutionPolicy Bypass -File .\Uninstall-Meltype.ps1 -RemoveData # �
 
 
 ```powershell
-dotnet build Meltype.sln
-dotnet run --project src/Meltype.Tests                                   # すべてのテスト (Windows)
-dotnet run --project src/Meltype.Tests -- CompositionTests               # 名前に一致するテストだけ
-dotnet run --project src/Meltype.Tests -- --explain konnichiwa hello      # 1 文字ずつの判定理由 (英数状態の検知)
-dotnet run --project src/Meltype.Tests -- --convert きょうはいいてんき     # 変換エンジンの結果と文節の区切り
-dotnet run --project src/Meltype.Tests -- --context この本は:あつい        # 文脈を渡したときの変換結果
-dotnet run --project src/Meltype.Tests -- --eval                          # 品質テスト
+dotnet build Galtype.sln
+dotnet run --project src/Galtype.Tests                                   # すべてのテスト (Windows)
+dotnet run --project src/Galtype.Tests -- CompositionTests               # 名前に一致するテストだけ
+dotnet run --project src/Galtype.Tests -- --explain konnichiwa hello      # 1 文字ずつの判定理由 (英数状態の検知)
+dotnet run --project src/Galtype.Tests -- --convert きょうはいいてんき     # 変換エンジンの結果と文節の区切り
+dotnet run --project src/Galtype.Tests -- --context この本は:あつい        # 文脈を渡したときの変換結果
+dotnet run --project src/Galtype.Tests -- --eval                          # 品質テスト
 ```
 
 <a name="maclinux-でのテスト"></a>
 <img src="images/headings/development/s01.svg" alt="Mac・Linux でのテスト" height="40">
 
 
-OS に依存しない部分 (`src/Meltype.Core`) とそのテストは、Mac・Linux でも動きます。.NET 10 SDK を入れて次を実行します。GitHub Actions でも、Ubuntu と macOS で毎回流しています。
+OS に依存しない部分 (`src/Galtype.Core`) とそのテストは、Mac・Linux でも動きます。.NET 10 SDK を入れて次を実行します。GitHub Actions でも、Ubuntu と macOS で毎回流しています。
 
 ```bash
-dotnet run --project src/Meltype.Core.Tests                 # すべてのテスト
-dotnet run --project src/Meltype.Core.Tests -- --eval       # 品質テスト (スペルチェッカーは使わない)
-dotnet run --project src/Meltype.Core.Tests -- --version    # 版 (Meltype.Core)
-dotnet run --project src/Meltype.Core.Tests -- --repro kyouhagoogle enter   # 打ったときの見え方と確定の結果
-dotnet run --project src/Meltype.Core.Tests -- --mixed-bench out.json       # 日本語の文の中の英単語が正しく分かれるか (約 550 例)
-dotnet run --project src/Meltype.Core.Tests -- --expect src/Meltype.Core.Tests/data/issue-cases.tsv out.json  # 報告された誤変換
-dotnet run -c Release --project src/Meltype.Core.Tests -- --perf perf.json  # 変換エンジンの遅延 (p95 / p99)・候補の数・控え・メモリ・正解率 (MELTYPE_MOZC が要る)
+dotnet run --project src/Galtype.Core.Tests                 # すべてのテスト
+dotnet run --project src/Galtype.Core.Tests -- --eval       # 品質テスト (スペルチェッカーは使わない)
+dotnet run --project src/Galtype.Core.Tests -- --version    # 版 (Galtype.Core)
+dotnet run --project src/Galtype.Core.Tests -- --repro kyouhagoogle enter   # 打ったときの見え方と確定の結果
+dotnet run --project src/Galtype.Core.Tests -- --mixed-bench out.json       # 日本語の文の中の英単語が正しく分かれるか (約 550 例)
+dotnet run --project src/Galtype.Core.Tests -- --expect src/Galtype.Core.Tests/data/issue-cases.tsv out.json  # 報告された誤変換
+dotnet run -c Release --project src/Galtype.Core.Tests -- --perf perf.json  # 変換エンジンの遅延 (p95 / p99)・候補の数・控え・メモリ・正解率 (MELTYPE_MOZC が要る)
 ```
 
-Windows のアプリ本体・Mac / Linux の IME も同じ形で版を出せます (`Meltype.exe --version`、`Meltype.app/.../Meltype --version`、`ibus-engine-meltype --version`)。
+Windows のアプリ本体・Mac / Linux の IME も同じ形で版を出せます (`Galtype.exe --version`、`Galtype.app/.../Galtype --version`、`ibus-engine-galtype --version`)。
 Windows のアプリ本体は GUI アプリ (WinExe) なので、cmd では版がプロンプトの後に出ます。
 コンソールアプリ (Exe) にすると、エクスプローラーやタスク スケジューラから起動したときにコンソールの窓が一瞬フォーカスを取り、その間に打ったキーが消えるので、WinExe のままにしています。
 
-`src/Meltype.Core.Tests/data/issue-cases.tsv` は、GitHub の issue (open / closed) から「打ったもの」と「期待した結果」を取り出したコーパスです。判定の作り方に関係なく同じ物差しで比べられるので、判定を変えるときは `--eval` と合わせて `--expect` で流します。
+`src/Galtype.Core.Tests/data/issue-cases.tsv` は、GitHub の issue (open / closed) から「打ったもの」と「期待した結果」を取り出したコーパスです。判定の作り方に関係なく同じ物差しで比べられるので、判定を変えるときは `--eval` と合わせて `--expect` で流します。
 
 環境変数 `MELTYPE_SCORED=1` を付けると、区切りを点数で選ぶ α版 (設定「区切りを点数で選ぶ (α版)」、`ScoredSegmentation.cs`) で動かせます。
 今までの区切りと比べるときは、同じコマンドを `MELTYPE_SCORED=0` と `1` で 2 回動かします。`--mixed-bench` は `MELTYPE_BENCH_OFFSET=31` などで調べる語を変えられます。
@@ -109,7 +109,7 @@ Windows のアプリ本体は GUI アプリ (WinExe) なので、cmd では版�
 <img src="images/headings/development/s02.svg" alt="品質テスト" height="40">
 
 
-`src/Meltype.Core.Tests/QualityTests.cs` に、日本語の文・英文・混在・英語とも日本語とも読める語・英語の後の短い語・記号と数字・小書き文字・大文字・かな入力・コードの行・文章ファイル・絵文字・もしかして の例をまとめてあります。
+`src/Galtype.Core.Tests/QualityTests.cs` に、日本語の文・英文・混在・英語とも日本語とも読める語・英語の後の短い語・記号と数字・小書き文字・大文字・かな入力・コードの行・文章ファイル・絵文字・もしかして の例をまとめてあります。
 期待値は「理想の結果」で書いてあり、`--eval` でカテゴリーごとの正解率と外れた例を表示します。
 
 - 通常のテストでは、全体 95% 以上・どのカテゴリーも 80% 以上を基準にしています (ある直しで別の場所が壊れたら気づけるように)
@@ -126,8 +126,8 @@ Windows のアプリ本体は GUI アプリ (WinExe) なので、cmd では版�
 Summary には 200 語まで出し、全件はログと、成果物 `judged-words` の `changes.tsv` に出します。手元では次のように比べられます。
 
 ```
-dotnet run --project src/Meltype.Core.Tests -c Release -- --judge-corpus before.tsv              # 変える前
-dotnet run --project src/Meltype.Core.Tests -c Release -- --judge-corpus after.tsv before.tsv    # 変えたあと (変える前の語も判定する)
+dotnet run --project src/Galtype.Core.Tests -c Release -- --judge-corpus before.tsv              # 変える前
+dotnet run --project src/Galtype.Core.Tests -c Release -- --judge-corpus after.tsv before.tsv    # 変えたあと (変える前の語も判定する)
 node .github/bot/pr-checks.mjs impact before.tsv after.tsv changes.tsv
 ```
 
@@ -143,13 +143,13 @@ powershell -ExecutionPolicy Bypass -File .\Build-Package.ps1
 
 `dist\` に zip ができます。中身はビルド済みの `app` フォルダーと、`Install.cmd` / `Uninstall.cmd` (ダブルクリックで実行)、`README.txt` です。インストーラー (`setup.exe`) は、GitHub Actions がこの zip の中身から Inno Setup で作ります。
 
-- .NET のランタイムを `app\dotnet` に同梱しているので、使う人の PC に .NET は要りません (`Meltype.exe` がそこを使う: `AppHostDotNetSearch=AppRelative`)
-- 小さくする (30MB 未満) ために、ランタイムから Meltype が使わない部品を削ります
-  1. Meltype.dll が使う型から参照をたどり、要らないアセンブリを削る (`Meltype.Tests -- --runtime-closure`)
-  2. 自己診断 (`Meltype.exe --selftest`) を走らせ、実際に読み込まれなかった大きなアセンブリを削る
+- .NET のランタイムを `app\dotnet` に同梱しているので、使う人の PC に .NET は要りません (`Galtype.exe` がそこを使う: `AppHostDotNetSearch=AppRelative`)
+- 小さくする (30MB 未満) ために、ランタイムから Galtype が使わない部品を削ります
+  1. Galtype.dll が使う型から参照をたどり、要らないアセンブリを削る (`Galtype.Tests -- --runtime-closure`)
+  2. 自己診断 (`Galtype.exe --selftest`) を走らせ、実際に読み込まれなかった大きなアセンブリを削る
   3. もう一度自己診断を走らせ、削りすぎていないことを確かめる (失敗したら zip を作らない)
 - 自己診断は、設定・判定・辞書・変換エンジン・Windows の候補 API・UI Automation・各画面・タスクトレイ・データの保存を、キーボードフックを掛けずに一通り動かします
-- インストール先は `%LOCALAPPDATA%\Programs\Meltype` で、管理者権限は要りません。配布用のファイルの元は [packaging/](../packaging/) にあります
+- インストール先は `%LOCALAPPDATA%\Programs\Galtype` で、管理者権限は要りません。配布用のファイルの元は [packaging/](../packaging/) にあります
 
 ポータブル版は次で作れます。
 
@@ -157,7 +157,7 @@ powershell -ExecutionPolicy Bypass -File .\Build-Package.ps1
 powershell -ExecutionPolicy Bypass -File .\Build-Package.ps1 -Portable
 ```
 
-通常版と分けて `dist\Meltype-test-<日時>-windows-portable.zip` を作ります。リリースビルドでは版番号を含む `Meltype-<版>-windows-portable.zip` になります。ZIPをフォルダーごと展開し、その中の `Meltype.exe` を実行してください。アプリと.NETランタイムを同梱するため、.NET未導入のPCでも起動できます。ユーザーデータは `Meltype.exe` の隣の `data` に保存します。IME登録、自動起動、アプリ内更新は含めません。
+通常版と分けて `dist\Galtype-test-<日時>-windows-portable.zip` を作ります。リリースビルドでは版番号を含む `Galtype-<版>-windows-portable.zip` になります。ZIPをフォルダーごと展開し、その中の `Galtype.exe` を実行してください。アプリと.NETランタイムを同梱するため、.NET未導入のPCでも起動できます。ユーザーデータは `Galtype.exe` の隣の `data` に保存します。IME登録、自動起動、アプリ内更新は含めません。
 
 <a name="ウイルス対策ソフトの検査"></a>
 <img src="images/headings/development/s03.svg" alt="ウイルス対策ソフトの検査" height="40">
@@ -167,7 +167,7 @@ GitHub Actions の配布ジョブは、公開する前に Microsoft Defender の
 手元で配布するときも、管理者の PowerShell で次を実行してください。
 
 ```powershell
-tools/Scan-WindowsPackage.ps1 -Path @('dist/Meltype', 'dist/Meltype-<version>-windows.zip')
+tools/Scan-WindowsPackage.ps1 -Path @('dist/Galtype', 'dist/Galtype-<version>-windows.zip')
 ```
 
 検査は駆除せずに行い、検出した内容をコマンドの出力に残します。検出されたら、対象のファイル・版・ハッシュ・Defender の定義の版を確かめ、誤検知が疑われるときは [Microsoft の審査窓口](https://www.microsoft.com/en-us/wdsi/filesubmission) に出してください。
@@ -179,10 +179,10 @@ tools/Scan-WindowsPackage.ps1 -Path @('dist/Meltype', 'dist/Meltype-<version>-wi
 <img src="images/headings/development/06.svg" alt="動作の仕組み" height="53"><br>
 
 
-どの動作モードも、キーボードフック (`WH_KEYBOARD_LL`) を専用のスレッドで受けます。Meltype が送り直したキーには印 (`dwExtraInfo = "MELT"`) を付け、自分では判定しません。
+どの動作モードも、キーボードフック (`WH_KEYBOARD_LL`) を専用のスレッドで受けます。Galtype が送り直したキーには印 (`dwExtraInfo = "MELT"`) を付け、自分では判定しません。
 
-<a name="meltype-キーボード"></a>
-<img src="images/headings/development/s04.svg" alt="Meltype キーボード" height="40">
+<a name="galtype-キーボード"></a>
+<img src="images/headings/development/s04.svg" alt="Galtype キーボード" height="40">
 
 
 ```
@@ -197,4 +197,4 @@ tools/Scan-WindowsPackage.ps1 -Path @('dist/Meltype', 'dist/Meltype-<version>-wi
                   変換ボックスに表示 ─▶ Enter で確定した文字列を SendInput (Unicode) で入力欄へ
 ```
 
-Meltype IME は、この変換ボックスの代わりに、TSF で入力欄に直接入力します ([TSF_DESIGN.md](TSF_DESIGN.md))。
+Galtype IME は、この変換ボックスの代わりに、TSF で入力欄に直接入力します ([TSF_DESIGN.md](TSF_DESIGN.md))。

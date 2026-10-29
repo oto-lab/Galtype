@@ -13,14 +13,14 @@ WSL の Ubuntu では、OS に依存しない部分のテストと、Linux 用�
 
 
 ```bash
-cd ~/path/to/Meltype
+cd ~/path/to/Galtype
 bash linux/build-cli.sh --setup --all
 ```
 
 `--all` は、本体のテスト → Mozc のヘルパーのビルド → パッケージの作成までをまとめて行います。できたものは次の場所に入ります。
 
 ```text
-linux/build/Meltype-linux/
+linux/build/Galtype-linux/
 ```
 
 <br>
@@ -50,13 +50,13 @@ linux/build-cli.sh --mozc --package  # Mozc のヘルパーも作り直してパ
 <img src="images/headings/wsl/03.svg" alt="入力ソースに出てこないとき" height="53"><br>
 
 
-入れた後に入力ソースの一覧に Meltype が出てこないときは、Linux のセッションを入り直してください。
+入れた後に入力ソースの一覧に Galtype が出てこないときは、Linux のセッションを入り直してください。
 エンジンの動きを調べるときは、次のように手で起動するとログが見られます。
 
 ```bash
 ibus restart
 sleep 2
-pkill -f ibus-engine-meltype || true
-/opt/meltype/ibus-engine-meltype --version   # 版だけ確認するとき
-/opt/meltype/ibus-engine-meltype
+pkill -f ibus-engine-galtype || true
+/opt/galtype/ibus-engine-galtype --version   # 版だけ確認するとき
+/opt/galtype/ibus-engine-galtype
 ```
