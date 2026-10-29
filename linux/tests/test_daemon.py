@@ -462,7 +462,7 @@ def main():
         package = args.package.resolve(strict=True)
     except FileNotFoundError:
         parser.error("package directory does not exist")
-    for relative in ("ibus-engine-galtype", "libGaltypeNative.so", "mozc/galtype_mozc_helper"):
+    for relative in ("ibus-engine-galtype", "libGaltypeNative.so", "mozc/meltype_mozc_helper"):
         if not (package / relative).is_file():
             parser.error("package is missing " + relative)
     PrivateDaemonTests.package = package

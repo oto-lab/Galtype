@@ -29,6 +29,26 @@ public sealed class GalmojiOptions
     public bool PreserveUrlsAndEmoji { get; set; } = true;
     public Dictionary<string, string> Dictionary { get; set; } = [];
 
+    /// <summary>Copies the current application settings for one conversion operation.</summary>
+    /// <example><code>GalmojiOptions.FromSettings(settings);</code></example>
+    public static GalmojiOptions FromSettings(Config.Settings settings) => new()
+    {
+        Enabled = settings.GalmojiEnabled,
+        Latin = settings.GalmojiLatin,
+        Digit = settings.GalmojiDigit,
+        Hiragana = settings.GalmojiHiragana,
+        Katakana = settings.GalmojiKatakana,
+        Kanji = settings.GalmojiKanji,
+        Symbol = settings.GalmojiSymbol,
+        SplitPolicy = settings.GalmojiSplitPolicy,
+        Variant = settings.GalmojiVariant,
+        StyleStandalone = settings.GalmojiStyleStandalone,
+        MaxDepth = settings.GalmojiMaxDepth,
+        Seed = settings.GalmojiSeed,
+        PreserveUrlsAndEmoji = settings.GalmojiPreserveUrlsAndEmoji,
+        Dictionary = settings.GalmojiDictionary,
+    };
+
     public GalmojiOptions Clone() => new()
     {
         Enabled = Enabled,

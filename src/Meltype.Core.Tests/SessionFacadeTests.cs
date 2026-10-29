@@ -863,6 +863,8 @@ internal static class SessionFacadeTests
                 "あつい" => ["熱い", "暑い", "厚い"],
                 _ => [],
             };
+            Directory.CreateDirectory(directory);
+            new Settings { GalmojiEnabled = false }.Save(Path.Combine(directory, "config.json"));
             var a = MeltypeSession.CreateDefault(directory, new CompositionTests.FakeConverter(), More, null);
             var b = MeltypeSession.CreateDefault(directory, new CompositionTests.FakeConverter(), More, null);
             void Choose(MeltypeSession session, string typed, string word)

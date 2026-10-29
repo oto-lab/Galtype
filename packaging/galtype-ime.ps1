@@ -1,19 +1,19 @@
 ﻿# SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 lnkiai
 #
-# Meltype IME (Windows の IME として入力欄に直接入力する。native\tip) を入れる / 外す。install.ps1・uninstall.ps1 から読み込んで使う。
+# Galtype IME (Windows の IME として入力欄に直接入力する。native\tip) を入れる / 外す。install.ps1・uninstall.ps1 から読み込んで使う。
 #   . .\galtype-ime.ps1
 #   Install-GaltypeIme -Source <x64 と x86 と Register-Tip.ps1 があるフォルダー>
 #   Uninstall-GaltypeIme
 # IME の登録は PC 全体の設定なので、ここだけ管理者権限を求める (UAC の確認が出る)。
 # 「言語と地域」のキーボードの一覧に足すのは、ふつうの権限で (今のユーザーの設定なので)。
 
-$MeltypeImeTip = '0411:{417D801B-A9BD-4C26-BD16-356A825A6998}{21F643F4-72D5-4946-BF70-0A126AB52D05}'
+$GaltypeImeTip = '0411:{417D801B-A9BD-4C26-BD16-356A825A6998}{21F643F4-72D5-4946-BF70-0A126AB52D05}'
 
 # 64 ビットの Program Files (32 ビットの PowerShell から動かしても、64 ビットの方を使う)。
 # 管理者として動かす Register-Tip.ps1 は、32 ビットの PowerShell で動いても 64 ビットの場所と regsvr32 を使う。
 # 環境変数 (ProgramW6432 など) はユーザーが上書きできるので、Windows の設定 (HKLM) から読む
-$MeltypeProgramFiles = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64).OpenSubKey('SOFTWARE\Microsoft\Windows\CurrentVersion').GetValue('ProgramFilesDir')
+$GaltypeProgramFiles = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64).OpenSubKey('SOFTWARE\Microsoft\Windows\CurrentVersion').GetValue('ProgramFilesDir')
 
 # ARM64 の Windows か (x64 のエミュレーションで動いている PowerShell では、環境変数が AMD64 になるので、Windows の設定から読む)
 function Test-Arm64Windows {
@@ -42,13 +42,13 @@ function Test-GaltypeImeServer {
 # 管理者として動かす処理。確かめてから使うまでの間にファイルをすり替えられないように、ユーザーが書き換えられない
 # Program Files の下に写してから、昇格する前に確かめたハッシュと比べ、合ったものだけで Register-Tip.ps1 を動かす。
 # この処理はファイルではなくコマンドとして渡す (ユーザーのフォルダーにあるスクリプトを、管理者として直接動かさない)
-$MeltypeImeElevatedCommand = {
+$GaltypeImeElevatedCommand = {
     param([string]$Source, [string]$Files, [string]$Log, [string]$Mode)
     $ErrorActionPreference = 'Stop'
     $code = 1
     # 環境変数はユーザーが上書きできる (管理者として動くプロセスにも引き継がれる) ので、Windows の設定 (HKLM) から読む
     $programFiles = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64).OpenSubKey('SOFTWARE\Microsoft\Windows\CurrentVersion').GetValue('ProgramFilesDir')
-    $stage = Join-Path $programFiles "Meltype\stage-$([Guid]::NewGuid().ToString('N'))"
+    $stage = Join-Path $programFiles "Galtype\stage-$([Guid]::NewGuid().ToString('N'))"
     try {
         # Files: 'Source からの相対パス=SHA-256' を | でつないだもの
         foreach ($entry in $Files.Split('|')) {
@@ -81,7 +81,7 @@ function Invoke-Elevated([string]$Source, [hashtable]$Hashes, [string]$Mode) {
     $log = Join-Path $env:TEMP "meltype-ime-$([Guid]::NewGuid().ToString('N')).log"
     $quote = { param([string]$text) "'" + $text.Replace("'", "''") + "'" }
     $files = ($Hashes.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '|'
-    $command = "& { $MeltypeImeElevatedCommand } $(& $quote $Source) $(& $quote $files) $(& $quote $log) $(& $quote $Mode)"
+    $command = "& { $GaltypeImeElevatedCommand } $(& $quote $Source) $(& $quote $files) $(& $quote $log) $(& $quote $Mode)"
     $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($command))
     $all = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-EncodedCommand', $encoded)
     # PATH から探さず、Windows のフォルダーの powershell.exe を使う
@@ -101,44 +101,44 @@ function Invoke-Elevated([string]$Source, [hashtable]$Hashes, [string]$Mode) {
     return 'failed'
 }
 
-function Add-MeltypeImeToLanguageList {
+function Add-GaltypeImeToLanguageList {
     $list = Get-WinUserLanguageList
     $japanese = $list | Where-Object { $_.LanguageTag -like 'ja*' } | Select-Object -First 1
     if (-not $japanese) {
         $list.Add('ja-JP')
         $japanese = $list | Where-Object { $_.LanguageTag -like 'ja*' } | Select-Object -First 1
     }
-    if ($japanese.InputMethodTips -notcontains $MeltypeImeTip) {
-        $japanese.InputMethodTips.Add($MeltypeImeTip)
+    if ($japanese.InputMethodTips -notcontains $GaltypeImeTip) {
+        $japanese.InputMethodTips.Add($GaltypeImeTip)
         Set-WinUserLanguageList $list -Force
     }
-    # 既定の入力方式を自分で決めていなければ、Meltype にする (サインインし直したときも Meltype から始まるように)。
+    # 既定の入力方式を自分で決めていなければ、Galtype にする (サインインし直したときも Galtype から始まるように)。
     # 自分で決めているときは変えない
     $override = Get-WinDefaultInputMethodOverride -ErrorAction SilentlyContinue
-    if (-not "$($override | Out-String)".Trim()) { Set-WinDefaultInputMethodOverride -InputTip $MeltypeImeTip }
+    if (-not "$($override | Out-String)".Trim()) { Set-WinDefaultInputMethodOverride -InputTip $GaltypeImeTip }
 }
 
-function Remove-MeltypeImeFromLanguageList {
-    # 既定の入力方式が Meltype のままなら、決めていない状態に戻す
+function Remove-GaltypeImeFromLanguageList {
+    # 既定の入力方式が Galtype のままなら、決めていない状態に戻す
     $override = Get-WinDefaultInputMethodOverride -ErrorAction SilentlyContinue
     if ("$($override | Out-String)" -match '417D801B-A9BD-4C26-BD16-356A825A6998') { Set-WinDefaultInputMethodOverride }
     $list = Get-WinUserLanguageList
     $changed = $false
     foreach ($language in $list) {
-        if ($language.InputMethodTips -contains $MeltypeImeTip) {
-            $language.InputMethodTips.Remove($MeltypeImeTip) | Out-Null
+        if ($language.InputMethodTips -contains $GaltypeImeTip) {
+            $language.InputMethodTips.Remove($GaltypeImeTip) | Out-Null
             $changed = $true
         }
     }
     if ($changed) { Set-WinUserLanguageList $list -Force }
 }
 
-$MeltypeImeDeclinedKey = 'HKCU:\Software\Meltype'
+$GaltypeImeDeclinedKey = 'HKCU:\Software\Galtype'
 
 # 登録を断ったことを覚える。自動更新と、Galtype.exe が起動したときには聞かない (Install.cmd を自分で実行したときは聞く)
-function Set-MeltypeImeDeclined {
-    New-Item -Path $MeltypeImeDeclinedKey -Force | Out-Null
-    Set-ItemProperty -LiteralPath $MeltypeImeDeclinedKey -Name ImeDeclined -Value 1 -Type DWord
+function Set-GaltypeImeDeclined {
+    New-Item -Path $GaltypeImeDeclinedKey -Force | Out-Null
+    Set-ItemProperty -LiteralPath $GaltypeImeDeclinedKey -Name ImeDeclined -Value 1 -Type DWord
 }
 
 # ファイルの SHA-256 (Get-FileHash は、ほかのシェルから起動した PowerShell では読み込めないことがあるので .NET で計算する)
@@ -154,12 +154,12 @@ function Test-GaltypeImeCurrent([string]$Source) {
     # 途中で止まった登録は、DLL が同じでも登録し直す
     if (-not (Test-GaltypeImeServer)) { return $false }
     # 登録を外すときに使うスクリプト (Program Files に置いたもの) も同じか (DLL が同じでも、スクリプトを直したら置き直す)
-    $installedScript = Join-Path $MeltypeProgramFiles 'Meltype\tip\Register-Tip.ps1'
+    $installedScript = Join-Path $GaltypeProgramFiles 'Galtype\tip\Register-Tip.ps1'
     $newScript = Join-Path $Source 'Register-Tip.ps1'
     if (-not (Test-Path -LiteralPath $installedScript) -or -not (Test-Path -LiteralPath $newScript)) { return $false }
     if ((Get-Sha256 $installedScript) -ne (Get-Sha256 $newScript)) { return $false }
     foreach ($arch in 'x64', 'x86') {
-        $installed = Join-Path $MeltypeProgramFiles "Meltype\tip\$arch\GaltypeTip.dll"
+        $installed = Join-Path $GaltypeProgramFiles "Galtype\tip\$arch\GaltypeTip.dll"
         $new = Join-Path $Source "$arch\GaltypeTip.dll"
         if (-not (Test-Path -LiteralPath $installed) -or -not (Test-Path -LiteralPath $new)) { return $false }
         # 署名する前の中身のハッシュがあれば、それで比べる (署名した DLL は、中身が同じでも毎回違うファイルになる)
@@ -188,7 +188,7 @@ function Read-HashFile([string]$path) {
 # 壊れた・途中までしかコピーされていない DLL を登録しないためのもの。ハッシュのファイルも同じフォルダー (ユーザーが書き換えられる場所)
 # にあるので、同じユーザーの権限で動くプログラムによる書き換えは防げない (SECURITY.md)。
 # 確かめたファイル (Register-Tip.ps1 も) のハッシュを返す。管理者として動く側は、写したものがこれと合うかを確かめる。合わなければ $null
-function Get-MeltypeImeSourceHashes([string]$Source) {
+function Get-GaltypeImeSourceHashes([string]$Source) {
     $hashes = @{}
     foreach ($arch in 'x64', 'x86') {
         $dll = Join-Path $Source "$arch\GaltypeTip.dll"
@@ -212,53 +212,53 @@ function Install-GaltypeIme([string]$Source, [switch]$Ask) {
     if (-not (Test-Path -LiteralPath $register)) { return $false }
     # ARM64 の Windows では、ARM64 のアプリ (メモ帳・エクスプローラーなど) に x64 / x86 の DLL が読み込まれず、日本語が打てなくなる
     if (Test-Arm64Windows) {
-        Write-Host 'ARM64 の Windows には Meltype IME はまだ対応していません。変換ボックスで入力する方式で使えます。'
+        Write-Host 'ARM64 の Windows には Galtype IME はまだ対応していません。変換ボックスで入力する方式で使えます。'
         return $false
     }
-    $hashes = Get-MeltypeImeSourceHashes $Source
+    $hashes = Get-GaltypeImeSourceHashes $Source
     if (-not $hashes) {
-        Write-Host 'Meltype IME の DLL が、ビルドしたときのものと違います (壊れているか、書き換えられています)。登録しません。'
+        Write-Host 'Galtype IME の DLL が、ビルドしたときのものと違います (壊れているか、書き換えられています)。登録しません。'
         return $false
     }
     if (Test-GaltypeImeCurrent $Source) {
-        try { Add-MeltypeImeToLanguageList } catch { }
+        try { Add-GaltypeImeToLanguageList } catch { }
         return $true
     }
-    $declined = (Get-ItemProperty -LiteralPath $MeltypeImeDeclinedKey -Name ImeDeclined -ErrorAction SilentlyContinue).ImeDeclined -eq 1
+    $declined = (Get-ItemProperty -LiteralPath $GaltypeImeDeclinedKey -Name ImeDeclined -ErrorAction SilentlyContinue).ImeDeclined -eq 1
     if ($declined -and -not $Ask) {
-        Write-Host '前に Meltype IME の登録を断ったので、登録しません (Install.cmd か Install-Galtype.ps1 を実行すると、もう一度聞きます)。'
+        Write-Host '前に Galtype IME の登録を断ったので、登録しません (Install.cmd か Install-Galtype.ps1 を実行すると、もう一度聞きます)。'
         return $false
     }
-    Write-Host 'Meltype IME (入力欄に直接入力) を Windows に登録します。管理者権限の確認が出たら「はい」を選んでください。'
+    Write-Host 'Galtype IME (入力欄に直接入力) を Windows に登録します。管理者権限の確認が出たら「はい」を選んでください。'
     $result = Invoke-Elevated $Source $hashes 'Register'
     if ($result -ne 'ok') {
-        Write-Host 'Meltype IME を登録できませんでした。今までどおり、変換ボックスで入力する方式で使えます。'
+        Write-Host 'Galtype IME を登録できませんでした。今までどおり、変換ボックスで入力する方式で使えます。'
         # UAC で断られたときだけ覚えて、自動更新では聞かない (失敗したときは、次の更新でまた試す)
-        if ($result -eq 'cancelled') { Set-MeltypeImeDeclined }
+        if ($result -eq 'cancelled') { Set-GaltypeImeDeclined }
         return $false
     }
-    Remove-ItemProperty -LiteralPath $MeltypeImeDeclinedKey -Name ImeDeclined -ErrorAction SilentlyContinue
+    Remove-ItemProperty -LiteralPath $GaltypeImeDeclinedKey -Name ImeDeclined -ErrorAction SilentlyContinue
     try {
-        Add-MeltypeImeToLanguageList
+        Add-GaltypeImeToLanguageList
     }
     catch {
-        Write-Host "キーボードの一覧に Meltype を足せませんでした: $($_.Exception.Message)"
-        Write-Host '「設定」→「時刻と言語」→「言語と地域」→ 日本語 の「…」→「言語のオプション」→「キーボードの追加」で Meltype を選んでください。'
+        Write-Host "キーボードの一覧に Galtype を足せませんでした: $($_.Exception.Message)"
+        Write-Host '「設定」→「時刻と言語」→「言語と地域」→ 日本語 の「…」→「言語のオプション」→「キーボードの追加」で Galtype を選んでください。'
     }
-    Write-Host 'Meltype IME を登録しました。Win + Space で「Meltype」を選ぶと、入力欄に直接入力できます。'
+    Write-Host 'Galtype IME を登録しました。Win + Space で「Galtype」を選ぶと、入力欄に直接入力できます。'
     return $true
 }
 
 function Uninstall-GaltypeIme {
-    try { Remove-MeltypeImeFromLanguageList } catch { }
+    try { Remove-GaltypeImeFromLanguageList } catch { }
     # 登録を断った記録も消す
-    Remove-Item -LiteralPath $MeltypeImeDeclinedKey -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $GaltypeImeDeclinedKey -Recurse -Force -ErrorAction SilentlyContinue
     if (-not (Test-GaltypeImeRegistered)) { return $true }
-    $register = Join-Path $MeltypeProgramFiles 'Meltype\tip\Register-Tip.ps1'
+    $register = Join-Path $GaltypeProgramFiles 'Galtype\tip\Register-Tip.ps1'
     # Program Files に無ければ、同じ場所 (インストール先) の tip か、ソースの native\tip のもの
     if (-not (Test-Path -LiteralPath $register)) { $register = Join-Path $PSScriptRoot 'tip\Register-Tip.ps1' }
     if (-not (Test-Path -LiteralPath $register)) { $register = Join-Path $PSScriptRoot '..\native\tip\Register-Tip.ps1' }
     if (-not (Test-Path -LiteralPath $register)) { return $false }
-    Write-Host 'Meltype IME の登録を外します。管理者権限の確認が出たら「はい」を選んでください。'
+    Write-Host 'Galtype IME の登録を外します。管理者権限の確認が出たら「はい」を選んでください。'
     return (Invoke-Elevated (Split-Path $register) @{ 'Register-Tip.ps1' = (Get-Sha256 $register) } 'Unregister') -eq 'ok'
 }

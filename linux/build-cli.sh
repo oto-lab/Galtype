@@ -131,7 +131,7 @@ fi
 
 if [[ $test_core -eq 1 ]]; then
     need dotnet
-    dotnet run --project "$root/src/Galtype.Core.Tests"
+    dotnet run --project "$root/src/Meltype.Core.Tests"
 fi
 
 if [[ $build_mozc -eq 1 ]]; then

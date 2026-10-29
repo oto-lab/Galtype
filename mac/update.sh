@@ -3,10 +3,10 @@
 # Copyright (C) 2026 hrmcngs
 
 # Run from any directory:
-#   bash "$HOME/Documents/github/other/Meltype/mac/update.sh"
+#   bash "$HOME/Documents/github/other/Galtype/mac/update.sh"
 # Show help without starting the input method:
-#   bash "$HOME/Documents/github/other/Meltype/mac/update.sh" --help
-# This updates and starts Meltype. Avoid running while investigating crashes.
+#   bash "$HOME/Documents/github/other/Galtype/mac/update.sh" --help
+# This updates and starts Galtype. Avoid running while investigating crashes.
 set -euo pipefail
 
 here="$(cd "$(dirname "$0")" && pwd)"
@@ -28,14 +28,14 @@ restore_input() {
     local result=$?
     trap - EXIT
     if ! bash "$here/start-input-method.sh" "$app" ||
-       ! "$app/Contents/MacOS/Meltype" --register-input-source ||
+       ! "$app/Contents/MacOS/Galtype" --register-input-source ||
        ! swift "$here/select-input-source.swift"; then
-        echo "Could not select Meltype. Choose it from the input menu." >&2
+        echo "Could not select Galtype. Choose it from the input menu." >&2
         [[ $result -ne 0 ]] || result=1
     fi
     exit "$result"
 }
 trap restore_input EXIT
 MELTYPE_SKIP_START=1 bash "$here/build-cli.sh" --test --install
-"$app/Contents/MacOS/Meltype" --check-inputs "$here/Resources/InputChecks.tsv"
-echo "Meltype update and input checks completed."
+"$app/Contents/MacOS/Galtype" --check-inputs "$here/Resources/InputChecks.tsv"
+echo "Galtype update and input checks completed."

@@ -9,7 +9,7 @@ target_app="${2:?Usage: install-app.sh source.app target.app}"
 [[ -d "$source_app" ]] || { echo "Missing app: $source_app" >&2; exit 1; }
 mkdir -p "$(dirname "$target_app")"
 # A hidden sibling of Input Methods avoids discovery and keeps renames on its volume.
-stage="$(mktemp -d "$(dirname "$(dirname "$target_app")")/.meltype-install.XXXXXX")"
+stage="$(mktemp -d "$(dirname "$(dirname "$target_app")")/.galtype-install.XXXXXX")"
 backup_ready=0
 replacement_started=0
 cleanup() {
@@ -50,7 +50,7 @@ target_device="$(stat -f %d "$(dirname "$target_app")")"
 }
 ditto "$source_app" "$stage/Galtype.app"
 codesign --verify --deep --strict "$stage/Galtype.app"
-pkill -x Meltype 2>/dev/null || true
+pkill -x Galtype 2>/dev/null || true
 if [[ -e "$target_app" ]]; then
     mv "$target_app" "$stage/previous.app"
     backup_ready=1

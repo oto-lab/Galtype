@@ -52,8 +52,8 @@ fi
 echo "$target に入れます (管理者のパスワードを聞かれます)"
 sudo rm -rf "$target"
 sudo mkdir -p "$target"
-sudo cp -R libGaltypeNative.so ibus-engine-galtype icon.png mozc LICENSE THIRD-PARTY-NOTICES.md "$target/"
-sudo chmod 755 "$target/ibus-engine-galtype" "$target/mozc/galtype_mozc_helper"
+sudo cp -R libGaltypeNative.so ibus-engine-galtype icon.png mozc galjp-runtime LICENSE THIRD-PARTY-NOTICES.md "$target/"
+sudo chmod 755 "$target/ibus-engine-galtype" "$target/mozc/meltype_mozc_helper"
 if $use_ibus; then
     sed "s|@DIR@|$target|g" galtype.xml | sudo tee /usr/share/ibus/component/galtype.xml > /dev/null
     # IBus に読み込み直させる (動いている Galtype も止まり、次に使うときに新しいものが起動する)

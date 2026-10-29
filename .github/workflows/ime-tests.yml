@@ -149,7 +149,7 @@ jobs:
       - name: OS keys through IBus, product Core and Chromium
         working-directory: tools/ime-tests
         env:
-          MELTYPE_PACKAGE_DIR: ${{ github.workspace }}/linux/build/Meltype-linux
+          MELTYPE_PACKAGE_DIR: ${{ github.workspace }}/linux/build/Galtype-linux
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: npm run test:ime:linux:ci
       - name: Real IME observations and process logs

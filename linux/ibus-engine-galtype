@@ -14,6 +14,7 @@ import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.realpath(__file__))
+os.environ.setdefault("GALTYPE_GALJP_RUNTIME", os.path.join(HERE, "galjp-runtime", "index.mjs"))
 
 
 def _version_from_xml():
@@ -34,15 +35,15 @@ def _version_from_native():
 
     try:
         lib = ctypes.CDLL(so)
-        lib.galtype_version.restype = ctypes.c_void_p
-        lib.galtype_free.argtypes = [ctypes.c_void_p]
-        pointer = lib.galtype_version()
+        lib.meltype_version.restype = ctypes.c_void_p
+        lib.meltype_free.argtypes = [ctypes.c_void_p]
+        pointer = lib.meltype_version()
         if not pointer:
             return None
         try:
             return ctypes.string_at(pointer).decode("utf-8")
         finally:
-            lib.galtype_free(pointer)
+            lib.meltype_free(pointer)
     except Exception:
         return None
 
@@ -73,14 +74,14 @@ _lib.meltype_select_candidate.restype = ctypes.c_void_p
 _lib.meltype_set_direct.argtypes = [ctypes.c_void_p, ctypes.c_int]
 _lib.meltype_set_can_delete.argtypes = [ctypes.c_void_p, ctypes.c_int]
 # コード入力 (コメント・文字列は日本語、それ以外は英字のまま)。ターミナルの入力欄で既定にする (issue #715)
-_set_code_input = getattr(_lib, "galtype_set_code_input", None)
+_set_code_input = getattr(_lib, "meltype_set_code_input", None)
 if _set_code_input is not None:
     _set_code_input.argtypes = [ctypes.c_void_p, ctypes.c_int]
 _lib.meltype_free.argtypes = [ctypes.c_void_p]
 _lib.meltype_report_url.argtypes = [ctypes.c_char_p]
 _lib.meltype_report_url.restype = ctypes.c_void_p
 # 入力中の 変換・無変換・ひらがな/カタカナ キー (設定「入力中のキーの役割を分ける」: issue #199)。古い本体には無い
-_role_key = getattr(_lib, "galtype_role_key", None)
+_role_key = getattr(_lib, "meltype_role_key", None)
 if _role_key is not None:
     _role_key.argtypes = [ctypes.c_void_p, ctypes.c_int]
     _role_key.restype = ctypes.c_void_p

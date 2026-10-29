@@ -27,8 +27,8 @@ final class EventClient: NSObject, IMKTextInput {
  func firstRect(forCharacterRange range:NSRange, actualRange:UnsafeMutablePointer<NSRange>!)->NSRect {actualRange?.pointee=range;return .zero}
 }
 #if !REAL_CONVERTER
-final class MeltypeConverter {
- static let shared=MeltypeConverter()
+final class GaltypeConverter {
+ static let shared=GaltypeConverter()
  func clauses(for text:String,context:String?)->[(reading:String,text:String)] {[]}
  func candidates(for text:String)->[String] {[]}
 }
@@ -41,14 +41,14 @@ struct EventTests {
   app.setActivationPolicy(.prohibited)
   guard let server=IMKServer(name:"LocalMeltypeBoundaryTests",bundleIdentifier:Bundle.main.bundleIdentifier) else {fatalError("IMKServer creation failed")}
   var passed=0
-  func check(_ name:String,_ body:(MeltypeInputController,EventClient)->Void) {
+  func check(_ name:String,_ body:(GaltypeInputController,EventClient)->Void) {
    let client=EventClient()
    // IMKInputController の初期化は OS のクライアントプロキシ専用なので nil で初期化する。
    // handle / commitComposition には合成 IMKTextInput クライアントを明示して渡す。
-   guard let controller=MeltypeInputController(server:server,delegate:nil,client:nil) else {fatalError("Controller creation failed")}
+   guard let controller=GaltypeInputController(server:server,delegate:nil,client:nil) else {fatalError("Controller creation failed")}
    body(controller,client); passed+=1; print("PASS: \(name)")
   }
-  func key(_ controller:MeltypeInputController,_ client:EventClient,_ chars:String,code:UInt16=0,flags:NSEvent.ModifierFlags=[])->Bool {
+  func key(_ controller:GaltypeInputController,_ client:EventClient,_ chars:String,code:UInt16=0,flags:NSEvent.ModifierFlags=[])->Bool {
    let event=NSEvent.keyEvent(with:.keyDown,location:.zero,modifierFlags:flags,timestamp:0,windowNumber:0,context:nil,characters:chars,charactersIgnoringModifiers:chars,isARepeat:false,keyCode:code)!
    let consumed=controller.handle(event,client:client)
    if !consumed && !flags.contains(.command) && !flags.contains(.control) && chars.unicodeScalars.allSatisfy({$0.value>=0x20}) {
@@ -57,7 +57,7 @@ struct EventTests {
    }
    return consumed
   }
-  func type(_ controller:MeltypeInputController,_ client:EventClient,_ raw:String) {
+  func type(_ controller:GaltypeInputController,_ client:EventClient,_ raw:String) {
    for scalar in raw.unicodeScalars { _=key(controller,client,String(scalar),code:UInt16(kVK_ANSI_A)) }
   }
   func equal(_ actual:String,_ expected:String) {
@@ -118,7 +118,7 @@ struct EventTests {
    type(controller,client,"@kuraido");precondition(!key(controller,client,"a",flags:.command));equal(client.document,"@kuraido");equal(client.marked,"")
   }
   #if REAL_CONVERTER
-  let converter=MeltypeConverter.shared
+  let converter=GaltypeConverter.shared
   let candidates=converter.candidates(for:"きょう")
   precondition(candidates.contains("今日"),"real dictionary conversion missing: \(candidates)")
   let clauses=converter.clauses(for:"きょうはいいてんき",context:nil)

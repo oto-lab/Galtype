@@ -28,7 +28,7 @@ if [[ ! "$rpmversion" =~ ^[0-9][A-Za-z0-9.+~]*$ ]]; then
     exit 1
 fi
 
-for f in libGaltypeNative.so ibus-engine-galtype galtype.xml icon.png LICENSE THIRD-PARTY-NOTICES.md mozc/galtype_mozc_helper; do
+for f in libGaltypeNative.so ibus-engine-galtype galtype.xml icon.png LICENSE THIRD-PARTY-NOTICES.md mozc/meltype_mozc_helper galjp-runtime/node galjp-runtime/index.mjs; do
     [[ -e "$src/$f" ]] || { echo "必要なファイルがありません: $src/$f (先に linux/build.sh を実行してください)" >&2; exit 1; }
 done
 command -v rpmbuild > /dev/null || { echo "rpmbuild がありません (Fedora なら sudo dnf install rpm-build)" >&2; exit 1; }
@@ -83,9 +83,9 @@ and romaji becomes Japanese, without switching the input mode.
 
 %install
 mkdir -p %{buildroot}%{target} %{buildroot}%{_datadir}/ibus/component
-cp -R %{galtype_src}/libGaltypeNative.so %{galtype_src}/ibus-engine-galtype %{galtype_src}/icon.png %{galtype_src}/mozc %{galtype_src}/LICENSE %{galtype_src}/THIRD-PARTY-NOTICES.md %{buildroot}%{target}/
+cp -R %{galtype_src}/libGaltypeNative.so %{galtype_src}/ibus-engine-galtype %{galtype_src}/icon.png %{galtype_src}/mozc %{galtype_src}/galjp-runtime %{galtype_src}/LICENSE %{galtype_src}/THIRD-PARTY-NOTICES.md %{buildroot}%{target}/
 chmod 644 %{buildroot}%{target}/libGaltypeNative.so %{buildroot}%{target}/icon.png %{buildroot}%{target}/LICENSE %{buildroot}%{target}/THIRD-PARTY-NOTICES.md
-chmod 755 %{buildroot}%{target}/ibus-engine-galtype %{buildroot}%{target}/mozc/galtype_mozc_helper
+chmod 755 %{buildroot}%{target}/ibus-engine-galtype %{buildroot}%{target}/mozc/meltype_mozc_helper
 sed "s|@DIR@|%{target}|g" %{galtype_src}/galtype.xml > %{buildroot}%{_datadir}/ibus/component/galtype.xml
 %if %{with_fcitx5}
 install -D -m 644 %{galtype_src}/fcitx5/galtype.so %{buildroot}%{_libdir}/fcitx5/galtype.so
@@ -108,6 +108,7 @@ pkill -f %{target}/ibus-engine-galtype > /dev/null 2>&1 || :
 %{target}/ibus-engine-galtype
 %{target}/icon.png
 %{target}/mozc
+%{target}/galjp-runtime
 %{target}/THIRD-PARTY-NOTICES.md
 %license %{target}/LICENSE
 %{_datadir}/ibus/component/galtype.xml

@@ -72,7 +72,6 @@ internal static class Program
             Composition.LearningSaves.FlushAll();
         };
 
-        if (!AppPaths.IsPortable) AppPaths.MigrateFromOldName();
         try
         {
             Directory.CreateDirectory(AppPaths.DataDirectory);

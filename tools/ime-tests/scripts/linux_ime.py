@@ -207,7 +207,7 @@ def control(operation):
         command(["xdotool", "windowfocus", "--sync", window])
         context_path = focused_context() if password else wait_for(focused_context, "Chromium input context", pump)
         # Initial selection only. Never repair focus/password recovery by reselecting.
-        if operation["action"] == "select" and not bus.set_global_engine("meltype"):
+        if operation["action"] == "select" and not bus.set_global_engine("galtype"):
             raise RuntimeError("Could not select product Meltype engine")
     else:
         window, context_path = operation["windowId"], operation["context"]
@@ -216,7 +216,7 @@ def control(operation):
     # Inspect the public bus selection and focused-context path instead.
     def selected_engine():
         engine = bus.get_global_engine()
-        return engine and engine.get_name() == "meltype"
+        return engine and engine.get_name() == "galtype"
 
     wait_for(selected_engine, "global Meltype selection", pump)
     if command(["xdotool", "getwindowfocus"]) != window or (not password and focused_context() != context_path):
@@ -281,7 +281,7 @@ def session(playwright_args):
             bus = IBus.Bus()
             wait_for(bus.is_connected, "private IBus connection", check)
             product = start("meltype", [sys.executable, str(files["ibus-engine-galtype"])])
-            wait_for(lambda: any(e.get_name() == "meltype" for e in bus.list_active_engines()),
+            wait_for(lambda: any(e.get_name() == "galtype" for e in bus.list_active_engines()),
                      "product engine registration", check)
             runtime = {"version": 1, "ibusAddress": address, "daemonPid": daemon.pid, "productPid": product.pid}
             Path(os.environ["MELTYPE_IME_SESSION"]).write_text(json.dumps(runtime))

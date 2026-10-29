@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 hrmcngs
 #
-# Mac の CLI から Meltype をテスト・ビルド・インストールする入口。
+# Mac の CLI から Galtype をテスト・ビルド・インストールする入口。
 #   mac/build-cli.sh --setup --test --install
 set -euo pipefail
 
@@ -21,7 +21,7 @@ Usage: mac/build-cli.sh [options]
 
 Options:
   --setup       Install .NET 10 SDK into ~/.dotnet if dotnet is missing.
-  --test        Run Meltype.Core.Tests and the Mac shortcut tests.
+  --test        Run Galtype.Core.Tests and the Mac shortcut tests.
   --build       Build mac/build/Galtype.app without installing it.
   --install     Build and install Galtype.app into ~/Library/Input Methods.
   --all         Run --test --install. This is the default.

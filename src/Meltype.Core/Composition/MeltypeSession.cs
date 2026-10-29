@@ -175,7 +175,6 @@ public sealed class MeltypeSession
     /// </summary>
     public static MeltypeSession CreateDefault(IKanjiConverter converter, Func<string, IReadOnlyList<string>>? moreCandidates, IWordChecker? wordChecker, bool autoSpacing = false)
     {
-        AppPaths.MigrateFromOldName();
         return CreateDefault(AppPaths.DataDirectory, converter, moreCandidates, wordChecker, autoSpacing);
     }
 
@@ -641,23 +640,7 @@ public sealed class MeltypeSession
             // アプリに渡したキーの文字は、確定した文字の続きとしては分からない
             if (!consumed) ForgetCommitted();
             var settings = _settings();
-            var options = new GalmojiOptions
-            {
-                Enabled = settings.GalmojiEnabled,
-                Latin = settings.GalmojiLatin,
-                Digit = settings.GalmojiDigit,
-                Hiragana = settings.GalmojiHiragana,
-                Katakana = settings.GalmojiKatakana,
-                Kanji = settings.GalmojiKanji,
-                Symbol = settings.GalmojiSymbol,
-                SplitPolicy = settings.GalmojiSplitPolicy,
-                Variant = settings.GalmojiVariant,
-                StyleStandalone = settings.GalmojiStyleStandalone,
-                MaxDepth = settings.GalmojiMaxDepth,
-                Seed = settings.GalmojiSeed,
-                PreserveUrlsAndEmoji = settings.GalmojiPreserveUrlsAndEmoji,
-                Dictionary = settings.GalmojiDictionary,
-            };
+            var options = GalmojiOptions.FromSettings(settings);
             var commits = _commits.Select(edit =>
             {
                 var text = _galmoji.Convert(edit.Text, options);
@@ -674,15 +657,7 @@ public sealed class MeltypeSession
         private CompositionView? ApplyGalmoji(CompositionView? view, GalmojiOptions options)
         {
             if (view is null) return null;
-            return view with
-            {
-                Text = _galmoji.Convert(view.Text, options),
-                Candidates = view.Candidates.Select(text => _galmoji.Convert(text, options)).ToList(),
-                Clauses = view.Clauses?.Select(text => _galmoji.Convert(text, options)).ToList(),
-                Committed = view.Committed is null ? null : _galmoji.Convert(view.Committed, options),
-                Suggestion = view.Suggestion is null ? null : _galmoji.Convert(view.Suggestion, options),
-                Meaning = view.Meaning is null ? null : _galmoji.Convert(view.Meaning, options),
-            };
+            return _galmoji.ConvertView(view, options);
         }
 
         public void CommitText(string text) => Add(text);

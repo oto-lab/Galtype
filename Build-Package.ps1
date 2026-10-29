@@ -108,6 +108,10 @@ $galjpRuntimeApp = Join-Path $app 'galjp-runtime'
 New-Item -ItemType Directory -Force -Path $galjpRuntimeApp | Out-Null
 Copy-Item -Path (Join-Path $galjpRuntimeSource 'index.mjs'), (Join-Path $galjpRuntimeSource 'package.json'), (Join-Path $galjpRuntimeSource 'package-lock.json') -Destination $galjpRuntimeApp -Force
 Copy-Item -Path (Join-Path $galjpRuntimeSource 'node_modules') -Destination $galjpRuntimeApp -Recurse -Force
+$nodePath = (Get-Command node).Source
+Copy-Item -LiteralPath $nodePath -Destination (Join-Path $galjpRuntimeApp 'node.exe')
+$nodeLicense = Join-Path (Split-Path $nodePath) 'LICENSE'
+Copy-Item -LiteralPath $nodeLicense -Destination (Join-Path $galjpRuntimeApp 'NODE-LICENSE.txt')
 
 # Mozc の変換ヘルパー (native\mozc\Build-MozcHelper.ps1 で作ったもの) を同梱する。無ければ Microsoft IME だけで動く。
 if (Test-Path -LiteralPath (Join-Path $mozcBin 'meltype_mozc_helper.exe')) {

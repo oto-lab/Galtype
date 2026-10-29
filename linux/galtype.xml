@@ -4,8 +4,8 @@
     <name>org.freedesktop.IBus.Galtype</name>
     <description>Galtype: 半角/全角 を押さずに日本語と英語を打ち分ける日本語入力</description>
     <exec>@DIR@/ibus-engine-galtype --ibus</exec>
-    <version>1.3.0</version>
-    <author>Yukishiro</author>
+    <version>1.0.0</version>
+    <author>oto-lab (based on Meltype by Yukishiro)</author>
     <license>GPL-3.0-or-later</license>
     <homepage>https://github.com/oto-lab/Galtype</homepage>
     <textdomain>galtype</textdomain>
@@ -14,7 +14,7 @@
             <name>galtype</name>
             <language>ja</language>
             <license>GPL-3.0-or-later</license>
-            <author>Yukishiro</author>
+            <author>oto-lab (based on Meltype by Yukishiro)</author>
             <icon>@DIR@/icon.png</icon>
             <layout>default</layout>
             <longname>Galtype</longname>

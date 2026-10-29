@@ -117,6 +117,8 @@ final class NativeCore {
     private let freeFunction: FreeFunction?
 
     private init() {
+        let runtime = (Bundle.main.executableURL?.deletingLastPathComponent().path ?? "") + "/galjp-runtime/index.mjs"
+        setenv("GALTYPE_GALJP_RUNTIME", runtime, 0)
         let path = (Bundle.main.privateFrameworksPath ?? "") + "/libGaltypeNative.dylib"
         // 初期化が終わるまで self のプロパティは使えないので、ローカルの handle から関数を探す。
         let handle = dlopen(path, RTLD_NOW)

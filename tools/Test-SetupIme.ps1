@@ -11,7 +11,7 @@ try {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot '..\packaging\setup-ime.ps1') -Destination $fixture
     $env:TEMP = $testRoot
     $helper = Join-Path $fixture 'galtype-ime.ps1'
-    $log = Join-Path $testRoot 'Meltype-setup-ime.log'
+    $log = Join-Path $testRoot 'Galtype-setup-ime.log'
     foreach ($case in @(
         @{ Ask = $true; Registered = '$false'; Result = '$true' },
         @{ Ask = $true; Registered = '$false'; Result = '$false' },
@@ -28,7 +28,7 @@ function Install-GaltypeIme([string]$Source, [switch]$Ask) {
     Write-Host 'Registration attempted'
     return RESULT
 }
-function Set-MeltypeImeDeclined { Set-Content -LiteralPath (Join-Path $PSScriptRoot 'declined') -Value 'declined' }
+function Set-GaltypeImeDeclined { Set-Content -LiteralPath (Join-Path $PSScriptRoot 'declined') -Value 'declined' }
 '@
         $expectedAsk = if ($case.Ask) { '$true' } else { '$false' }
         Set-Content -LiteralPath $helper -Value $stub.Replace('RESULT', $case.Result).Replace('REGISTERED', $case.Registered).Replace('EXPECTEDASK', $expectedAsk) -Encoding UTF8
@@ -41,7 +41,7 @@ function Set-MeltypeImeDeclined { Set-Content -LiteralPath (Join-Path $PSScriptR
         if ((Test-Path -LiteralPath $called) -ne $expectedCall) { throw 'Incorrect registration decision' }
         $text = Get-Content -LiteralPath $log -Raw
         if ($expectedCall -and $text -notmatch 'Registration attempted') { throw 'Registration output was not logged' }
-        if ($case.Result -eq '$false' -and $text -notmatch 'Meltype キーボード方式') { throw 'Missing fallback message' }
+        if ($case.Result -eq '$false' -and $text -notmatch 'Galtype キーボード方式') { throw 'Missing fallback message' }
         if ($expectedCall) { Remove-Item -LiteralPath $called }
         $declined = Join-Path $fixture 'declined'
         if ((Test-Path -LiteralPath $declined) -eq $expectedCall) { throw 'Incorrect declined record' }
@@ -52,7 +52,7 @@ function Set-MeltypeImeDeclined { Set-Content -LiteralPath (Join-Path $PSScriptR
         $stub = @'
 function Test-GaltypeImeRegistered { return $true }
 function Install-GaltypeIme { throw 'Install-GaltypeIme called during uninstall' }
-function Set-MeltypeImeDeclined { throw 'Set-MeltypeImeDeclined called during uninstall' }
+function Set-GaltypeImeDeclined { throw 'Set-GaltypeImeDeclined called during uninstall' }
 function Uninstall-GaltypeIme {
     Set-Content -LiteralPath (Join-Path $PSScriptRoot 'uninstalled') -Value 'uninstalled'
     return RESULT

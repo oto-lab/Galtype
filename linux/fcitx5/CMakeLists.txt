@@ -12,7 +12,7 @@ find_package(Fcitx5Utils 5.0 REQUIRED)
 # 本体 (libGaltypeNative.so) と Mozc のヘルパーを入れた場所 (install.sh と同じ)
 set(GALTYPE_DIR "/opt/galtype" CACHE PATH "libGaltypeNative.so を入れた場所")
 
-add_library(galtype MODULE galtype.cpp)
+add_library(galtype MODULE meltype.cpp)
 set_target_properties(galtype PROPERTIES PREFIX "" CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
 # fcitx5 5.1.16 以降の fcitx-utils/log.h は std::source_location を使うため、C++20 が要る
 if(Fcitx5Core_VERSION VERSION_GREATER_EQUAL 5.1.16)
@@ -38,7 +38,7 @@ if(BUILD_TESTING)
     file(COPY /usr/share/fcitx5/addon/keyboard.conf DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/test/addon)
     get_target_property(FCITX5_CORE_LOCATION Fcitx5::Core LOCATION)
     get_filename_component(FCITX5_LIB_DIR ${FCITX5_CORE_LOCATION} DIRECTORY)
-    add_executable(testgaltype test/testgaltype.cpp)
+    add_executable(testgaltype test/testmeltype.cpp)
     set_target_properties(testgaltype PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
     # fcitx5 5.1.16 以降の fcitx-utils/log.h は std::source_location を使うため、C++20 が要る
     if(Fcitx5Core_VERSION VERSION_GREATER_EQUAL 5.1.16)

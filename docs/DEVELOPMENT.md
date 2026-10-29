@@ -13,18 +13,18 @@
 
 | フォルダー | 中身 |
 |---|---|
-| `src/Galtype.Core/` | OS に依存しない部分 (Windows・Mac・Linux 共通)。英語 / 日本語の判定・ローマ字・変換ボックスの中身・辞書・学習・設定 |
-| `src/Galtype/` | Windows 版 (キーボードフック・変換ボックスの画面・Microsoft IME の変換エンジン・IMM32 / TSF・UI Automation・スペルチェッカー・トレイ) |
-| `src/Galtype.Mac.Native/` | Mac 版の IME から呼ぶ C の関数 (Galtype.Core を NativeAOT で dylib にする) |
+| `src/Meltype.Core/` | OS に依存しない部分 (Windows・Mac・Linux 共通)。英語 / 日本語の判定・ローマ字・変換ボックスの中身・辞書・学習・設定 |
+| `src/Meltype/` | Windows 版 (キーボードフック・変換ボックスの画面・Microsoft IME の変換エンジン・IMM32 / TSF・UI Automation・スペルチェッカー・トレイ) |
+| `src/Meltype.Mac.Native/` | Mac 版の IME から呼ぶ C の関数 (Galtype.Core を NativeAOT で dylib にする) |
 | `mac/` | Mac 版の IME (Swift、Input Method Kit。漢字変換は azooKey) |
 | `linux/` | Linux 版 (IBus・fcitx5 のエンジン) |
 | `native/` | Galtype IME (Windows の TSF の DLL) と Mozc のヘルパー ([native/mozc/README.md](../native/mozc/README.md)。Mozc-UT の辞書は [MOZC-UT.md](MOZC-UT.md)) |
-| `src/Galtype.Core.Tests/` | 共通部分のテスト (判定・変換ボックス・学習・品質テスト)。Mac・Linux でも動く |
-| `src/Galtype.Tests/` | Windows 版のテストと調査用の道具 (共通部分のテストもまとめて流す) |
+| `src/Meltype.Core.Tests/` | 共通部分のテスト (判定・変換ボックス・学習・品質テスト)。Mac・Linux でも動く |
+| `src/Meltype.Tests/` | Windows 版のテストと調査用の道具 (共通部分のテストもまとめて流す) |
 | `dictionaries/` | 組み込みの辞書 |
 | `packaging/` | 配布用のファイル (インストーラー・Install.cmd など) |
 
-`src/Galtype.Core/` の中は、`Composition/` (変換ボックスの中身: 英語の区間の判定・変換の流れ・候補・文脈・学習・ユーザー辞書・もしかして)、`Detection/` (ローマ字・英語・辞書・かな・打ち間違いの判定)、`Input/` (キーの表し方・コードの行の判定)、`Config/`・`Diagnostics/` (設定・ログ) に分かれています。
+`src/Meltype.Core/` の中は、`Composition/` (変換ボックスの中身: 英語の区間の判定・変換の流れ・候補・文脈・学習・ユーザー辞書・もしかして)、`Detection/` (ローマ字・英語・辞書・かな・打ち間違いの判定)、`Input/` (キーの表し方・コードの行の判定)、`Config/`・`Diagnostics/` (設定・ログ) に分かれています。
 
 <br>
 
@@ -69,36 +69,36 @@ powershell -ExecutionPolicy Bypass -File .\Uninstall-Galtype.ps1 -RemoveData # �
 
 
 ```powershell
-dotnet build Galtype.sln
-dotnet run --project src/Galtype.Tests                                   # すべてのテスト (Windows)
-dotnet run --project src/Galtype.Tests -- CompositionTests               # 名前に一致するテストだけ
-dotnet run --project src/Galtype.Tests -- --explain konnichiwa hello      # 1 文字ずつの判定理由 (英数状態の検知)
-dotnet run --project src/Galtype.Tests -- --convert きょうはいいてんき     # 変換エンジンの結果と文節の区切り
-dotnet run --project src/Galtype.Tests -- --context この本は:あつい        # 文脈を渡したときの変換結果
-dotnet run --project src/Galtype.Tests -- --eval                          # 品質テスト
+dotnet build Meltype.sln
+dotnet run --project src/Meltype.Tests                                   # すべてのテスト (Windows)
+dotnet run --project src/Meltype.Tests -- CompositionTests               # 名前に一致するテストだけ
+dotnet run --project src/Meltype.Tests -- --explain konnichiwa hello      # 1 文字ずつの判定理由 (英数状態の検知)
+dotnet run --project src/Meltype.Tests -- --convert きょうはいいてんき     # 変換エンジンの結果と文節の区切り
+dotnet run --project src/Meltype.Tests -- --context この本は:あつい        # 文脈を渡したときの変換結果
+dotnet run --project src/Meltype.Tests -- --eval                          # 品質テスト
 ```
 
 <a name="maclinux-でのテスト"></a>
 <img src="images/headings/development/s01.svg" alt="Mac・Linux でのテスト" height="40">
 
 
-OS に依存しない部分 (`src/Galtype.Core`) とそのテストは、Mac・Linux でも動きます。.NET 10 SDK を入れて次を実行します。GitHub Actions でも、Ubuntu と macOS で毎回流しています。
+OS に依存しない部分 (`src/Meltype.Core`) とそのテストは、Mac・Linux でも動きます。.NET 10 SDK を入れて次を実行します。GitHub Actions でも、Ubuntu と macOS で毎回流しています。
 
 ```bash
-dotnet run --project src/Galtype.Core.Tests                 # すべてのテスト
-dotnet run --project src/Galtype.Core.Tests -- --eval       # 品質テスト (スペルチェッカーは使わない)
-dotnet run --project src/Galtype.Core.Tests -- --version    # 版 (Galtype.Core)
-dotnet run --project src/Galtype.Core.Tests -- --repro kyouhagoogle enter   # 打ったときの見え方と確定の結果
-dotnet run --project src/Galtype.Core.Tests -- --mixed-bench out.json       # 日本語の文の中の英単語が正しく分かれるか (約 550 例)
-dotnet run --project src/Galtype.Core.Tests -- --expect src/Galtype.Core.Tests/data/issue-cases.tsv out.json  # 報告された誤変換
-dotnet run -c Release --project src/Galtype.Core.Tests -- --perf perf.json  # 変換エンジンの遅延 (p95 / p99)・候補の数・控え・メモリ・正解率 (MELTYPE_MOZC が要る)
+dotnet run --project src/Meltype.Core.Tests                 # すべてのテスト
+dotnet run --project src/Meltype.Core.Tests -- --eval       # 品質テスト (スペルチェッカーは使わない)
+dotnet run --project src/Meltype.Core.Tests -- --version    # 版 (Galtype.Core)
+dotnet run --project src/Meltype.Core.Tests -- --repro kyouhagoogle enter   # 打ったときの見え方と確定の結果
+dotnet run --project src/Meltype.Core.Tests -- --mixed-bench out.json       # 日本語の文の中の英単語が正しく分かれるか (約 550 例)
+dotnet run --project src/Meltype.Core.Tests -- --expect src/Meltype.Core.Tests/data/issue-cases.tsv out.json  # 報告された誤変換
+dotnet run -c Release --project src/Meltype.Core.Tests -- --perf perf.json  # 変換エンジンの遅延 (p95 / p99)・候補の数・控え・メモリ・正解率 (MELTYPE_MOZC が要る)
 ```
 
 Windows のアプリ本体・Mac / Linux の IME も同じ形で版を出せます (`Galtype.exe --version`、`Galtype.app/.../Galtype --version`、`ibus-engine-galtype --version`)。
 Windows のアプリ本体は GUI アプリ (WinExe) なので、cmd では版がプロンプトの後に出ます。
 コンソールアプリ (Exe) にすると、エクスプローラーやタスク スケジューラから起動したときにコンソールの窓が一瞬フォーカスを取り、その間に打ったキーが消えるので、WinExe のままにしています。
 
-`src/Galtype.Core.Tests/data/issue-cases.tsv` は、GitHub の issue (open / closed) から「打ったもの」と「期待した結果」を取り出したコーパスです。判定の作り方に関係なく同じ物差しで比べられるので、判定を変えるときは `--eval` と合わせて `--expect` で流します。
+`src/Meltype.Core.Tests/data/issue-cases.tsv` は、GitHub の issue (open / closed) から「打ったもの」と「期待した結果」を取り出したコーパスです。判定の作り方に関係なく同じ物差しで比べられるので、判定を変えるときは `--eval` と合わせて `--expect` で流します。
 
 環境変数 `MELTYPE_SCORED=1` を付けると、区切りを点数で選ぶ α版 (設定「区切りを点数で選ぶ (α版)」、`ScoredSegmentation.cs`) で動かせます。
 今までの区切りと比べるときは、同じコマンドを `MELTYPE_SCORED=0` と `1` で 2 回動かします。`--mixed-bench` は `MELTYPE_BENCH_OFFSET=31` などで調べる語を変えられます。
@@ -109,7 +109,7 @@ Windows のアプリ本体は GUI アプリ (WinExe) なので、cmd では版�
 <img src="images/headings/development/s02.svg" alt="品質テスト" height="40">
 
 
-`src/Galtype.Core.Tests/QualityTests.cs` に、日本語の文・英文・混在・英語とも日本語とも読める語・英語の後の短い語・記号と数字・小書き文字・大文字・かな入力・コードの行・文章ファイル・絵文字・もしかして の例をまとめてあります。
+`src/Meltype.Core.Tests/QualityTests.cs` に、日本語の文・英文・混在・英語とも日本語とも読める語・英語の後の短い語・記号と数字・小書き文字・大文字・かな入力・コードの行・文章ファイル・絵文字・もしかして の例をまとめてあります。
 期待値は「理想の結果」で書いてあり、`--eval` でカテゴリーごとの正解率と外れた例を表示します。
 
 - 通常のテストでは、全体 95% 以上・どのカテゴリーも 80% 以上を基準にしています (ある直しで別の場所が壊れたら気づけるように)
@@ -126,8 +126,8 @@ Windows のアプリ本体は GUI アプリ (WinExe) なので、cmd では版�
 Summary には 200 語まで出し、全件はログと、成果物 `judged-words` の `changes.tsv` に出します。手元では次のように比べられます。
 
 ```
-dotnet run --project src/Galtype.Core.Tests -c Release -- --judge-corpus before.tsv              # 変える前
-dotnet run --project src/Galtype.Core.Tests -c Release -- --judge-corpus after.tsv before.tsv    # 変えたあと (変える前の語も判定する)
+dotnet run --project src/Meltype.Core.Tests -c Release -- --judge-corpus before.tsv              # 変える前
+dotnet run --project src/Meltype.Core.Tests -c Release -- --judge-corpus after.tsv before.tsv    # 変えたあと (変える前の語も判定する)
 node .github/bot/pr-checks.mjs impact before.tsv after.tsv changes.tsv
 ```
 

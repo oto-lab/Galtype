@@ -15,21 +15,21 @@ for helper in install-app.sh start-input-method.sh select-input-source.swift; do
     [[ -f "$helper" ]] || { echo "必要なファイルがありません: ${helper}。zip 全体を展開してください。" >&2; exit 1; }
 done
 
-# 入力ソースの「+」の一覧に Meltype が出ない Mac がある (macOS 26、#21)。
-# アプリ内の登録処理で、有効な入力ソースを追加し、Meltype の重複だけを整理する。
+# 入力ソースの「+」の一覧に Galtype が出ない Mac がある (macOS 26、#21)。
+# アプリ内の登録処理で、有効な入力ソースを追加し、Galtype の重複だけを整理する。
 enable_input_source() {
-    "$TARGET/Galtype.app/Contents/MacOS/Meltype" --register-input-source || {
-        echo "入力ソースに Meltype を追加できませんでした。ログアウトしてログインし直すと直ります。" >&2
+    "$TARGET/Galtype.app/Contents/MacOS/Galtype" --register-input-source || {
+        echo "入力ソースに Galtype を追加できませんでした。ログアウトしてログインし直すと直ります。" >&2
         return 0
     }
-    echo "Meltype の入力ソースの登録処理を実行しました"
+    echo "Galtype の入力ソースの登録処理を実行しました"
 }
 
 # 入力ソースの登録をやり直す (#134)。Galtype.app を入れ替えるとき、バンドルが無い一瞬に入力ソースの
 # 走査が走ると、macOS は登録を消す。消えたあとは、バンドルを戻して走査し直しても戻らないことがあり、
 # これまではログアウトするしかなかった。TISRegisterInputSource なら実行中でも戻せる。
 register_input_source() {
-    local tool="$TARGET/Galtype.app/Contents/MacOS/MeltypeRegisterInputSource"
+    local tool="$TARGET/Galtype.app/Contents/MacOS/GaltypeRegisterInputSource"
     # この道具が入っていない Galtype.app (これまでの版) のときは何もしない。
     [[ -x "$tool" ]] || return 0
     "$tool" "$TARGET/Galtype.app" ||
@@ -49,8 +49,8 @@ bash ./start-input-method.sh "$TARGET/Galtype.app"
 # swift はコマンドライン・デベロッパ・ツールが無い Mac では使えない。選べなくてもインストールは終わっている。
 if swift ./select-input-source.swift; then
     echo
-    echo "Meltype を起動し、入力ソースとして選択しました。"
+    echo "Galtype を起動し、入力ソースとして選択しました。"
 else
     echo
-    echo "Meltype を起動しました。入力メニューから Meltype を選んでください。"
+    echo "Galtype を起動しました。入力メニューから Galtype を選んでください。"
 fi

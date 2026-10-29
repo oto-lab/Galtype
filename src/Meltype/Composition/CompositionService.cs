@@ -38,7 +38,7 @@ internal sealed class CompositionService : ICompositionHost, IDisposable
     private int _pumpScheduled;
 
     /// <param name="options">LiveConversion などの設定。Candidates を指定しなければ組み込みの補助辞書を読む。</param>
-    public CompositionService(Control invoker, CompositionDetector detector, CompositionOptions options)
+    public CompositionService(Control invoker, CompositionDetector detector, CompositionOptions options, Func<Config.Settings>? settings = null)
     {
         _invoker = invoker;
         Gate = new CaptureGate(SchedulePump);
@@ -117,7 +117,8 @@ internal sealed class CompositionService : ICompositionHost, IDisposable
         TranslationHistory = resolved.TranslationHistory;
         _hybrid = new HybridConverter(options.Engine, _mozc, _converter, reading => _windowsCandidates.Get(reading), () => CurrentZenzai(options), _zenzai.Failed);
         _resolved = resolved;
-        Controller = new CompositionController(Gate, detector, _hybrid, this, resolved);
+        ICompositionHost host = settings is null ? this : new GalmojiCompositionHost(this, () => GalmojiOptions.FromSettings(settings()));
+        Controller = new CompositionController(Gate, detector, _hybrid, host, resolved);
         // 直したときの「Zenzai を使う」も覚えておく (報告を開くまでに設定を変えても、直したときの設定で報告する。issue #1197)
         Controller.Corrected += correction => Corrections.Add(correction with { Zenzai = options.UseZenzai() });
         if (options.Engine() != Config.ConversionEngine.System && _mozc.IsInstalled) _mozc.WarmUp();

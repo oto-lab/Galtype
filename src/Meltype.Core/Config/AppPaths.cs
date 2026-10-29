@@ -30,28 +30,6 @@ internal static class AppPaths
         return Path.Combine(localAppDataDirectory, "Galtype");
     }
 
-    /// <summary>旧名 (AutoIME) のときの保存場所。</summary>
-    private static string OldDataDirectory =>
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AutoIME");
-
-    /// <summary>旧名 (AutoIME) の設定・学習データ・ユーザー辞書があれば、新しい保存場所に移す。</summary>
-    public static void MigrateFromOldName()
-    {
-        if (IsPortable) return;
-        try
-        {
-            if (Directory.Exists(DataDirectory) || !Directory.Exists(OldDataDirectory)) return;
-            Directory.Move(OldDataDirectory, DataDirectory);
-            var oldLog = Path.Combine(DataDirectory, "autoime.log");
-            if (File.Exists(oldLog)) File.Move(oldLog, LogFile, overwrite: true);
-            Diagnostics.Log.Info($"旧名 (AutoIME) の設定と学習データを {DataDirectory} に移しました。");
-        }
-        catch (Exception ex)
-        {
-            Diagnostics.Log.Warn($"旧名 (AutoIME) の設定と学習データを移せませんでした: {ex.Message}");
-        }
-    }
-
     public static string ConfigFile => Path.Combine(DataDirectory, "config.json");
     public static string ConversionHistoryFile => Path.Combine(DataDirectory, "conversions.json");
     public static string TranslationHistoryFile => Path.Combine(DataDirectory, "translations.json");

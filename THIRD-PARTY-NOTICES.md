@@ -429,3 +429,7 @@ UT 辞書を有効にしてビルドしたバイナリは、**あなた自身の
 
 - 既存の Meltype ロゴ画像は Galtype の文書では使用しません。
 - `docs/images/headings/` の画像 (docs/ の見出し) と Galtype のロゴ・デモ画像の文字は、M PLUS Rounded 1c (Copyright 2016 The M+ Project Authors、SIL Open Font License 1.1) の字形を図形にしたものです。
+
+## Node.js
+
+Galtype の各 OS の配布物は Node.js を同梱します。Node.js とその同梱依存のライセンスは、配布物の `galjp-runtime/NODE-LICENSE.txt` にある公式の LICENSE 全文を参照してください。Windows は `app/galjp-runtime`、macOS は `Galtype.app/Contents/MacOS/galjp-runtime`、Linux は `galjp-runtime` に置きます。

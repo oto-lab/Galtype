@@ -4,7 +4,7 @@
 import Carbon
 import Foundation
 
-let target = "io.github.yksr-melt.inputmethod.Meltype.Japanese"
+let target = "io.github.oto-lab.galtype.Japanese"
 
 func sourceID(_ source: TISInputSource) -> String {
     guard let value = TISGetInputSourceProperty(source, kTISPropertyInputSourceID) else {
@@ -20,12 +20,12 @@ for _ in 0..<10 {
         if sourceID(source) == target && TISSelectInputSource(source) == noErr {
             if let current = TISCopyCurrentKeyboardInputSource()?.takeRetainedValue(),
                sourceID(current) == target {
-                print("Meltype selected.")
+                print("Galtype selected.")
                 exit(0)
             }
         }
     }
     Thread.sleep(forTimeInterval: 0.3)
 }
-fputs("Unable to select Meltype.\n", stderr)
+fputs("Unable to select Galtype.\n", stderr)
 exit(1)

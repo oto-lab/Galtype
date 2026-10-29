@@ -35,7 +35,7 @@ guard status == noErr else {
     FileHandle.standardError.write(Data("入力ソースに登録できませんでした (OSStatus \(status)): \(appPath)\n".utf8))
     exit(1)
 }
-print("入力ソースに Meltype を登録しました: \(appPath)")
+print("入力ソースに Galtype を登録しました: \(appPath)")
 
 // このアプリが有効な入力ソースとして見えているか。
 // TISCreateInputSourceList(nil, false) は、有効な入力ソースだけを返す。

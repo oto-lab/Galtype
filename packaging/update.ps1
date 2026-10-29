@@ -1,10 +1,10 @@
 ﻿# SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Yukishiro
 
-# Meltype の更新を確認して、新しい版があればダウンロードして展開しておく (Meltype が定期的に呼ぶ)。
-#   update.ps1 -Repository yksr-melt/Meltype -CurrentVersion 0.1.2 -Directory %LOCALAPPDATA%\Meltype\update
-# GitHub の最新のリリースに Windows 版の zip (Meltype-<版>-windows.zip、前の名前は Galtype-test-*.zip) があり、版 (タグ v0.1.3) が今の版より新しければ、
-# <Directory>\<版> に展開し、<Directory>\ready.txt に「版 TAB 展開した場所」を書く。インストールは Meltype が install.ps1 を呼んで行う。
+# Galtype の更新を確認して、新しい版があればダウンロードして展開しておく (Galtype が定期的に呼ぶ)。
+#   update.ps1 -Repository oto-lab/Galtype -CurrentVersion 0.1.2 -Directory %LOCALAPPDATA%\Galtype\update
+# GitHub の最新のリリースに Windows 版の zip (Galtype-<版>-windows.zip、前の名前は Galtype-test-*.zip) があり、版 (タグ v0.1.3) が今の版より新しければ、
+# <Directory>\<版> に展開し、<Directory>\ready.txt に「版 TAB 展開した場所」を書く。インストールは Galtype が install.ps1 を呼んで行う。
 # 結果は標準出力に 1 行で返す: none (更新なし) / ready <版> / error <理由>
 
 param(
@@ -15,17 +15,17 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
-# 結果を UTF-8 で返す (Meltype が UTF-8 として読む)
+# 結果を UTF-8 で返す (Galtype が UTF-8 として読む)
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
 
 try {
     [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
-    $headers = @{ 'User-Agent' = 'Meltype-Updater'; 'Accept' = 'application/vnd.github+json' }
+    $headers = @{ 'User-Agent' = 'Galtype-Updater'; 'Accept' = 'application/vnd.github+json' }
     $release = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repository/releases/latest" -Headers $headers -TimeoutSec 30
     $latest = $release.tag_name -replace '^v', ''
     if ([version]$latest -le [version]$CurrentVersion) { Write-Output 'none'; exit 0 }
 
-    $asset = @($release.assets | Where-Object { $_.name -like 'Meltype-*-windows.zip' -and $_.name -notlike '*-windows-portable.zip' }) + @($release.assets | Where-Object { $_.name -like 'Galtype-test-*.zip' }) | Select-Object -First 1
+    $asset = @($release.assets | Where-Object { $_.name -like 'Galtype-*-windows.zip' -and $_.name -notlike '*-windows-portable.zip' }) + @($release.assets | Where-Object { $_.name -like 'Galtype-test-*.zip' }) | Select-Object -First 1
     if (-not $asset) { Write-Output "error リリース $latest に zip がありません"; exit 0 }
 
     $target = Join-Path $Directory $latest
@@ -34,7 +34,7 @@ try {
 
     New-Item -ItemType Directory -Force -Path $Directory | Out-Null
     $zip = Join-Path $Directory $asset.name
-    Invoke-WebRequest -Uri $asset.browser_download_url -Headers @{ 'User-Agent' = 'Meltype-Updater' } -OutFile $zip -UseBasicParsing -TimeoutSec 600
+    Invoke-WebRequest -Uri $asset.browser_download_url -Headers @{ 'User-Agent' = 'Galtype-Updater' } -OutFile $zip -UseBasicParsing -TimeoutSec 600
 
     # GitHub が公開している SHA-256 と同じか (ダウンロードの途中で壊れていないか) を確かめる。
     if ($asset.digest -like 'sha256:*') {

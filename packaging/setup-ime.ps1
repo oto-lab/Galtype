@@ -8,25 +8,25 @@
 param([switch]$Ask, [switch]$Uninstall)
 
 $ErrorActionPreference = 'Stop'
-$log = Join-Path $env:TEMP 'Meltype-setup-ime.log'
+$log = Join-Path $env:TEMP 'Galtype-setup-ime.log'
 
 try {
     & {
         . (Join-Path $PSScriptRoot 'galtype-ime.ps1')
         if ($Uninstall) {
-            if (-not (Uninstall-GaltypeIme)) { Write-Host 'Meltype IME の登録を外せませんでした。' }
+            if (-not (Uninstall-GaltypeIme)) { Write-Host 'Galtype IME の登録を外せませんでした。' }
         }
         # チェックが OFF でも、登録済みの DLL は本体と一緒に更新する。
         elseif ($Ask -or (Test-GaltypeImeRegistered)) {
             if (-not (Install-GaltypeIme -Source (Join-Path $PSScriptRoot 'tip') -Ask:$Ask)) {
-                Write-Host 'Meltype IME を登録できませんでした。Meltype キーボード方式は引き続き使えます。'
+                Write-Host 'Galtype IME を登録できませんでした。Galtype キーボード方式は引き続き使えます。'
             }
         }
         # チェックを外して、登録もしていない: 断ったことを覚えて、Galtype.exe が起動したときに聞かない
-        else { Set-MeltypeImeDeclined }
+        else { Set-GaltypeImeDeclined }
     } *> $log
 }
 catch {
-    Add-Content -LiteralPath $log -Value "Meltype IME の登録に失敗しました: $($_.Exception.Message)" -Encoding UTF8
+    Add-Content -LiteralPath $log -Value "Galtype IME の登録に失敗しました: $($_.Exception.Message)" -Encoding UTF8
     exit 1
 }

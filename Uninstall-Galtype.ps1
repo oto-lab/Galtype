@@ -2,31 +2,31 @@
 # Copyright (C) 2026 Yukishiro
 
 param(
-    # 設定と学習データ (%LOCALAPPDATA%\Meltype) も削除する
+    # 設定と学習データ (%LOCALAPPDATA%\Galtype) も削除する
     [switch]$RemoveData
 )
 $ErrorActionPreference = 'Stop'
 
 foreach ($folderName in 'Startup', 'Programs') {
-    $shortcut = Join-Path ([Environment]::GetFolderPath($folderName)) 'Meltype.lnk'
+    $shortcut = Join-Path ([Environment]::GetFolderPath($folderName)) 'Galtype.lnk'
     if (Test-Path -LiteralPath $shortcut) { Remove-Item -LiteralPath $shortcut -Force }
 }
-# サインインしたらすぐ起動するタスク (Meltype が作る: #283)。PATH に System32 が無い PC もあるので、フルパスで起動する
+# サインインしたらすぐ起動するタスク (Galtype が作る: #283)。PATH に System32 が無い PC もあるので、フルパスで起動する
 $system = [Environment]::SystemDirectory
-& "$system\cmd.exe" /c "`"$system\schtasks.exe`" /Delete /TN Meltype /F >nul 2>&1"
+& "$system\cmd.exe" /c "`"$system\schtasks.exe`" /Delete /TN Galtype /F >nul 2>&1"
 # 強制終了の前に終了の合図を送り、まだ書いていない学習データを書かせる
 $running = Join-Path $PSScriptRoot 'app-build\Galtype.exe'
 if (Test-Path -LiteralPath $running) { Start-Process -FilePath $running -ArgumentList '--exit' -Wait -ErrorAction SilentlyContinue }
-Get-Process Meltype, meltype_mozc_helper -ErrorAction SilentlyContinue | Stop-Process -Force
+Get-Process Galtype -ErrorAction SilentlyContinue | Stop-Process -Force
 . (Join-Path $PSScriptRoot 'packaging\galtype-ime.ps1')
 if (-not (Uninstall-GaltypeIme)) {
-    Write-Warning 'Meltype IME の登録を外せませんでした (管理者権限の確認で「いいえ」を選んだときなど)。もう一度このスクリプトを実行してください。続けて外せないときは、管理者の PowerShell で native\tip\Register-Tip.ps1 -Unregister を実行してください。'
+    Write-Warning 'Galtype IME の登録を外せませんでした (管理者権限の確認で「いいえ」を選んだときなど)。もう一度このスクリプトを実行してください。続けて外せないときは、管理者の PowerShell で native\tip\Register-Tip.ps1 -Unregister を実行してください。'
 }
 
 if ($RemoveData) {
-    $data = Join-Path $env:LOCALAPPDATA 'Meltype'
+    $data = Join-Path $env:LOCALAPPDATA 'Galtype'
     if (Test-Path -LiteralPath $data) { Remove-Item -LiteralPath $data -Recurse -Force }
-    Write-Host 'Meltype を停止し、自動起動・スタートメニューのショートカットと設定・学習データを削除しました。'
+    Write-Host 'Galtype を停止し、自動起動・スタートメニューのショートカットと設定・学習データを削除しました。'
 } else {
-    Write-Host 'Meltype を停止し、自動起動・スタートメニューのショートカットを削除しました。設定と学習データは %LOCALAPPDATA%\Meltype に残っています (-RemoveData で削除)。'
+    Write-Host 'Galtype を停止し、自動起動・スタートメニューのショートカットを削除しました。設定と学習データは %LOCALAPPDATA%\Galtype に残っています (-RemoveData で削除)。'
 }

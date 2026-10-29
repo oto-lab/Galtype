@@ -113,7 +113,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
             Font = () => _engine.Settings.CompositionFont,
             LightTheme = () => _engine.Settings.CompositionIsLight(Meltype.Composition.CompositionWindow.WindowsUsesLightTheme()),
             Opacity = () => _engine.Settings.CompositionOpacityValue,
-        });
+        }, () => _engine.AppSettings);
         _engine.AttachComposition(_composition);
         _tipServer = new Tip.TipServer(_invoker, _composition, () => _engine.Settings);
         _tipServer.Start();

@@ -1072,7 +1072,7 @@ public sealed class Settings
     {
         try
         {
-            if (!File.Exists(path)) return new Settings();
+            if (!File.Exists(path)) return new Settings { GalmojiEnabled = true };
             var json = File.ReadAllText(path);
             var settings = JsonSerializer.Deserialize(json, JsonType) ?? new Settings();
             if (!json.Contains(nameof(SettingsVersion))) settings.SettingsVersion = 1;

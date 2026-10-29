@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Yukishiro
 #
-# Meltype の Mac 版をビルドして ~/Library/Input Methods にインストールする。
+# Galtype の Mac 版をビルドして ~/Library/Input Methods にインストールする。
 #   ./build.sh            ビルドしてインストール
 #   ./build.sh --no-install  ビルドだけ (build/Galtype.app)
 # 必要なもの: macOS 13 以降、Xcode (またはコマンドライン ツール: xcode-select --install)、.NET 10 SDK
@@ -10,8 +10,8 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 INSTALL=1
-# 入力ソースの「+」の一覧に Meltype が出ない Mac がある (自分で署名した版、macOS 26、#21)。
-# アプリ内の登録処理で、有効な入力ソースを追加し、Meltype の重複だけを整理する。
+# 入力ソースの「+」の一覧に Galtype が出ない Mac がある (自分で署名した版、macOS 26、#21)。
+# アプリ内の登録処理で、有効な入力ソースを追加し、Galtype の重複だけを整理する。
 enable_input_source() {
     "$TARGET/Galtype.app/Contents/MacOS/Galtype" --register-input-source
     echo "Galtype の入力ソースの登録処理を実行しました"
@@ -107,6 +107,16 @@ if [[ -n "${GALTYPE_MAC_IDENTITY:-}" ]]; then
 else
     codesign --force --deep --sign - "$APP"
 fi
+runtime="$APP/Contents/MacOS/galjp-runtime"
+npm --prefix "../tools/galjp-runtime" ci --omit=dev
+mkdir -p "$runtime"
+cp "../tools/galjp-runtime/"{index.mjs,package.json,package-lock.json} "$runtime/"
+cp -R "../tools/galjp-runtime/node_modules" "$runtime/"
+node_path="$(node -p 'process.execPath')"
+cp "$node_path" "$runtime/node"
+cp "$(dirname "$node_path")/../LICENSE" "$runtime/NODE-LICENSE.txt"
+chmod +x "$runtime/node"
+
 echo "作成しました: $APP"
 
 if [[ $INSTALL -eq 1 ]]; then
@@ -122,5 +132,5 @@ if [[ $INSTALL -eq 1 ]]; then
         bash "$PWD/start-input-method.sh" "$TARGET/Galtype.app"
     fi
     echo "初めてのときは、いったんログアウトしてログインし直してから、"
-    echo "システム設定 → キーボード → 入力ソース →「編集…」→「+」→ 日本語 → Meltype を追加してください。"
+    echo "システム設定 → キーボード → 入力ソース →「編集…」→「+」→ 日本語 → Galtype を追加してください。"
 fi

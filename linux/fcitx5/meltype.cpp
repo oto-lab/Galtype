@@ -61,32 +61,33 @@ struct Native {
     bool load() {
         const char *dir = std::getenv("GALTYPE_DIR");
         std::string base = dir && *dir ? dir : GALTYPE_DIR;
+        setenv("GALTYPE_GALJP_RUNTIME", (base + "/galjp-runtime/index.mjs").c_str(), 0);
         handle = dlopen((base + "/libGaltypeNative.so").c_str(), RTLD_NOW | RTLD_LOCAL);
         if (!handle) {
             FCITX_ERROR() << "Galtype: libGaltypeNative.so を読めません: " << dlerror();
             return false;
         }
         auto sym = [this](const char *name) { return dlsym(handle, name); };
-        initMozc = reinterpret_cast<decltype(initMozc)>(sym("galtype_init_mozc"));
-        create = reinterpret_cast<decltype(create)>(sym("galtype_create"));
-        destroy = reinterpret_cast<decltype(destroy)>(sym("galtype_destroy"));
-        handleKey = reinterpret_cast<decltype(handleKey)>(sym("galtype_handle_key"));
-        commit = reinterpret_cast<decltype(commit)>(sym("galtype_commit"));
-        selectCandidate = reinterpret_cast<decltype(selectCandidate)>(sym("galtype_select_candidate"));
-        setDirect = reinterpret_cast<decltype(setDirect)>(sym("galtype_set_direct"));
-        setCanDelete = reinterpret_cast<decltype(setCanDelete)>(sym("galtype_set_can_delete"));
-        setCodeInput = reinterpret_cast<decltype(setCodeInput)>(sym("galtype_set_code_input"));
-        setCodeLine = reinterpret_cast<decltype(setCodeLine)>(sym("galtype_set_code_line"));
-        setCodeTerminal = reinterpret_cast<decltype(setCodeTerminal)>(sym("galtype_set_code_terminal"));
-        codeEnglishAt = reinterpret_cast<decltype(codeEnglishAt)>(sym("galtype_code_english_at"));
-        caretMoved = reinterpret_cast<decltype(caretMoved)>(sym("galtype_caret_moved"));
-        roleKey = reinterpret_cast<decltype(roleKey)>(sym("galtype_role_key"));
-        free = reinterpret_cast<decltype(free)>(sym("galtype_free"));
+        initMozc = reinterpret_cast<decltype(initMozc)>(sym("meltype_init_mozc"));
+        create = reinterpret_cast<decltype(create)>(sym("meltype_create"));
+        destroy = reinterpret_cast<decltype(destroy)>(sym("meltype_destroy"));
+        handleKey = reinterpret_cast<decltype(handleKey)>(sym("meltype_handle_key"));
+        commit = reinterpret_cast<decltype(commit)>(sym("meltype_commit"));
+        selectCandidate = reinterpret_cast<decltype(selectCandidate)>(sym("meltype_select_candidate"));
+        setDirect = reinterpret_cast<decltype(setDirect)>(sym("meltype_set_direct"));
+        setCanDelete = reinterpret_cast<decltype(setCanDelete)>(sym("meltype_set_can_delete"));
+        setCodeInput = reinterpret_cast<decltype(setCodeInput)>(sym("meltype_set_code_input"));
+        setCodeLine = reinterpret_cast<decltype(setCodeLine)>(sym("meltype_set_code_line"));
+        setCodeTerminal = reinterpret_cast<decltype(setCodeTerminal)>(sym("meltype_set_code_terminal"));
+        codeEnglishAt = reinterpret_cast<decltype(codeEnglishAt)>(sym("meltype_code_english_at"));
+        caretMoved = reinterpret_cast<decltype(caretMoved)>(sym("meltype_caret_moved"));
+        roleKey = reinterpret_cast<decltype(roleKey)>(sym("meltype_role_key"));
+        free = reinterpret_cast<decltype(free)>(sym("meltype_free"));
         if (!create || !destroy || !handleKey || !commit || !selectCandidate || !setDirect || !free) {
             FCITX_ERROR() << "Galtype: libGaltypeNative.so の関数が足りません";
             return false;
         }
-        if (initMozc && !initMozc((base + "/mozc/galtype_mozc_helper").c_str(), nullptr)) {
+        if (initMozc && !initMozc((base + "/mozc/meltype_mozc_helper").c_str(), nullptr)) {
             FCITX_WARN() << "Galtype: Mozc を使えません (漢字変換はひらがなのままになります)";
         }
         return true;

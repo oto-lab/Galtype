@@ -144,7 +144,7 @@ class IntegrationTests(unittest.TestCase):
 
     def test_helper_ready_and_real_candidates(self):
         with tempfile.TemporaryDirectory(prefix="galtype-mozc-protocol-") as profile:
-            process = subprocess.Popen([str(self.package / "mozc/galtype_mozc_helper"), profile],
+            process = subprocess.Popen([str(self.package / "mozc/meltype_mozc_helper"), profile],
                                        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             self.addCleanup(lambda: process.kill() if process.poll() is None else None)
             selector = selectors.DefaultSelector()
@@ -380,12 +380,12 @@ class IntegrationTests(unittest.TestCase):
         class Spy:
             def __getattr__(self, name):
                 attribute = getattr(original, name)
-                if name == "galtype_set_can_delete":
+                if name == "meltype_set_can_delete":
                     def set_can_delete(session, value):
                         calls.append(("can_delete", value))
                         return attribute(session, value)
                     return set_can_delete
-                if name == "galtype_commit":
+                if name == "meltype_commit":
                     def commit(session):
                         calls.append(("commit", None))
                         pointer = attribute(session)

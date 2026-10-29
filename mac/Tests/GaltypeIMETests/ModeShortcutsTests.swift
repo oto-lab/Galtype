@@ -36,7 +36,7 @@ final class ModeShortcutsTests: XCTestCase {
     }
 
     func testAllServicesReachActiveTarget() {
-        let services = ModeServices(isMeltypeSelected: { true }, selectWithoutInput: { _ in })
+        let services = ModeServices(isGaltypeSelected: { true }, selectWithoutInput: { _ in })
         let target = Target()
         services.activate(target)
         for action in ModeShortcutAction.allCases {
@@ -47,7 +47,7 @@ final class ModeShortcutsTests: XCTestCase {
     }
 
     func testUnavailableInputClientIsRejectedWithoutChangingMode() {
-        let services = ModeServices(isMeltypeSelected: { true }, selectWithoutInput: { _ in })
+        let services = ModeServices(isGaltypeSelected: { true }, selectWithoutInput: { _ in })
         let target = Target()
         target.available = false
         services.activate(target)
@@ -62,7 +62,7 @@ final class ModeShortcutsTests: XCTestCase {
     func testInactiveInputUsesCentralSelectionButOtherSourceIsRejected() {
         var selected = true
         var idleActions: [ModeShortcutAction] = []
-        let services = ModeServices(isMeltypeSelected: { selected }, selectWithoutInput: { idleActions.append($0) })
+        let services = ModeServices(isGaltypeSelected: { selected }, selectWithoutInput: { idleActions.append($0) })
         let target = Target()
         XCTAssertNil(invoke(services, "direct"))
         XCTAssertEqual(idleActions, [.direct])
@@ -78,7 +78,7 @@ final class ModeShortcutsTests: XCTestCase {
     }
 
     func testOldControllerDeactivationDoesNotClearNewTarget() {
-        let services = ModeServices(isMeltypeSelected: { true }, selectWithoutInput: { _ in })
+        let services = ModeServices(isGaltypeSelected: { true }, selectWithoutInput: { _ in })
         let old = Target(), current = Target()
         services.activate(old)
         services.activate(current)
@@ -89,7 +89,7 @@ final class ModeShortcutsTests: XCTestCase {
     }
 
     func testControllerIsNotRetained() {
-        let services = ModeServices(isMeltypeSelected: { true }, selectWithoutInput: { _ in })
+        let services = ModeServices(isGaltypeSelected: { true }, selectWithoutInput: { _ in })
         var target: Target? = Target()
         weak var reference = target
         services.activate(target!)
@@ -99,7 +99,7 @@ final class ModeShortcutsTests: XCTestCase {
     }
 
     func testInvalidServiceIdentifiersNeverSelectMode() {
-        let services = ModeServices(isMeltypeSelected: { true }, selectWithoutInput: { _ in })
+        let services = ModeServices(isGaltypeSelected: { true }, selectWithoutInput: { _ in })
         let target = Target()
         services.activate(target)
         for identifier in [nil, "", "0", "DIRECT", "unknown"] as [String?] {
@@ -109,7 +109,7 @@ final class ModeShortcutsTests: XCTestCase {
     }
 
     func testServiceDoesNotModifyPasteboard() {
-        let services = ModeServices(isMeltypeSelected: { true }, selectWithoutInput: { _ in })
+        let services = ModeServices(isGaltypeSelected: { true }, selectWithoutInput: { _ in })
         let target = Target()
         services.activate(target)
         let board = NSPasteboard.withUniqueName()
@@ -137,7 +137,7 @@ final class ModeShortcutsTests: XCTestCase {
             XCTAssertNil(entry["NSReturnTypes"])
             XCTAssertNil(entry["NSKeyEquivalent"])
         }
-        XCTAssertTrue(ModeServices(isMeltypeSelected: { true }, selectWithoutInput: { _ in }).responds(to: NSSelectorFromString("changeInputMode:userData:error:")))
+        XCTAssertTrue(ModeServices(isGaltypeSelected: { true }, selectWithoutInput: { _ in }).responds(to: NSSelectorFromString("changeInputMode:userData:error:")))
     }
 
     func testIndicatorPreferenceDefaultsEnabledAndPersistsIndependently() {

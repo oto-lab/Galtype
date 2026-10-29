@@ -87,7 +87,7 @@ function message(findings, author) {
     list,
     '',
     '新しく作ったソースファイルの先頭には、次の 2 行を入れてください (コメントの記号はファイルに合わせてください)。',
-    '貢献の著作権は書いた人に残るので ([CLA](https://github.com/yksr-melt/Meltype/blob/main/CONTRIBUTING.md) の 3)、名前は **あなたの名前** (GitHub のユーザー名など) にしてください。',
+    '貢献の著作権は書いた人に残るので、名前は **あなたの名前** (GitHub のユーザー名など) にしてください。',
     '',
     '```',
     '// SPDX-License-Identifier: GPL-3.0-or-later',

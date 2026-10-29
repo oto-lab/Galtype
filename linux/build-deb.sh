@@ -31,7 +31,7 @@ if [[ ! "$debversion" =~ ^[0-9][A-Za-z0-9.+~]*$ ]]; then
     exit 1
 fi
 
-for f in libGaltypeNative.so ibus-engine-galtype galtype.xml icon.png LICENSE THIRD-PARTY-NOTICES.md mozc/galtype_mozc_helper; do
+for f in libGaltypeNative.so ibus-engine-galtype galtype.xml icon.png LICENSE THIRD-PARTY-NOTICES.md mozc/meltype_mozc_helper galjp-runtime/node galjp-runtime/index.mjs; do
     [[ -e "$src/$f" ]] || { echo "必要なファイルがありません: $src/$f (先に linux/build.sh を実行してください)" >&2; exit 1; }
 done
 command -v dpkg-deb > /dev/null || { echo "dpkg-deb がありません (Debian / Ubuntu で実行してください)" >&2; exit 1; }
@@ -53,9 +53,9 @@ root="$stage/root"
 
 echo "== 中身を並べる ($root)"
 mkdir -p "$root$target" "$root/usr/share/ibus/component" "$root/usr/share/doc/galtype" "$root/DEBIAN"
-cp -R "$src/libGaltypeNative.so" "$src/ibus-engine-galtype" "$src/icon.png" "$src/mozc" "$src/LICENSE" "$src/THIRD-PARTY-NOTICES.md" "$root$target/"
+cp -R "$src/libGaltypeNative.so" "$src/ibus-engine-galtype" "$src/icon.png" "$src/mozc" "$src/galjp-runtime" "$src/LICENSE" "$src/THIRD-PARTY-NOTICES.md" "$root$target/"
 chmod 644 "$root$target/libGaltypeNative.so" "$root$target/icon.png" "$root$target/LICENSE" "$root$target/THIRD-PARTY-NOTICES.md"
-chmod 755 "$root$target/ibus-engine-galtype" "$root$target/mozc/galtype_mozc_helper"
+chmod 755 "$root$target/ibus-engine-galtype" "$root$target/mozc/meltype_mozc_helper"
 sed "s|@DIR@|$target|g" "$src/galtype.xml" > "$root/usr/share/ibus/component/galtype.xml"
 if [[ -f "$src/fcitx5/galtype.so" ]]; then
     mkdir -p "$root$addondir" "$root/usr/share/fcitx5/addon" "$root/usr/share/fcitx5/inputmethod"
@@ -88,7 +88,7 @@ installed_size="$(du -sk --exclude=DEBIAN "$root" | cut -f1)"
     echo "Package: galtype"
     echo "Version: $debversion"
     echo "Architecture: $arch"
-    echo "Maintainer: Yukishiro <https://github.com/oto-lab/Galtype>"
+    echo "Maintainer: oto-lab <https://github.com/oto-lab/Galtype>"
     echo "Installed-Size: $installed_size"
     echo "Depends: libc6, libstdc++6, libgcc-s1, zlib1g, python3"
     echo "Recommends: ibus, python3-gi, gir1.2-ibus-1.0"

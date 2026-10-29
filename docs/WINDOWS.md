@@ -177,7 +177,7 @@ Windows の「設定」→「アプリ」→「インストールされている
 <a name="開発者向け"></a>
 <img src="images/headings/windows/07.svg" alt="開発者向け" height="53"><br>
 
-- Windows 版の本体は `src/Galtype` (WinForms のアプリ)、Galtype IME は `native/` にあります
+- Windows 版の本体は `src/Meltype` (WinForms のアプリ)、Galtype IME は `native/` にあります
 - ビルド・テスト・仕組み → [DEVELOPMENT.md](DEVELOPMENT.md)、Galtype IME の仕組み → [TSF_DESIGN.md](TSF_DESIGN.md)、リリースの手順 → [RELEASE.md](RELEASE.md)
 
 Galtype は GNU GPL v3 ([LICENSE](../LICENSE)) で配布しています。同梱の .NET ランタイムは MIT ライセンスです ([THIRD-PARTY-NOTICES.md](../THIRD-PARTY-NOTICES.md))。
