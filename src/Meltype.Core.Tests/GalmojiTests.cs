@@ -10,29 +10,26 @@ internal static class GalmojiTests
     [Test]
     public static void ConvertsGaljpExamples()
     {
-        var converter = new GalmojiConverter();
         var options = new GalmojiOptions { Enabled = true };
 
-        Assert.Equal("學木交", converter.Convert("学校", options));
-        Assert.Equal("ｲ言束頁Ｕτゑ", converter.Convert("信頼してる", options));
+        Assert.Equal("學木交", GalmojiConverter.Convert("学校", options));
+        Assert.Equal("ｲ言束頁Ｕτゑ", GalmojiConverter.Convert("信頼してる", options));
     }
 
     [Test]
     public static void PreservesUrlsByDefault()
     {
-        var converter = new GalmojiConverter();
         var options = new GalmojiOptions { Enabled = true };
 
-        Assert.Equal("目儿τ https://example.com/学校", converter.Convert("見て https://example.com/学校", options));
+        Assert.Equal("目儿τ https://example.com/学校", GalmojiConverter.Convert("見て https://example.com/学校", options));
     }
 
     [Test]
     public static void DisabledConversionReturnsInput()
     {
-        var converter = new GalmojiConverter();
         var options = new GalmojiOptions { Enabled = false };
 
-        Assert.Equal("学校", converter.Convert("学校", options));
+        Assert.Equal("学校", GalmojiConverter.Convert("学校", options));
     }
 
     [Test]
@@ -66,9 +63,8 @@ internal static class GalmojiTests
     [Test]
     public static void ConvertsPreeditCandidatesAndCommittedTextConsistently()
     {
-        var converter = new GalmojiConverter();
         var view = new CompositionView("学校", ["学校"], 0, true, "", Committed: "学校", Predictions: ["学校"]);
-        var converted = converter.ConvertView(view, new GalmojiOptions());
+        var converted = GalmojiConverter.ConvertView(view, new GalmojiOptions());
         Assert.Equal("學木交", converted.Text);
         Assert.Equal(converted.Text, converted.Candidates[0]);
         Assert.Equal(converted.Text, converted.Committed);
@@ -82,7 +78,7 @@ internal static class GalmojiTests
         var session = new MeltypeSession(CompositionTests.Detector, new CompositionTests.FakeConverter(), new CompositionOptions(), () => settings);
         SessionResult? result = null;
         foreach (var c in "gakkou") result = session.HandleKey(char.ToUpperInvariant(c), c, false, false, false, false);
-        var expected = new GalmojiConverter().Convert("がっこう", new GalmojiOptions());
+        var expected = GalmojiConverter.Convert("がっこう", new GalmojiOptions());
         Assert.Equal(expected, result?.View?.Text);
         result = session.HandleKey(Meltype.Input.VirtualKeys.Return, null, false, false, false, false);
         Assert.Equal(expected, result.Commits.Single().Text);

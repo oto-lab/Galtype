@@ -36,7 +36,7 @@ internal static class SelfTest
         Check("バージョン", () => AppInfo.Version);
         Check("Galjp runtime", () =>
         {
-            var converted = new GalmojiConverter().Convert("学校", new GalmojiOptions());
+            var converted = GalmojiConverter.Convert("学校", new GalmojiOptions());
             if (converted != "學木交") throw new InvalidOperationException("Galjp runtime did not convert the sample.");
             return converted;
         });

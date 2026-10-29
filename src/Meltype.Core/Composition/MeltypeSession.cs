@@ -602,7 +602,7 @@ public sealed class MeltypeSession
     /// <summary>変換ボックスからの指示を集めて、1 回のキー入力の結果にまとめる。</summary>
     private sealed class Host : ICompositionHost
     {
-        private readonly GalmojiConverter _galmoji = new();
+
         private readonly Func<Settings> _settings;
         private readonly List<TextEdit> _commits = [];
         private int _pendingDelete;
@@ -645,9 +645,9 @@ public sealed class MeltypeSession
             var options = GalmojiOptions.FromSettings(settings);
             var commits = _commits.Select(edit =>
             {
-                var text = _galmoji.Convert(edit.Text, options);
+                var text = GalmojiConverter.Convert(edit.Text, options);
                 var expect = edit.Expect is { } originalExpect
-                    ? _galmoji.Convert(originalExpect, options)
+                    ? GalmojiConverter.Convert(originalExpect, options)
                     : null;
                 var deleteBefore = expect is null ? edit.DeleteBefore : expect.Length;
                 return edit with { DeleteBefore = deleteBefore, Text = text, Expect = expect };
@@ -659,7 +659,7 @@ public sealed class MeltypeSession
         private CompositionView? ApplyGalmoji(CompositionView? view, GalmojiOptions options)
         {
             if (view is null) return null;
-            return _galmoji.ConvertView(view, options);
+            return GalmojiConverter.ConvertView(view, options);
         }
 
         public void CommitText(string text) => Add(text);

@@ -7,12 +7,12 @@ namespace Meltype.Composition;
 
 internal sealed class GalmojiCompositionHost(ICompositionHost host, Func<GalmojiOptions> options) : ICompositionHost
 {
-    private readonly GalmojiConverter _converter = new();
+
     private readonly List<(string Original, string Rendered)> _committed = [];
 
     public void CommitText(string text)
     {
-        var rendered = _converter.Convert(text, options());
+        var rendered = GalmojiConverter.Convert(text, options());
         host.CommitText(rendered);
         _committed.Add((text, rendered));
         if (_committed.Count > 256) _committed.RemoveAt(0);
@@ -33,7 +33,7 @@ internal sealed class GalmojiCompositionHost(ICompositionHost host, Func<Galmoji
             else
             {
                 var prefix = chunk.Original[..^count];
-                var renderedPrefix = _converter.Convert(prefix, options());
+                var renderedPrefix = GalmojiConverter.Convert(prefix, options());
                 length += Math.Max(0, chunk.Rendered.Length - renderedPrefix.Length);
                 _committed.Add((prefix, renderedPrefix));
                 count = 0;
@@ -47,12 +47,12 @@ internal sealed class GalmojiCompositionHost(ICompositionHost host, Func<Galmoji
     public void ReplaceBackward(int count, string text)
     {
         var length = RenderedDeletionLength(count);
-        var rendered = _converter.Convert(text, options());
+        var rendered = GalmojiConverter.Convert(text, options());
         host.ReplaceBackward(length, rendered);
         _committed.Add((text, rendered));
     }
 
-    public void Show(CompositionView view) => host.Show(_converter.ConvertView(view, options()));
+    public void Show(CompositionView view) => host.Show(GalmojiConverter.ConvertView(view, options()));
 
     public void Replay(KeyEvent e)
     {
@@ -73,7 +73,7 @@ internal sealed class GalmojiCompositionHost(ICompositionHost host, Func<Galmoji
     }
 
     public ReconversionSelection? GetReconversionSelection() => host.GetReconversionSelection();
-    public bool TryReplaceSelection(ReconversionSelection selection, string text) => host.TryReplaceSelection(selection, _converter.Convert(text, options()));
+    public bool TryReplaceSelection(ReconversionSelection selection, string text) => host.TryReplaceSelection(selection, GalmojiConverter.Convert(text, options()));
     public bool CanDeleteBackward => host.CanDeleteBackward;
     public char? CharFromKey(KeyEvent e, bool shift) => host.CharFromKey(e, shift);
     public bool IsShiftDown() => host.IsShiftDown();

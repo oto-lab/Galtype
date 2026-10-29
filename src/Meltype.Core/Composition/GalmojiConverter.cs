@@ -9,7 +9,7 @@ using System.Text.Json;
 namespace Meltype.Composition;
 
 /// <summary>Converts display and committed text through the shared local Galjp process.</summary>
-public sealed class GalmojiConverter
+public static class GalmojiConverter
 {
     private static readonly object _sync = new();
     private static Process? _node;
@@ -18,8 +18,8 @@ public sealed class GalmojiConverter
     private static DateTimeOffset _retryAfter;
 
     /// <summary>Returns the input unchanged when disabled or when the local runtime is unavailable.</summary>
-    /// <example><code>new GalmojiConverter().Convert("学校", new GalmojiOptions()); // 學木交</code></example>
-    public string Convert(string input, GalmojiOptions options)
+    /// <example><code>GalmojiConverter.Convert("学校", new GalmojiOptions()); // 學木交</code></example>
+    public static string Convert(string input, GalmojiOptions options)
     {
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(options);
@@ -28,7 +28,7 @@ public sealed class GalmojiConverter
         return TryConvertWithNode(input, options) ?? input;
     }
 
-    internal CompositionView ConvertView(CompositionView view, GalmojiOptions options) => view with
+    internal static CompositionView ConvertView(CompositionView view, GalmojiOptions options) => view with
     {
         Text = Convert(view.Text, options),
         Candidates = view.Candidates.Select(text => Convert(text, options)).ToList(),
