@@ -652,14 +652,8 @@ public sealed class MeltypeSession
                 var deleteBefore = expect is null ? edit.DeleteBefore : expect.Length;
                 return edit with { DeleteBefore = deleteBefore, Text = text, Expect = expect };
             }).ToList();
-            var view = _hidden ? null : ApplyGalmoji(_view, options);
+            var view = _hidden || _view is null ? null : GalmojiConverter.ConvertView(_view, options);
             return new SessionResult(consumed, commits, view);
-        }
-
-        private CompositionView? ApplyGalmoji(CompositionView? view, GalmojiOptions options)
-        {
-            if (view is null) return null;
-            return GalmojiConverter.ConvertView(view, options);
         }
 
         public void CommitText(string text) => Add(text);
