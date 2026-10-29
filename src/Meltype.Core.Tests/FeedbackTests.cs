@@ -11,6 +11,14 @@ namespace Meltype.Tests;
 /// <summary>協力者のテストで報告された問題 (2026-09) と、判定の強さ (Aggressive / Balanced / Conservative / Manual)。</summary>
 internal static class FeedbackTests
 {
+    [Test]
+    public static void PublicRelease_ReportsIssuesFromFirstGaltypeVersion()
+    {
+        Assert.True(ProjectInfo.IsPublicRelease("0.1.0"), "First Windows release can report issues");
+        Assert.True(ProjectInfo.IsPublicRelease("1.0.0"), "Later releases remain public");
+        Assert.True(!ProjectInfo.IsPublicRelease("0.0.0"), "Development placeholder is not public");
+    }
+
     private static string Showing(string typed, string? before = null, DetectionLevel level = DetectionLevel.Balanced)
     {
         var k = new CompositionTests.Keyboard { Level = level };

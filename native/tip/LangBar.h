@@ -7,7 +7,7 @@
 
 #include "Globals.h"
 
-namespace meltype {
+namespace galtype {
 
 class TextService;
 
@@ -50,4 +50,4 @@ private:
     ITfLangBarItemSink* sink_ = nullptr;
 };
 
-}  // namespace meltype
+}  // namespace galtype

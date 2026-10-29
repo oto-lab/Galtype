@@ -5,8 +5,8 @@ import Foundation
 import InputMethodKit
 
 // テストだけの変換スタブ。実際の NativeCore / InputController / KeyMapping と一緒にコンパイルする。
-final class MeltypeConverter {
-    static let shared = MeltypeConverter()
+final class GaltypeConverter {
+    static let shared = GaltypeConverter()
     func clauses(for text: String, context: String?) -> [(reading: String, text: String)] { [] }
     func candidates(for text: String) -> [String] { [] }
 }

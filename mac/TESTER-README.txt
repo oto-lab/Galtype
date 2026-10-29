@@ -3,7 +3,7 @@ Meltype for Mac テスト版
 ※ テスト版です。内容は公開しないでください。
 ※ 試作のため、動かないところがあります。気づいたことはなんでも教えてください。
 
-Meltype はアプリではなく「入力ソース」(日本語入力) です。Meltype.app をダブルクリックしても何も起きません。
+Meltype はアプリではなく「入力ソース」(日本語入力) です。Galtype.app をダブルクリックしても何も起きません。
 下の手順でインストールして、入力ソースに追加して使います。
 
 ■ 動く環境
@@ -16,7 +16,7 @@ Meltype はアプリではなく「入力ソース」(日本語入力) です。
        (macOS 15 以降は、一度ダブルクリックしてから システム設定 → プライバシーとセキュリティ →
         下のほうの「このまま開く」を押す)
        (それでも開けないときは、「ターミナル」を開いて次の 1 行を貼り付けて Enter:
-          bash ~/Downloads/Meltype-mac/install.sh  )
+          bash ~/Downloads/Galtype-mac/install.sh  )
   3. インストーラーが Meltype を登録・起動し、入力ソースを選びます。
      通常の更新ではシステム設定を開く必要はありません。
      install-app.sh、start-input-method.sh、select-input-source.swift も必要なので、zip 全体を展開してください。
@@ -40,12 +40,12 @@ Meltype はアプリではなく「入力ソース」(日本語入力) です。
 ■ 止まってしまったら
   まず入力メニューで ABC または標準の日本語入力を選びます。
   展開したフォルダーで次を実行して再起動できます:
-       bash ./start-input-method.sh "$HOME/Library/Input Methods/Meltype.app"
+       bash ./start-input-method.sh "$HOME/Library/Input Methods/Galtype.app"
        swift ./select-input-source.swift
 
 ■ アンインストール
   入力ソースから Meltype を外してから、ターミナルで
        launchctl remove io.github.yksr-melt.Meltype.manual
-       rm -rf ~/Library/Input\ Methods/Meltype.app
+       rm -rf ~/Library/Input\ Methods/Galtype.app
   設定と学習データも消すなら
        rm -rf ~/Library/Application\ Support/Meltype

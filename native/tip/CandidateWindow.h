@@ -11,7 +11,7 @@
 
 #include "Globals.h"
 
-namespace meltype {
+namespace galtype {
 
 struct CandidateView {
     std::vector<std::wstring> candidates;
@@ -49,4 +49,4 @@ private:
     Impl* impl_;
 };
 
-}  // namespace meltype
+}  // namespace galtype

@@ -13,8 +13,8 @@ namespace Meltype.Tests;
 /// </summary>
 internal static class TipEndToEnd
 {
-    private static readonly Guid ClsidTextService = new("417D801B-A9BD-4C26-BD16-356A825A6998");
-    private static readonly Guid ProfileGuid = new("21F643F4-72D5-4946-BF70-0A126AB52D05");
+    private static readonly Guid ClsidTextService = new("CB3A7F51-C145-492F-AA7B-FED5330A7DB5");
+    private static readonly Guid ProfileGuid = new("B52F0FDF-86A6-4EEB-83E9-EEE13706A2D7");
     private static readonly Guid ClsidProfiles = new("33C53A50-F456-4884-B049-85FD643ECFED");
 
     [ComImport, Guid("71c6e74c-0f28-11d8-a82a-00065b84435c"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -56,7 +56,7 @@ internal static class TipEndToEnd
         });
         serverThread.SetApartmentState(ApartmentState.STA);
         serverThread.IsBackground = true;
-        // MELTYPE_E2E_EXTERNAL_SERVER=1: このプロセスではサーバーを動かさず、常駐している Meltype.exe につなぐ
+        // MELTYPE_E2E_EXTERNAL_SERVER=1: このプロセスではサーバーを動かさず、常駐している Galtype.exe につなぐ
         if (Environment.GetEnvironmentVariable("MELTYPE_E2E_EXTERNAL_SERVER") != "1")
         {
             serverThread.Start();

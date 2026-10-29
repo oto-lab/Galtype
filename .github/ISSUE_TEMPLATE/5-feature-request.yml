@@ -69,8 +69,6 @@ body:
       multiple: true
       options:
         - Windows
-        - Mac
-        - Linux
         - すべて
 
   - type: checkboxes

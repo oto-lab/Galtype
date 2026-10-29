@@ -135,7 +135,7 @@ public sealed class MeltypeSession
 {
     private readonly CaptureGate _gate;
     private readonly CompositionController _controller;
-    private readonly Host _host = new();
+    private readonly Host _host;
     private readonly Func<Settings> _settings;
     private readonly Func<long> _timeMs;
     private readonly SigilWord _sigil = new();
@@ -147,6 +147,7 @@ public sealed class MeltypeSession
         bool directModeDetection = false, Func<long>? timeMs = null)
     {
         _settings = settings;
+        _host = new(settings);
         _timeMs = timeMs ?? (() => Environment.TickCount64);
         _directModeDetection = directModeDetection;
         _gate = new CaptureGate(() => { });
@@ -174,7 +175,6 @@ public sealed class MeltypeSession
     /// </summary>
     public static MeltypeSession CreateDefault(IKanjiConverter converter, Func<string, IReadOnlyList<string>>? moreCandidates, IWordChecker? wordChecker, bool autoSpacing = false)
     {
-        AppPaths.MigrateFromOldName();
         return CreateDefault(AppPaths.DataDirectory, converter, moreCandidates, wordChecker, autoSpacing);
     }
 
@@ -191,9 +191,11 @@ public sealed class MeltypeSession
     {
         Directory.CreateDirectory(dataDirectory);
         // 設定は入力欄を作るたびに読み直す (設定の変更は、次に開いた入力欄から効く)。
-        var settings = Settings.Load(Path.Combine(dataDirectory, "config.json"));
-        // 設定で「ファイルにログを書く」を ON にしていれば、Mac でも meltype.log に書く (動かないときの調査用)。
-        Diagnostics.Log.SetFileOutput(settings.FileLog ? Path.Combine(dataDirectory, "meltype.log") : null);
+        var configPath = Path.Combine(dataDirectory, "config.json");
+        var settings = Settings.Load(configPath);
+        if (!File.Exists(configPath)) settings.Save(configPath);
+        // 設定で「ファイルにログを書く」を ON にしていれば、Mac でも galtype.log に書く (動かないときの調査用)。
+        Diagnostics.Log.SetFileOutput(settings.FileLog ? Path.Combine(dataDirectory, "galtype.log") : null);
         Diagnostics.Log.RecordText = settings.LogTypedText;
         var userDirectory = Path.Combine(dataDirectory, "dictionaries");
         if (s_shared is not { } shared || shared.Directory != dataDirectory)
@@ -600,6 +602,8 @@ public sealed class MeltypeSession
     /// <summary>変換ボックスからの指示を集めて、1 回のキー入力の結果にまとめる。</summary>
     private sealed class Host : ICompositionHost
     {
+
+        private readonly Func<Settings> _settings;
         private readonly List<TextEdit> _commits = [];
         private int _pendingDelete;
         // このセッションで続けて確定した文字の終わりの部分 (確定し直しで消す文字を、DLL などで確かめられるように)
@@ -613,6 +617,8 @@ public sealed class MeltypeSession
         private bool _hidden;
         public bool DeferCurrentReplayOnDelete { get; set; }
         private string? _pendingExpectOverride;
+
+        public Host(Func<Settings> settings) => _settings = settings;
 
         public bool ReplayedCurrent { get; private set; }
 
@@ -635,7 +641,25 @@ public sealed class MeltypeSession
             if (_pendingDelete > 0) Add("");
             // アプリに渡したキーの文字は、確定した文字の続きとしては分からない
             if (!consumed) ForgetCommitted();
-            return new SessionResult(consumed, _commits.ToList(), _hidden ? null : _view);
+            var settings = _settings();
+            var options = GalmojiOptions.FromSettings(settings);
+            var commits = _commits.Select(edit =>
+            {
+                var text = GalmojiConverter.Convert(edit.Text, options);
+                var expect = edit.Expect is { } originalExpect
+                    ? GalmojiConverter.Convert(originalExpect, options)
+                    : null;
+                var deleteBefore = expect is null ? edit.DeleteBefore : expect.Length;
+                return edit with { DeleteBefore = deleteBefore, Text = text, Expect = expect };
+            }).ToList();
+            var view = _hidden ? null : ApplyGalmoji(_view, options);
+            return new SessionResult(consumed, commits, view);
+        }
+
+        private CompositionView? ApplyGalmoji(CompositionView? view, GalmojiOptions options)
+        {
+            if (view is null) return null;
+            return GalmojiConverter.ConvertView(view, options);
         }
 
         public void CommitText(string text) => Add(text);

@@ -2,8 +2,8 @@
 // Copyright (C) 2026 Yukishiro
 //
 // fcitx5 のアドオンを、fcitx5 のテスト用のフロントエンド (testfrontend) で動かして確かめる。
-// 本体 (libMeltypeNative.so) の場所を環境変数 MELTYPE_DIR で渡す (Mozc が無ければ、変換はひらがなのまま)。
-//   cmake -S linux/fcitx5 -B build -DBUILD_TESTING=ON && cmake --build build && MELTYPE_DIR=… ctest --test-dir build
+// 本体 (libGaltypeNative.so) の場所を環境変数 GALTYPE_DIR で渡す (Mozc が無ければ、変換はひらがなのまま)。
+//   cmake -S linux/fcitx5 -B build -DBUILD_TESTING=ON && cmake --build build && GALTYPE_DIR=… ctest --test-dir build
 
 #include <testfrontend_public.h>
 #include <fcitx-utils/eventdispatcher.h>
@@ -32,18 +32,18 @@ void typeKeys(AddonInstance *frontend, ICUUID uuid, const std::string &keys) {
 void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
     dispatcher->schedule([dispatcher, instance]() {
         auto *frontend = instance->addonManager().addon("testfrontend");
-        FCITX_ASSERT(instance->addonManager().addon("meltype", true)) << "Meltype のアドオンを読めません";
+        FCITX_ASSERT(instance->addonManager().addon("galtype", true)) << "Galtype のアドオンを読めません";
         auto group = instance->inputMethodManager().currentGroup();
         group.inputMethodList().clear();
         group.inputMethodList().push_back(InputMethodGroupItem("keyboard-us"));
-        group.inputMethodList().push_back(InputMethodGroupItem("meltype"));
+        group.inputMethodList().push_back(InputMethodGroupItem("galtype"));
         group.setDefaultInputMethod("");
         instance->inputMethodManager().setGroup(group);
         auto uuid = frontend->call<ITestFrontend::createInputContext>("testapp");
         auto *ic = instance->inputContextManager().findByUUID(uuid);
         FCITX_ASSERT(ic);
-        instance->setCurrentInputMethod(ic, "meltype", true);
-        FCITX_ASSERT(instance->inputMethod(ic) == "meltype");
+        instance->setCurrentInputMethod(ic, "galtype", true);
+        FCITX_ASSERT(instance->inputMethod(ic) == "galtype");
 
         // ローマ字の日本語 (Mozc が無いのでひらがなのまま確定)
         frontend->call<ITestFrontend::pushCommitExpectation>("にほんご");
@@ -78,10 +78,10 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
 } // namespace
 
 int main() {
-    setupTestingEnvironment(FCITX5_MELTYPE_BINARY_DIR, {FCITX5_MELTYPE_BINARY_DIR, FCITX5_SYSTEM_ADDON_DIR}, {"test"});
-    char arg0[] = "testmeltype";
+    setupTestingEnvironment(FCITX5_GALTYPE_BINARY_DIR, {FCITX5_GALTYPE_BINARY_DIR, FCITX5_SYSTEM_ADDON_DIR}, {"test"});
+    char arg0[] = "testgaltype";
     char arg1[] = "--disable=all";
-    char arg2[] = "--enable=testfrontend,testui,testim,keyboard,meltype";
+    char arg2[] = "--enable=testfrontend,testui,testim,keyboard,galtype";
     char *argv[] = {arg0, arg1, arg2};
     fcitx::Log::setLogRule("default=5");
     Instance instance(FCITX_ARRAY_SIZE(argv), argv);

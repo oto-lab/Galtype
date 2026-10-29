@@ -129,7 +129,7 @@ internal sealed class ForegroundTracker
     {
         if (window == IntPtr.Zero) return AppInfo.None;
         if (Native.GetWindowThreadProcessId(window, out var processId) == 0) return AppInfo.None;
-        if (processId == OwnProcessId) return new AppInfo(window, processId, "Meltype.exe", false, false, !TypingAllowedWindows.ContainsKey(window));
+        if (processId == OwnProcessId) return new AppInfo(window, processId, "Galtype.exe", false, false, !TypingAllowedWindows.ContainsKey(window));
 
         var name = "";
         bool? elevated = null;

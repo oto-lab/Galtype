@@ -12,7 +12,7 @@
 #include "Globals.h"
 #include "TextService.h"
 
-namespace meltype {
+namespace galtype {
 
 HINSTANCE g_module = nullptr;
 LONG g_locks = 0;
@@ -55,12 +55,12 @@ void TipLog(const wchar_t* format, ...) {
     if (enabled < 0 && !SelfIsMediumOrLower()) enabled = 0;
     if (enabled < 0) {
         wchar_t value[8] = {};
-        enabled = GetEnvironmentVariableW(L"MELTYPE_TIP_LOG", value, 8) > 0 && value[0] == L'1' ? 1 : 0;
+        enabled = GetEnvironmentVariableW(L"GALTYPE_TIP_LOG", value, 8) > 0 && value[0] == L'1' ? 1 : 0;
         // 環境変数が無ければ、データフォルダーに tip-log という空のファイルがあるときだけ
         if (!enabled) {
             wchar_t path[MAX_PATH] = {};
             if (GetEnvironmentVariableW(L"LOCALAPPDATA", path, MAX_PATH) > 0) {
-                StringCchCatW(path, MAX_PATH, L"\\Meltype\\tip-log");
+                StringCchCatW(path, MAX_PATH, L"\\Galtype\\tip-log");
                 enabled = GetFileAttributesW(path) != INVALID_FILE_ATTRIBUTES ? 1 : 0;
             }
         }
@@ -73,7 +73,7 @@ void TipLog(const wchar_t* format, ...) {
     va_end(args);
     wchar_t path[MAX_PATH] = {};
     if (GetEnvironmentVariableW(L"LOCALAPPDATA", path, MAX_PATH) == 0) return;
-    StringCchCatW(path, MAX_PATH, L"\\Meltype\\tip.log");
+    StringCchCatW(path, MAX_PATH, L"\\Galtype\\tip.log");
     HANDLE file = CreateFileW(path, FILE_APPEND_DATA, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (file == INVALID_HANDLE_VALUE) return;
     SYSTEMTIME now;
@@ -185,7 +185,7 @@ HRESULT RegisterProfile() {
                                   reinterpret_cast<void**>(&profiles));
     if (FAILED(hr)) return hr;
     std::wstring icon = ModulePath();
-    // アイコンはこの DLL のリソースの 1 つ目 (MeltypeTip.rc)
+    // アイコンはこの DLL のリソースの 1 つ目 (GaltypeTip.rc)
     hr = profiles->RegisterProfile(CLSID_TextService, kLangId, GUID_Profile, kDisplayName, static_cast<ULONG>(wcslen(kDisplayName)), icon.c_str(),
                                    static_cast<ULONG>(icon.size()), 0, nullptr, 0, TRUE, 0);
     profiles->Release();
@@ -218,9 +218,9 @@ HRESULT RegisterCategories(bool add) {
 }
 
 }  // namespace
-}  // namespace meltype
+}  // namespace galtype
 
-using namespace meltype;
+using namespace galtype;
 
 BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID) {
     switch (reason) {

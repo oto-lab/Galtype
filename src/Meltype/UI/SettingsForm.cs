@@ -4,6 +4,7 @@
 using System.ComponentModel;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using Meltype.Composition;
 using Meltype.Config;
 
@@ -17,6 +18,7 @@ namespace Meltype.UI;
 /// </summary>
 internal sealed class SettingsForm : Form, IMessageFilter
 {
+    private static readonly JsonSerializerOptions DictionaryJsonOptions = new() { WriteIndented = true };
     private const string On = "ON";
     private const string Off = "OFF";
 
@@ -35,6 +37,7 @@ internal sealed class SettingsForm : Form, IMessageFilter
     // プロファイル (仕事用・趣味用・SNS 用など) を選ぶ欄
     private readonly ComboBox _profiles = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 200, Anchor = AnchorStyles.Left };
     private bool _loadingProfiles;
+    private bool _bindingError;
     private readonly ToggleSwitch _showHelp = new() { Text = "下部に説明を表示" };
     private readonly ToggleSwitch _wheelChangesValue = new() { Text = "マウスホイールで値を変更" };
 
@@ -51,7 +54,7 @@ internal sealed class SettingsForm : Form, IMessageFilter
     {
         _engine = engine;
         _draft = engine.Settings.Clone().Normalize();
-        Text = "Meltype 設定";
+        Text = "Galtype 設定";
         StartPosition = FormStartPosition.CenterScreen;
         // 上のプロファイルの欄のボタンが 1 段に並ぶ幅にし、高さも幅と同じにする。
         // 文字は画面の拡大率に合わせて大きくなるので、窓の大きさも拡大率に合わせる。
@@ -98,7 +101,13 @@ internal sealed class SettingsForm : Form, IMessageFilter
         FormClosing += (_, e) =>
         {
             if (discard) return;
+            _bindingError = false;
             var next = CollectValues();
+            if (_bindingError)
+            {
+                e.Cancel = true;
+                return;
+            }
             foreach (var binding in next.EffectiveToggleShortcuts)
             {
                 if (ShortcutEditor.ValidationError(binding, next, []) is not { } error) continue;
@@ -401,6 +410,33 @@ internal sealed class SettingsForm : Form, IMessageFilter
             return new Binding(property, panel,
                 s => text.Text = (string?)property.GetValue(s) ?? "",
                 s => property.SetValue(s, text.Text.Trim()));
+        }
+        if (type == typeof(Dictionary<string, string>) && property.Name == nameof(Settings.GalmojiDictionary))
+        {
+            var box = new TextBox
+            {
+                Multiline = true,
+                ScrollBars = ScrollBars.Vertical,
+                Width = 360,
+                Height = 72,
+                Anchor = AnchorStyles.Left,
+            };
+            return new Binding(property, box,
+                s => box.Text = JsonSerializer.Serialize(
+                    (Dictionary<string, string>?)property.GetValue(s) ?? [],
+                    DictionaryJsonOptions),
+                s =>
+                {
+                    try
+                    {
+                        property.SetValue(s, JsonSerializer.Deserialize<Dictionary<string, string>>(box.Text) ?? []);
+                    }
+                    catch (JsonException)
+                    {
+                        _bindingError = true;
+                        MessageBox.Show(this, "追加辞書は JSON のオブジェクトとして入力してください。", "Galtype 設定", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                });
         }
         if (type == typeof(string))
         {

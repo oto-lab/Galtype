@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 0924haruto12
-"""Test packaged Meltype through a private IBus daemon and synthetic input context.
+"""Test packaged Galtype through a private IBus daemon and synthetic input context.
 
 Run inside an existing isolated Xvfb and D-Bus session:
     xvfb-run -a dbus-run-session -- python3 linux/tests/test_daemon.py PACKAGE
@@ -75,7 +75,7 @@ class PrivateDaemonTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.temporary = tempfile.TemporaryDirectory(prefix="meltype-private-daemon-")
+        cls.temporary = tempfile.TemporaryDirectory(prefix="galtype-private-daemon-")
         cls.root = Path(cls.temporary.name)
         cls.processes = []
         cls.log_files = []
@@ -84,7 +84,7 @@ class PrivateDaemonTests(unittest.TestCase):
 
         for variable, leaf in (("XDG_DATA_HOME", "data"), ("XDG_CACHE_HOME", "cache"),
                                ("XDG_CONFIG_HOME", "config"), ("XDG_RUNTIME_DIR", "runtime"),
-                               ("MELTYPE_DATA_DIR", "settings")):
+                               ("GALTYPE_DATA_DIR", "settings")):
             directory = cls.root / leaf
             directory.mkdir(mode=0o700)
             cls.set_environment(variable, str(directory))
@@ -105,10 +105,10 @@ class PrivateDaemonTests(unittest.TestCase):
         cls.wait_for(lambda: cls.socket.exists(), "private IBus socket")
         cls.bus = IBus.Bus()
         cls.wait_for(cls.bus.is_connected, "private IBus connection")
-        cls.product = cls.start_process("packaged Meltype", [
-            sys.executable, str(cls.package / "ibus-engine-meltype")])
+        cls.product = cls.start_process("packaged Galtype", [
+            sys.executable, str(cls.package / "ibus-engine-galtype")])
 
-        cls.context = cls.bus.create_input_context("meltype-private-synthetic-client")
+        cls.context = cls.bus.create_input_context("galtype-private-synthetic-client")
         if cls.context is None:
             raise RuntimeError("IBus did not create the synthetic input context")
         cls.context.set_capabilities(
@@ -129,10 +129,10 @@ class PrivateDaemonTests(unittest.TestCase):
         cls.pump()
 
         def select_engine():
-            cls.context.set_engine("meltype")
+            cls.context.set_engine("galtype")
             cls.pump(0.1)
             description = cls.context.get_engine()
-            return description is not None and description.get_name() == "meltype"
+            return description is not None and description.get_name() == "galtype"
 
         cls.wait_for(select_engine, "packaged engine factory registration")
         cls.context.focus_in()
@@ -454,7 +454,7 @@ class PrivateDaemonTests(unittest.TestCase):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("package", type=Path, help="existing Meltype-linux package directory")
+    parser.add_argument("package", type=Path, help="existing Galtype-linux package directory")
     args = parser.parse_args()
     if not os.environ.get("DISPLAY") or not os.environ.get("DBUS_SESSION_BUS_ADDRESS"):
         parser.error("run inside xvfb-run -a dbus-run-session; this test does not start an outer session")
@@ -462,7 +462,7 @@ def main():
         package = args.package.resolve(strict=True)
     except FileNotFoundError:
         parser.error("package directory does not exist")
-    for relative in ("ibus-engine-meltype", "libMeltypeNative.so", "mozc/meltype_mozc_helper"):
+    for relative in ("ibus-engine-galtype", "libGaltypeNative.so", "mozc/meltype_mozc_helper"):
         if not (package / relative).is_file():
             parser.error("package is missing " + relative)
     PrivateDaemonTests.package = package

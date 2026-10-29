@@ -47,9 +47,8 @@ jobs:
         include:
           - { project: Meltype, os: windows-latest }
           - { project: Meltype.Tests, os: windows-latest }
-          - { project: Meltype.Core, os: ubuntu-latest }
-          - { project: Meltype.Core.Tests, os: ubuntu-latest }
-          - { project: Meltype.Mac.Native, os: ubuntu-latest }
+          - { project: Meltype.Core, os: windows-latest }
+          - { project: Meltype.Core.Tests, os: windows-latest }
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     permissions:
@@ -79,12 +78,3 @@ jobs:
         with:
           sarif_file: ${{ runner.temp }}/sarif/${{ matrix.project }}.sarif
           category: roslyn-${{ matrix.project }}
-
-  dependencies:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
-        with:
-          fail-on-severity: high

@@ -5,7 +5,7 @@
 
 #include "Globals.h"
 
-namespace meltype {
+namespace galtype {
 namespace {
 
 class Parser {
@@ -220,4 +220,4 @@ std::string JsonString(const std::wstring& text) {
     return out;
 }
 
-}  // namespace meltype
+}  // namespace galtype

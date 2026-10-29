@@ -28,6 +28,7 @@ mac/build/
 native/mozc/bin/
 linux/build/
 tools/data/
+tools/galjp-runtime/node_modules/
 native/tip/bin/
 native/tip/obj/
 

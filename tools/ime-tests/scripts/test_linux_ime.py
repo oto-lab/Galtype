@@ -26,7 +26,7 @@ class LinuxImeRunnerTests(unittest.TestCase):
             address, settings = runner.isolate_environment(root)
             self.assertNotIn("IBUS_USE_PORTAL", os.environ)
             self.assertEqual("unix:path=" + str(root / "ibus.socket"), address)
-            for variable in ("HOME", "XDG_CONFIG_HOME", "XDG_DATA_HOME", "MELTYPE_DATA_DIR", "TMPDIR"):
+            for variable in ("HOME", "XDG_CONFIG_HOME", "XDG_DATA_HOME", "GALTYPE_DATA_DIR", "TMPDIR"):
                 self.assertTrue(Path(os.environ[variable]).is_relative_to(root), variable)
             self.assertFalse(settings["LearningEnabled"])
             self.assertFalse(json.loads((root / "settings/config.json").read_text())["LiveConversion"])
@@ -50,10 +50,10 @@ class LinuxImeRunnerTests(unittest.TestCase):
     def test_rejects_incomplete_product_instead_of_using_a_test_double(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            (root / "ibus-engine-meltype").write_text("engine")
-            with self.assertRaisesRegex(RuntimeError, "libMeltypeNative.so"):
+            (root / "ibus-engine-galtype").write_text("engine")
+            with self.assertRaisesRegex(RuntimeError, "libGaltypeNative.so"):
                 runner.package_files(root)
-            (root / "libMeltypeNative.so").write_bytes(b"native")
+            (root / "libGaltypeNative.so").write_bytes(b"native")
             (root / "mozc").mkdir()
             helper = root / "mozc/meltype_mozc_helper"
             helper.write_bytes(b"mozc")
@@ -125,7 +125,7 @@ class LinuxImeRunnerTests(unittest.TestCase):
 
     def test_product_settings_must_be_deserialized_with_every_requested_key(self):
         with tempfile.TemporaryDirectory() as temporary, patch.dict(os.environ, {
-                "MELTYPE_DATA_DIR": temporary, "MELTYPE_IME_ARTIFACTS": temporary}):
+                "GALTYPE_DATA_DIR": temporary, "GALTYPE_IME_ARTIFACTS": temporary}):
             root = Path(temporary)
             manifest = root / "session.json"
             manifest.write_text(json.dumps({"settings": {"requested": runner.SETTINGS, "productSaved": None}}))
@@ -181,7 +181,7 @@ class LinuxImeRunnerTests(unittest.TestCase):
         context_path = "/org/freedesktop/IBus/InputContext_1"
         # Deliberately no InputContext API: another client's context cannot be called.
         bus = SimpleNamespace(is_connected=lambda: True, current_input_context=lambda: focused["context"],
-                              get_global_engine=lambda: SimpleNamespace(get_name=lambda: "meltype"))
+                              get_global_engine=lambda: SimpleNamespace(get_name=lambda: "galtype"))
         ibus = SimpleNamespace(Bus=lambda: bus)
         def command(args):
             commands.append(args)

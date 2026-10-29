@@ -3,7 +3,7 @@
 # Copyright (C) 2026 0924haruto12
 """Swift の実際のラッパーを NativeAOT と接続して検証する。IME はインストールしない。
 
-python3 tools/test-mac-boundaries.py path/to/MeltypeNative.dylib
+python3 tools/test-mac-boundaries.py path/to/GaltypeNative.dylib
 """
 
 import argparse
@@ -29,12 +29,12 @@ def main():
         executable = contents / "MacOS" / "BoundaryTests"
         frameworks.mkdir(parents=True)
         executable.parent.mkdir()
-        shutil.copy2(library, frameworks / "libMeltypeNative.dylib")
+        shutil.copy2(library, frameworks / "libGaltypeNative.dylib")
         (contents / "Info.plist").write_bytes(plistlib.dumps({"CFBundleExecutable": executable.name,
                                                             "CFBundlePackageType": "APPL"}))
         subprocess.run(["xcrun", "swiftc", "-swift-version", "5",
                         str(repo / "tools/test-mac-boundaries.swift"),
-                        *[str(repo / "mac/Sources/MeltypeIME" / name)
+                        *[str(repo / "mac/Sources/GaltypeIME" / name)
                           for name in ("NativeCore.swift", "InputController.swift", "KeyMapping.swift",
                                        "MacUserDictionary.swift", "ModeShortcuts.swift", "ModeIndicator.swift",
                                        "ModeServices.swift", "InputSourceRegistration.swift")],
@@ -43,7 +43,7 @@ def main():
         data.mkdir()
         (data / "config.json").write_text(json.dumps({"SpaceAroundEnglish": True, "SigilWordsDirect": False}), encoding="utf-8")
         env = os.environ.copy()
-        env["MELTYPE_DATA_DIR"] = str(data)
+        env["GALTYPE_DATA_DIR"] = str(data)
         subprocess.run([str(executable)], env=env, check=True)
 
 

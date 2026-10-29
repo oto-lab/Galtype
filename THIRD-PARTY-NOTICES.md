@@ -1,6 +1,26 @@
 # サードパーティー通知
 
-Meltype のソースコード (このリポジトリ) には、他者の著作物は含まれていません。
+このリポジトリは [yksr-melt/Meltype](https://github.com/yksr-melt/Meltype) を元にした Galtype の fork です。Meltype 由来のコードと著作権表示は維持しています。Galtype 側で新しく作るコードの著作権者は `otoneko.` です。
+
+## Galtype で追加したもの
+
+### galjp
+
+[galjp](https://github.com/otnc/galjp) の npm パッケージを、入力中のギャル文字変換に使います。
+
+- 著作権: Copyright (c) otoneko.
+- ライセンス: ISC License
+- 使用版: 5.0.0
+- 実行時の依存: npm パッケージを使う常駐 Node.js プロセス
+
+galjp には次の由来データが含まれます。
+
+- [KanjiVG](https://kanjivg.tagaini.net/): Creative Commons Attribution-Share Alike 3.0
+- [Unicode Character Database](https://www.unicode.org/copyright.html): Unicode License
+
+完全な通知は、配布物に同梱する galjp の `LICENSE`、`LICENSE-KanjiVG`、`NOTICE` にも記載します。
+
+Galtype のプログラム本体と、上記のライセンスが適用されるデータ・部品の境界は、配布時の構成に合わせて明示します。
 
 ## 配布用パッケージに同梱しているもの
 
@@ -16,9 +36,9 @@ Meltype のソースコード (このリポジトリ) には、他者の著作�
 
 | 部品 | ライセンス | 使い方 |
 | --- | --- | --- |
-| [AzooKeyKanaKanjiConverter](https://github.com/azooKey/AzooKeyKanaKanjiConverter) (azooKey の変換エンジンと辞書) | MIT License | Swift Package として取り込み、Meltype.app に組み込む (漢字変換)。Meltype.app を配布するときは、azooKey のライセンス表示も同梱する |
-| .NET ランタイム (NativeAOT) | MIT License | libMeltypeNative.dylib に組み込まれる |
-| [swift-collections](https://github.com/apple/swift-collections)・[swift-algorithms](https://github.com/apple/swift-algorithms)・[swift-numerics](https://github.com/apple/swift-numerics) (Apple) | Apache License 2.0 | AzooKeyKanaKanjiConverter が使う部品として、一緒に Meltype.app に組み込まれる (`mac/Package.resolved` で版を固定) |
+| [AzooKeyKanaKanjiConverter](https://github.com/azooKey/AzooKeyKanaKanjiConverter) (azooKey の変換エンジンと辞書) | MIT License | Swift Package として取り込み、Galtype.app に組み込む (漢字変換)。Galtype.app を配布するときは、azooKey のライセンス表示も同梱する |
+| .NET ランタイム (NativeAOT) | MIT License | libGaltypeNative.dylib に組み込まれる |
+| [swift-collections](https://github.com/apple/swift-collections)・[swift-algorithms](https://github.com/apple/swift-algorithms)・[swift-numerics](https://github.com/apple/swift-numerics) (Apple) | Apache License 2.0 | AzooKeyKanaKanjiConverter が使う部品として、一緒に Galtype.app に組み込まれる (`mac/Package.resolved` で版を固定) |
 | [Jinja](https://github.com/johnmai-dev/Jinja)・[swift-tokenizers](https://github.com/ensan-hcl/swift-tokenizers) | Apache License 2.0 | AzooKeyKanaKanjiConverter が依存する部品 (`mac/Package.resolved` で版を固定)。組み込まれる場合は、ライセンス表示を同梱する |
 
 ## 実行時に使う Windows の機能 (同梱しない)
@@ -407,5 +427,9 @@ UT 辞書を有効にしてビルドしたバイナリは、**あなた自身の
 
 ### README の画像
 
-- `docs/meltype.jpg`・`docs/images/logo.png` (Meltype のロゴ) は [@Crysta1221](https://github.com/Crysta1221) さんの作品です。
-- `docs/images/headings/` の画像 (README と docs/ の見出し) と `docs/images/demo.svg`・`docs/images/features.svg` の文字は、M PLUS Rounded 1c (Copyright 2016 The M+ Project Authors、SIL Open Font License 1.1) の字形を図形にしたものです。
+- 既存の Meltype ロゴ画像は Galtype の文書では使用しません。
+- `docs/images/headings/` の画像 (docs/ の見出し) と Galtype のロゴ・デモ画像の文字は、M PLUS Rounded 1c (Copyright 2016 The M+ Project Authors、SIL Open Font License 1.1) の字形を図形にしたものです。
+
+## Node.js
+
+Galtype の Windows 配布物は Node.js を同梱します。Node.js とその同梱依存のライセンスは `app/galjp-runtime/NODE-LICENSE.txt` にある公式の LICENSE 全文を参照してください。

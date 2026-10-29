@@ -33,11 +33,14 @@ jobs:
           version_re='^[0-9]+\.[0-9]+\.[0-9]+$'
 
           # 最新リリースの Windows の zip に入っているランタイムの版
-          tag=$(gh api "repos/$REPO/releases/latest" --jq .tag_name)
-          url=$(gh api "repos/$REPO/releases/latest" --jq '[.assets[] | select(.name | endswith("-windows.zip") and startswith("Meltype-"))][0].browser_download_url // ""')
+          if ! tag=$(gh api "repos/$REPO/releases/latest" --jq .tag_name 2>"$RUNNER_TEMP/release-error"); then
+            if grep -q "HTTP 404" "$RUNNER_TEMP/release-error"; then echo "No published release yet"; exit 0; fi
+            cat "$RUNNER_TEMP/release-error" >&2; exit 1
+          fi
+          url=$(gh api "repos/$REPO/releases/latest" --jq '[.assets[] | select(.name | endswith("-windows.zip") and startswith("Galtype-"))][0].browser_download_url // ""')
           if [[ -z "$url" ]]; then echo "最新リリース $tag に Windows の zip がありません"; exit 0; fi
-          curl -fsSL --retry 3 -o "$RUNNER_TEMP/meltype.zip" "$url"
-          bundled=$(unzip -Z1 "$RUNNER_TEMP/meltype.zip" | grep -oE 'dotnet[\\/]host[\\/]fxr[\\/][0-9]+\.[0-9]+\.[0-9]+' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1 || true)
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/galtype.zip" "$url"
+          bundled=$(unzip -Z1 "$RUNNER_TEMP/galtype.zip" | grep -oE 'dotnet[\\/]host[\\/]fxr[\\/][0-9]+\.[0-9]+\.[0-9]+' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1 || true)
           if [[ ! "$bundled" =~ $version_re ]]; then echo "::warning::$tag の zip から .NET の版を読めませんでした"; exit 0; fi
           channel="${bundled%.*}"
 

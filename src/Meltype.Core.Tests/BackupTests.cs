@@ -42,7 +42,7 @@ internal static class BackupTests
             File.WriteAllText(Path.Combine(source, "config.json"), "{\"Mode\":\"Keyboard\"}");
             File.WriteAllText(Path.Combine(source, "userdict.txt"), "ゆきしろ\t雪代\n");
             File.WriteAllText(Path.Combine(source, "dictionaries", "candidates.txt"), "てすと テスト\n");
-            File.WriteAllText(Path.Combine(source, "meltype.log"), "ログは入れない");
+            File.WriteAllText(Path.Combine(source, "galtype.log"), "ログは入れない");
 
             var (content, files) = Backup.Create(source, "0.2.0");
             Assert.Equal(3, files, "ログは入れない");

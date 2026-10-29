@@ -7,7 +7,7 @@ namespace Meltype.Composition;
 
 /// <summary>
 /// 更新の前に「あなたの打ち方で変わる語」を見せるための、語ごとの自動の判定 (issue #285)。
-/// 今の版と新しい版 (更新の zip の中の Meltype.exe --judge-words) の両方で同じ語を打ってみて、結果が変わる語だけを見せる。
+/// 今の版と新しい版 (更新の zip の中の Galtype.exe --judge-words) の両方で同じ語を打ってみて、結果が変わる語だけを見せる。
 /// 判定はこの PC の中だけで行い、何も送らない。学習 (覚えた語) は使わない (版による自動の判定の違いを見るため)。
 /// </summary>
 public static class WordJudge

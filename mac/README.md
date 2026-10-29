@@ -1,24 +1,24 @@
 <p align="center">
-  <img src="../docs/images/logo.png" alt="Meltype" width="360">
+  <img src="../docs/images/galtype-logo.svg" alt="Galtype" width="360">
 </p>
 
-<a name="meltype-for-mac"></a>
-<p align="center"><img src="../docs/images/headings/mac/title.svg" alt="Meltype for Mac" height="80"></p>
+<a name="galtype-for-mac"></a>
+<p align="center"><img src="../docs/images/headings/mac/title.svg" alt="Galtype for Mac" height="80"></p>
 
 <p align="center"><b>雪解けのように、半角/全角の壁を溶かす日本語入力。</b></p>
 
 <p align="center">
-  <a href="https://github.com/yksr-melt/Meltype/releases/latest"><img src="https://img.shields.io/github/v/release/yksr-melt/Meltype?color=5ec4f0" alt="release"></a>
+  <a href="https://github.com/oto-lab/Galtype/releases/latest"><img src="https://img.shields.io/github/v/release/oto-lab/Galtype?color=5ec4f0" alt="release"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-ff8ab4?logo=apple&logoColor=white" alt="macOS 13 以降">
   <img src="https://img.shields.io/badge/プレビュー版-7a96f0" alt="プレビュー版">
 </p>
 
 <p align="center">
-  <a href="https://github.com/yksr-melt/Meltype/releases/latest"><b>ダウンロード</b></a>
+  <a href="https://github.com/oto-lab/Galtype/releases/latest"><b>ダウンロード</b></a>
   &nbsp;·&nbsp;
   <a href="../README.md">トップの README</a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/yksr-melt/Meltype/issues/new/choose">不具合の報告・提案</a>
+  <a href="https://github.com/oto-lab/Galtype/issues/new/choose">不具合の報告・提案</a>
 </p>
 
 <p align="center">
@@ -27,11 +27,11 @@
   <a href="../linux/README.md"><img src="../docs/images/cards/os-linux.svg" alt="Linux" width="30%"></a>
 </p>
 
-Mac の正式な IME の仕組み (Input Method Kit) で動く Meltype です。Windows 版と同じく、日本語を打っている途中の英単語は英字のまま、
+Mac の正式な IME の仕組み (Input Method Kit) で動く Galtype です。Windows 版と同じく、日本語を打っている途中の英単語は英字のまま、
 英語とも日本語とも読める語は前後の文脈で判定します。Mac では OS が IME としてキーを渡してくれるので、
 メニューバーの入力メニューにもふつうの IME として表示されます。
 
-> **プレビュー版です。** 動かないところやビルドエラーがあれば、エラーの全文とあわせて [Issues](https://github.com/yksr-melt/Meltype/issues) で教えてください！
+> **プレビュー版です。** 動かないところやビルドエラーがあれば、エラーの全文とあわせて [Issues](https://github.com/oto-lab/Galtype/issues) で教えてください！
 
 <br>
 
@@ -46,22 +46,22 @@ Mac の正式な IME の仕組み (Input Method Kit) で動く Meltype です。
 <a name="インストール"></a>
 <img src="../docs/images/headings/mac/02.svg" alt="インストール" height="53"><br>
 
-Meltype はアプリではなく「入力ソース」(日本語入力) です。`Meltype.app` をダブルクリックしても何も起きません。
+Galtype はアプリではなく「入力ソース」(日本語入力) です。`Galtype.app` をダブルクリックしても何も起きません。
 
-1. [Releases](https://github.com/yksr-melt/Meltype/releases/latest) から `Meltype-<version>-mac.zip` をダウンロードして、**zip 全体を**展開する (インストーラーが `install-app.sh`・`start-input-method.sh`・`select-input-source.swift` も使います)
-2. 「Install Meltype.command」をダブルクリック
+1. [Releases](https://github.com/oto-lab/Galtype/releases/latest) から `Galtype-<version>-mac.zip` をダウンロードして、**zip 全体を**展開する (インストーラーが `install-app.sh`・`start-input-method.sh`・`select-input-source.swift` も使います)
+2. 「Install Galtype.command」をダブルクリック
    - 「開発元が未確認のため開けません」と出たら、右クリック (control + クリック) →「開く」→「開く」
    - macOS 15 以降は、一度ダブルクリックしてから、システム設定 → プライバシーとセキュリティ → 下のほうの「このまま開く」を押す
-   - それでも開けないときは、「ターミナル」で `bash ~/Downloads/Meltype-mac/install.sh` を実行する
-3. インストーラーが Meltype を登録・起動し、入力ソースを選びます。通常の更新では、システム設定を開く必要はありません
+   - それでも開けないときは、「ターミナル」で `bash ~/Downloads/Galtype-mac/install.sh` を実行する
+3. インストーラーが Galtype を登録・起動し、入力ソースを選びます。通常の更新では、システム設定を開く必要はありません
 
 起動エラーが出たときは、入力メニューから ABC または標準の日本語入力を選んでください。初回に入力ソースが見つからないときだけ、ログアウト・ログインしてから入力メニューを確かめてください。
 
-Homebrew から入れる場合は、最初に tap を追加してからインストールします。以後は `brew upgrade --cask meltype` で更新できます。
+Homebrew から入れる場合は、最初に tap を追加してからインストールします。以後は `brew upgrade --cask galtype` で更新できます。
 
 ```bash
-brew tap yksr-melt/Meltype https://github.com/yksr-melt/Meltype.git
-brew install --cask yksr-melt/Meltype/meltype
+brew tap oto-lab/Galtype https://github.com/oto-lab/Galtype.git
+brew install --cask oto-lab/Galtype/galtype
 ```
 
 <a name="ソースからビルドする"></a>
@@ -77,11 +77,11 @@ cd mac
 ./build.sh
 ```
 
-1. 本体 (C#) を NativeAOT でビルドし、IME (Swift) をビルドして、`build/Meltype.app` を作ります (初回は azooKey の変換エンジンと辞書のダウンロードで時間がかかります)
-2. `~/Library/Input Methods/Meltype.app` にインストールします
-3. メニューバーの入力メニューで Meltype を選ぶと使えます。出てこなければ、**システム設定 → キーボード → 入力ソース →「編集…」→「+」→ 日本語 → Meltype** を追加し、それでも出てこなければ、いったんログアウトしてログインし直します
+1. 本体 (C#) を NativeAOT でビルドし、IME (Swift) をビルドして、`build/Galtype.app` を作ります (初回は azooKey の変換エンジンと辞書のダウンロードで時間がかかります)
+2. `~/Library/Input Methods/Galtype.app` にインストールします
+3. メニューバーの入力メニューで Galtype を選ぶと使えます。出てこなければ、**システム設定 → キーボード → 入力ソース →「編集…」→「+」→ 日本語 → Galtype** を追加し、それでも出てこなければ、いったんログアウトしてログインし直します
 
-作り直したときは `./build.sh` をもう一度実行すれば入れ替わります (動いている Meltype は自動で止めます)。
+作り直したときは `./build.sh` をもう一度実行すれば入れ替わります (動いている Galtype は自動で止めます)。
 `mac/.build` (Swift のビルド結果) は azooKey の辞書の置き場所として使われることがあるので、消さないでください。
 
 <br>
@@ -102,28 +102,28 @@ cd mac
 | <kbd>英数</kbd> / <kbd>かな</kbd> | JIS キーボードで、英数 (直接入力) / 日本語に戻る |
 
 - 先頭か空白の直後に打った `/review`・`$skill`・`@ファイル名` は、空白まで変換せずにそのまま入ります (`SigilWordsDirect` で OFF)
-- 設定・学習データ・ユーザー辞書は `~/Library/Application Support/Meltype` (入力メニューの「Meltype のデータフォルダを開く」「Meltype の設定ファイル (config.json) を開く…」)。設定は Windows 版と同じ `config.json` です (自動判定の強さ `DetectionLevel` など)
+- 設定・学習データ・ユーザー辞書は `~/Library/Application Support/Galtype` (入力メニューの「Galtype のデータフォルダを開く」「Galtype の設定ファイル (config.json) を開く…」)。設定は Windows 版と同じ `config.json` です (自動判定の強さ `DetectionLevel` など)
 
 ## 入力モードのショートカット (Mac 専用)
 
 macOS の「サービス」に操作の一覧を表示し、OS 設定でキーの割り当てだけを変更します。
 
-1. この版の Meltype をインストールした後、いったんログアウトしてログインし直します。サービスの一覧に4項目を反映するためです。
+1. この版の Galtype をインストールした後、いったんログアウトしてログインし直します。サービスの一覧に4項目を反映するためです。
 2. **設定 → キーボード → キーボードショートカット → サービス → 一般** を開きます。
 3. 次の項目を有効にし、右側のショートカット欄をダブルクリックして使いたいキーを割り当てます。項目が折りたたまれている場合は、カテゴリを展開してください。
 
 | 操作 | サービス名 |
 | --- | --- |
-| 自動判定 | `Meltype：日本語・英語の自動判定` |
-| 英数の直接入力 | `Meltype：英数の直接入力` |
-| コード入力 | `Meltype：コード入力 (コメント・文字列は日本語)` |
-| 順次切り替え | `Meltype：次の入力モード` |
+| 自動判定 | `Galtype：日本語・英語の自動判定` |
+| 英数の直接入力 | `Galtype：英数の直接入力` |
+| コード入力 | `Galtype：コード入力 (コメント・文字列は日本語)` |
+| 順次切り替え | `Galtype：次の入力モード` |
 
 初期状態ではキーを割り当てていません。
-キーの変更は OS が管理し、切り替えのたびに Meltype を再起動する必要はありません。
+キーの変更は OS が管理し、切り替えのたびに Galtype を再起動する必要はありません。
 変更が反映されない場合は、使用中のアプリを開き直し、それでも反映されなければログアウトしてログインし直してください。
 
-**Meltype が入力ソースに選ばれている間**に使用できます。入力欄がない状態でも切り替えられます。
+**Galtype が入力ソースに選ばれている間**に使用できます。入力欄がない状態でも切り替えられます。
 入力・変換中にショートカットが届くかどうかは OS と前面アプリの挙動に従います。
 サービスが届くと、現在表示している未確定文字を確定してから入力モードを切り替え、ミニウィンドウを表示します。
 
@@ -132,7 +132,7 @@ macOS の「サービス」に操作の一覧を表示し、OS 設定でキー�
 
 「次の入力モード」は、現在選んでいるモードの次へ切り替え、一覧のその項目を強調します。
 同じキーを続けて押すと **自動 → 英数 → Code → 自動** の順に進みます。
-最後に選んだモードは保存され、英語など別の入力ソースから Meltype に戻したときや、別の入力欄へ移ったときにも使われます。
+最後に選んだモードは保存され、英語など別の入力ソースから Galtype に戻したときや、別の入力欄へ移ったときにも使われます。
 
 切り替えると、3つのモードと選択中の項目を約1秒表示します。続けて切り替えると表示時間を延長します。
 入力カーソルの位置を取得できるときは、その下に **自動 | 英数 | Code** を横並びで表示します。
@@ -146,17 +146,17 @@ JIS の「英数」「かな」キーから切り替えた場合も表示しま�
 <a name="ユーザー辞書"></a>
 <img src="../docs/images/headings/mac/s02.svg" alt="ユーザー辞書" height="40">
 
-Mac 版には登録の画面がないので、データフォルダ (`~/Library/Application Support/Meltype`) のファイルで登録します。変換では最優先に使います。
+Mac 版には登録の画面がないので、データフォルダ (`~/Library/Application Support/Galtype`) のファイルで登録します。変換では最優先に使います。
 
 - `userdict.txt`: 1 行に「読み<Tab>単語」(UTF-8)。読みはひらがな (1 文字の読みは、その 1 文字だけを変換するときだけ使います)
 - macOS 標準の「ユーザ辞書」の語を使う (#40):
   1. 入力メニューの「ユーザ辞書を編集…」(システム設定 → キーボード → テキスト置換) を開き、使いたい項目を選んで Finder にドラッグします。`ユーザ辞書.plist` ができます
-  2. そのファイルを `~/Library/Application Support/Meltype/dictionaries/` に置きます (フォルダが無ければ作る)。名前は何でもよく、`.plist` をいくつ置いてもかまいません
-  3. `pkill -x Meltype` で止めてから入力ソースを選び直す (または ログアウトしてログインし直す) と読み込みます
+  2. そのファイルを `~/Library/Application Support/Galtype/dictionaries/` に置きます (フォルダが無ければ作る)。名前は何でもよく、`.plist` をいくつ置いてもかまいません
+  3. `pkill -x Galtype` で止めてから入力ソースを選び直す (または ログアウトしてログインし直す) と読み込みます
 - `.plist` の語は `userdict.txt` には書き込まず、置いたファイルをそのまま読みます (`userdict.txt` の語はそのまま残り、同じ読みなら `userdict.txt` の語が先)。macOS 側で登録を変えたら、書き出し直して置き換えてください
 - 読み (shortcut) がひらがな・カタカナ・英数字で 2 文字以上の項目だけを使います。1 文字の読み・記号の入った読み・複数行の定型文は飛ばします
 - XML 形式の plist だけ読めます。読めないとき (バイナリ形式の plist) は、ターミナルで `plutil -convert xml1 ファイル名.plist` を実行して XML にしてください
-- macOS の辞書 (`~/Library` の中) を Meltype が直接読むことはしません。書き出したファイルを置いたときだけ使います
+- macOS の辞書 (`~/Library` の中) を Galtype が直接読むことはしません。書き出したファイルを置いたときだけ使います
 
 <a name="windows-版との違い"></a>
 <img src="../docs/images/headings/mac/s03.svg" alt="Windows 版との違い (今のところ)" height="40">
@@ -172,23 +172,23 @@ Mac 版には登録の画面がないので、データフォルダ (`~/Library/
 
 - **入力ソースに出てこない**: まず入力メニューを見る。無ければ、ターミナルで次を実行する (ログアウトは要りません。`install.sh` も同じことをします、#134)
   ```bash
-  ~/Library/Input\ Methods/Meltype.app/Contents/MacOS/MeltypeRegisterInputSource
+  ~/Library/Input\ Methods/Galtype.app/Contents/MacOS/GaltypeRegisterInputSource
   ```
-  これで戻らなければ、ログアウトしてログインし直す。`~/Library/Input Methods/Meltype.app` があるか確かめる。
-- **Meltype がいくつも並ぶ**: ターミナルで次を実行する
+  これで戻らなければ、ログアウトしてログインし直す。`~/Library/Input Methods/Galtype.app` があるか確かめる。
+- **Galtype がいくつも並ぶ**: ターミナルで次を実行する
   ```bash
-  "$HOME/Library/Input Methods/Meltype.app/Contents/MacOS/Meltype" --register-input-source
+  "$HOME/Library/Input Methods/Galtype.app/Contents/MacOS/Galtype" --register-input-source
   ```
-  OS の登録 API で登録・有効化した後、`com.apple.HIToolbox` の `AppleEnabledInputSources` と `com.apple.inputsources` の `AppleEnabledThirdPartyInputSources` を読み、Meltype がある各一覧の中で親と日本語モードの重複を除く。最初の項目の位置と付随情報、ほかの入力ソースを保持する。OS の版番号で保存先を作ったり、一方の一覧から他方へ移したりはしない。両方に Meltype がある場合も、それぞれの登録を残す。
-  変更前の一覧は、変更する設定領域の `MeltypeInputSourcesBeforeRepair` に保存する。有効な日本語モードが一件になるまで最大約 2 秒待つ。反映待ちの場合は件数と対処方法を表示して終了コード 0 で終了し、入力メニューを再起動しない。設定の形式・保存・登録 API の失敗は終了コード 1 にする。表示が戻らなければ、設定画面で追加し直すかログアウトしてログインし直す。保存先をまたぐ登録の統合は行わないため、このコマンドだけで実メニューが必ず一件になるとは限らない。
-- **入力メニューに「絵文字と記号を表示」「キーボードビューアを表示」「キーボード設定を開く…」の 3 つしか出ない**: 入力ソースの登録は残っていて Meltype も使えるが、メニューの一覧が古いまま固まっている (#134)。上の `MeltypeRegisterInputSource` を実行すると直る。応急処置は、入力メニューで「キーボードビューアを表示」を押すか、ターミナルで `killall TextInputMenuAgent` (macOS がすぐ起動し直します)。入力メニューの一覧は、選択できるキーボード系の入力ソースが 2 つ以上あるときだけ出るので、1 つしか無いときも同じ見え方になります
+  OS の登録 API で登録・有効化した後、`com.apple.HIToolbox` の `AppleEnabledInputSources` と `com.apple.inputsources` の `AppleEnabledThirdPartyInputSources` を読み、Galtype がある各一覧の中で親と日本語モードの重複を除く。最初の項目の位置と付随情報、ほかの入力ソースを保持する。OS の版番号で保存先を作ったり、一方の一覧から他方へ移したりはしない。両方に Galtype がある場合も、それぞれの登録を残す。
+  変更前の一覧は、変更する設定領域の `GaltypeInputSourcesBeforeRepair` に保存する。有効な日本語モードが一件になるまで最大約 2 秒待つ。反映待ちの場合は件数と対処方法を表示して終了コード 0 で終了し、入力メニューを再起動しない。設定の形式・保存・登録 API の失敗は終了コード 1 にする。表示が戻らなければ、設定画面で追加し直すかログアウトしてログインし直す。保存先をまたぐ登録の統合は行わないため、このコマンドだけで実メニューが必ず一件になるとは限らない。
+- **入力メニューに「絵文字と記号を表示」「キーボードビューアを表示」「キーボード設定を開く…」の 3 つしか出ない**: 入力ソースの登録は残っていて Galtype も使えるが、メニューの一覧が古いまま固まっている (#134)。上の `GaltypeRegisterInputSource` を実行すると直る。応急処置は、入力メニューで「キーボードビューアを表示」を押すか、ターミナルで `killall TextInputMenuAgent` (macOS がすぐ起動し直します)。入力メニューの一覧は、選択できるキーボード系の入力ソースが 2 つ以上あるときだけ出るので、1 つしか無いときも同じ見え方になります
 - **動きがおかしい**: ログを見る
   ```bash
-  log stream --predicate 'process == "Meltype"' --level debug
+  log stream --predicate 'process == "Galtype"' --level debug
   ```
-- **止まってしまった**: まず入力メニューで ABC または標準の日本語入力を選び、`pkill -x Meltype` (次にキーを打つと macOS が起動し直します)。zip を展開したフォルダーで次を実行しても再起動できます
+- **止まってしまった**: まず入力メニューで ABC または標準の日本語入力を選び、`pkill -x Galtype` (次にキーを打つと macOS が起動し直します)。zip を展開したフォルダーで次を実行しても再起動できます
   ```bash
-  bash ./start-input-method.sh "$HOME/Library/Input Methods/Meltype.app"
+  bash ./start-input-method.sh "$HOME/Library/Input Methods/Galtype.app"
   swift ./select-input-source.swift
   ```
 
@@ -199,13 +199,13 @@ Mac 版には登録の画面がないので、データフォルダ (`~/Library/
 <a name="アンインストール"></a>
 <img src="../docs/images/headings/mac/05.svg" alt="アンインストール" height="53"><br>
 
-入力ソースから Meltype を外してから、ターミナルで次を実行します。
+入力ソースから Galtype を外してから、ターミナルで次を実行します。
 
 ```bash
-launchctl remove io.github.yksr-melt.Meltype.manual
-rm -rf ~/Library/Input\ Methods/Meltype.app
+launchctl remove io.github.yksr-melt.Galtype.manual
+rm -rf ~/Library/Input\ Methods/Galtype.app
 # 設定と学習データも消すなら
-rm -rf ~/Library/Application\ Support/Meltype
+rm -rf ~/Library/Application\ Support/Galtype
 ```
 
 <br>
@@ -218,8 +218,8 @@ rm -rf ~/Library/Application\ Support/Meltype
 
 | 部分 | 中身 |
 | --- | --- |
-| IME 本体 (`Sources/MeltypeIME`, Swift) | Input Method Kit でキーを受け取り、変換中の文字 (下線付き)・候補の一覧・確定を入力欄に反映する |
-| 判定の本体 (`src/Meltype.Mac.Native` → `libMeltypeNative.dylib`) | Windows 版と共通の C# の部分 (`src/Meltype.Core`: 英語 / 日本語の判定・ローマ字・変換の流れ・学習・辞書) を NativeAOT で Mac 用のライブラリにしたもの |
+| IME 本体 (`Sources/GaltypeIME`, Swift) | Input Method Kit でキーを受け取り、変換中の文字 (下線付き)・候補の一覧・確定を入力欄に反映する |
+| 判定の本体 (`src/Galtype.Mac.Native` → `libGaltypeNative.dylib`) | Windows 版と共通の C# の部分 (`src/Galtype.Core`: 英語 / 日本語の判定・ローマ字・変換の流れ・学習・辞書) を NativeAOT で Mac 用のライブラリにしたもの |
 | 漢字変換 | [azooKey](https://github.com/azooKey/AzooKeyKanaKanjiConverter) の変換エンジン (MIT License、辞書付き) |
 | 英単語の判定 | macOS のスペルチェッカー (英語) |
 
@@ -227,7 +227,7 @@ rm -rf ~/Library/Application\ Support/Meltype
 <img src="../docs/images/headings/mac/s05.svg" alt="ターミナルからの更新と検証" height="40">
 
 ほかのMacへ渡す配布ZIPは、ビルド後に `bash mac/package.sh` で作れます。
-`dist/` のZIPを全体ごと展開し、`Install Meltype.command` または `bash install.sh` を実行します。
+`dist/` のZIPを全体ごと展開し、`Install Galtype.command` または `bash install.sh` を実行します。
 配布インストーラーもGUIセッションで起動・準備完了を確認してから入力ソースを選択します。
 `install-app.sh` は一時コピーの署名を検証してから既存アプリを入れ替えます。
 コピー・署名確認の失敗では既存アプリを保持し、入れ替え失敗では不完全な新アプリを隔離して旧アプリを戻します。
@@ -239,14 +239,14 @@ rm -rf ~/Library/Application\ Support/Meltype
 VS Code のターミナルを含め、どのディレクトリからでも実行できます。
 
 ```bash
-bash ~/Documents/github/other/Meltype/mac/build-cli.sh --test --build
+bash ~/Documents/github/other/Galtype/mac/build-cli.sh --test --build
 # 使用中の入力ソースを入れ替えてよいときだけ:
-bash ~/Documents/github/other/Meltype/mac/update.sh
+bash ~/Documents/github/other/Galtype/mac/update.sh
 ```
 
 `--build` はビルドのみで、インストール・プロセス停止・入力ソース切り替えを行いません。
 更新は `update.sh → build-cli.sh --test --install → build.sh` を通ります。
-通常の更新では LaunchServices の `open Meltype.app` を使わず、`start-input-method.sh` が GUI セッションの launchd 管理下で起動します。
+通常の更新では LaunchServices の `open Galtype.app` を使わず、`start-input-method.sh` が GUI セッションの launchd 管理下で起動します。
 プロセスと IMK 接続の準備完了を確認してから登録・選択します。起動できなければ入力ソースを選択せずエラーにします。
 設定画面を開くコマンドはありません。設定画面へ移動したという報告の原因はまだ確定していません。
 
@@ -256,8 +256,8 @@ bash ~/Documents/github/other/Meltype/mac/update.sh
 ビルドしたアプリで、インストールせずに検証できます。
 
 ```bash
-mac/build/Meltype.app/Contents/MacOS/Meltype --check-inputs mac/Resources/InputChecks.tsv
-mac/build/Meltype.app/Contents/MacOS/Meltype --self-test
+mac/build/Galtype.app/Contents/MacOS/Galtype --check-inputs mac/Resources/InputChecks.tsv
+mac/build/Galtype.app/Contents/MacOS/Galtype --self-test
 swift test --package-path mac
 sbcl --script tests/test_mac_scripts.lisp
 ```
@@ -272,7 +272,7 @@ Code Helper のディスク書き込み `.diag` と stickersd の JetsamEvent �
 2026-10-08の実機検証では、コピーした更新スクリプトのビルド段階を失敗させたケース（終了23）と、
 入力チェックファイルを欠落させたケース（終了1）で、元の終了コードを維持したままIME起動・選択の復旧を確認しました。
 初回起動の準備完了に失敗して再試行で成功するケースがあり、起動ヘルパーは最大3回の試行に制限しています。
-実際のABC/Meltype入力ソース切替は100/100成功しましたが、TSMのUIServerメッセージ失敗ログが1件出ています。
+実際のABC/Galtype入力ソース切替は100/100成功しましたが、TSMのUIServerメッセージ失敗ログが1件出ています。
 これはChrome/VS Codeのクライアント切替やパネル位置のGUI検証を代替しません。
 
 ほかのビルドの方法は [docs/MAC-CLI.md](../docs/MAC-CLI.md)、全体の仕組みは [docs/DEVELOPMENT.md](../docs/DEVELOPMENT.md) にあります。

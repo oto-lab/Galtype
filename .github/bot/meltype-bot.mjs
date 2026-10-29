@@ -207,7 +207,7 @@ const Help = [
   '| `/test-repro <SHA> <キー>` | PR のコードで `/repro` | メンテナー |',
   '| `/test-jht <SHA> <文> [/ 読み]` | PR のコードで `/jht` | メンテナー |',
   '| `/test-explain <SHA> <キー>` | PR のコードで `/explain` | メンテナー |',
-  '| `/release <版>` | 版 (例: `1.2.3`) のタグとリリースの下書きを作り、Windows・Mac・Linux の配布物のビルドを始める。csproj・Info.plist の版が <版> でないか、docs/release-notes/<版>.md が無ければ止める | 管理者 |',
+  '| `/release <版>` | 版 (例: `1.2.3`) のタグとリリースの下書きを作り、Windows の配布物のビルドを始める。csproj の版が <版> でないか、docs/release-notes/<版>.md が無ければ止める | 管理者 |',
   '| `/pre-release <版>` | `/release` のプレリリース版 (版は `1.2.3-pre.1` の形) | 管理者 |',
   '| `/self-assign` | 自分を Issue の Assignees に入れる (担当になる)。`要トリアージ` の間はメンテナーだけ | だれでも |',
   '| `/help` | この一覧 | だれでも |',
@@ -217,10 +217,10 @@ const Help = [
 
 // /release <版>・/pre-release <版> (issue #665)。管理者 (admin / maintain) だけ。
 //   1. 版の形を確かめる (release: 1.2.3 / pre-release: 1.2.3-pre.1)
-//   2. main の csproj (2 つ)・Info.plist の版が <版> と合うか確かめる (版を上げ忘れた配布を防ぐ: issue #601)
+// Verify the Windows and Core project versions before creating a release.
 //   3. タグ v<版> を main の先頭に作る (もうあれば止める)
 //   4. リリースの下書きを作る。本文は main の docs/release-notes/<版>.md (配布物にも同じものを同梱する: issue #1207)。無ければ止める。pre-release は prerelease
-//   5. 配布物のビルド (build / mac / linux) を、そのタグで始める。ビルドが終わると、下書きに配布物が付く
+// Dispatch only the Windows package workflow for this release scope.
 // タグを GITHUB_TOKEN で作ると push の起動が掛からないので、workflow_dispatch で明示的に起動する。
 async function releaseCommand(issue, command, version) {
   const reply = text => upsertComment(issue, `release-${event.comment.id}`, text);
@@ -236,10 +236,6 @@ async function releaseCommand(issue, command, version) {
     const found = (await read(file)).match(/<Version>([^<]+)<\/Version>/)?.[1];
     if (found !== version) mismatches.push(`${file}: ${found ?? '(版なし)'}`);
   }
-  const plain = version.replace(/-.*$/, '');
-  const plist = await read('mac/Resources/Info.plist');
-  const plistVersion = plist.match(/<key>CFBundleShortVersionString<\/key>\s*<string>([^<]+)<\/string>/)?.[1];
-  if (plistVersion !== plain) mismatches.push(`mac/Resources/Info.plist: ${plistVersion ?? '(版なし)'} (期待 ${plain})`);
   // リリースノートは配布物に同梱し、更新したあとの初めての起動で見せるので、先に main に入れておく
   const notesFile = `docs/release-notes/${version}.md`;
   const notes = await read(notesFile).catch(() => null);
@@ -249,9 +245,9 @@ async function releaseCommand(issue, command, version) {
   if (await gh('GET', `/git/ref/tags/${tag}`).then(() => true).catch(() => false)) return reply(`❌ タグ \`${tag}\` はもうあります。`);
   const sha = (await gh('GET', '/git/ref/heads/main')).object.sha;
   await gh('POST', '/git/refs', { ref: `refs/tags/${tag}`, sha });
-  await gh('POST', '/releases', { tag_name: tag, name: `Meltype ${version}`, draft: true, prerelease: pre, body: notes });
+  await gh('POST', '/releases', { tag_name: tag, name: `Galtype ${version}`, draft: true, prerelease: pre, body: notes });
   const started = [], failed = [];
-  for (const workflow of ['build.yml', 'mac.yml', 'linux.yml']) {
+  for (const workflow of ['build.yml']) {
     try {
       await gh('POST', `/actions/workflows/${workflow}/dispatches`, { ref: tag }, dispatchToken);
       started.push(workflow);
@@ -300,8 +296,8 @@ async function parse() {
     }
 
     const problems = [];
-    const version = field(form, 'Meltype の版');
-    if ('Meltype の版' in form && !/\d+\.\d+/.test(version)) problems.push('**Meltype の版** を書いてください (Windows: トレイのアイコンを右クリック →「Meltype について...」)。');
+    const version = field(form, 'Galtype の版') || field(form, 'Meltype の版');
+    if (('Galtype の版' in form || 'Meltype の版' in form) && !/\d+\.\d+/.test(version)) problems.push('**Galtype の版** を書いてください (Windows: トレイのアイコンを右クリック →「Galtype について...」)。');
     const misdetection = labels.has('誤判定') || '出たもの' in form;
     const keys = field(form, '打ったもの');
     if (misdetection && !isKeys(keys)) problems.push('**打ったもの** は、変換された文字ではなく、押したキーをそのまま英字で書いてください (例: `nihongowohanasu`)。');

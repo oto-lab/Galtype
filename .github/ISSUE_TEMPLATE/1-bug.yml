@@ -16,8 +16,6 @@ body:
       options:
         - Windows 11
         - Windows 10
-        - Mac (プレビュー版)
-        - Linux (プレビュー版)
     validations:
       required: true
 
@@ -25,15 +23,15 @@ body:
     id: os-detail
     attributes:
       label: OS の詳細 (分かれば)
-      description: "Mac: macOS 15.2 / M2 など。Linux: Ubuntu 24.04 / GNOME / Wayland など"
-      placeholder: Ubuntu 24.04 / GNOME / Wayland
+      description: "Windows の版とビルド番号など"
+      placeholder: Windows 11 24H2
 
   - type: input
     id: version
     attributes:
-      label: Meltype の版
-      description: "Windows: トレイのアイコンを右クリック →「Meltype について...」"
-      placeholder: 0.2.0
+      label: Galtype の版
+      description: "Windows: トレイのアイコンを右クリック →「Galtype について...」"
+      placeholder: 0.1.0
     validations:
       required: true
 
@@ -42,9 +40,9 @@ body:
     attributes:
       label: 使っていたモード (Windows)
       options:
-        - Meltype IME (入力欄に直接入力)
-        - Meltype キーボード (変換ボックスで入力)
-        - 分からない / Mac・Linux
+        - Galtype IME (入力欄に直接入力)
+        - Galtype キーボード (変換ボックスで入力)
+        - 分からない
 
   - type: input
     id: app
@@ -93,7 +91,7 @@ body:
       label: ログ (あれば)
       description: |
         Windows: トレイのアイコンを右クリック →「ログ / 判定理由...」→「コピー」
-        Mac: ターミナルで log stream --predicate 'process == "Meltype"' --level debug を実行してから操作
+        Mac: ターミナルで log stream --predicate 'process == "Galtype"' --level debug を実行してから操作
         見られて困る部分は消してください。
       render: text
 
@@ -101,5 +99,5 @@ body:
     id: environment
     attributes:
       label: 実行環境
-      description: Meltype の「不具合の報告・提案...」→「GitHub で報告」から開くと自動で入ります (入力した文字は入りません)。
+      description: Galtype の「不具合の報告・提案...」→「GitHub で報告」から開くと自動で入ります (入力した文字は入りません)。
       render: text

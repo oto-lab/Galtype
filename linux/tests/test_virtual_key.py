@@ -25,7 +25,7 @@ class FakeIBus:
 class VirtualKeyTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        source = Path(__file__).resolve().parents[1] / "ibus-engine-meltype"
+        source = Path(__file__).resolve().parents[1] / "ibus-engine-galtype"
         parsed = ast.parse(source.read_text(encoding="utf-8"), filename=str(source))
         constants = {"OTHER_CHARACTER_KEY", "SPECIAL_KEYS", "SYMBOL_KEYS"}
         nodes = [node for node in parsed.body if

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Yukishiro
 //
-// Meltype の fcitx5 のアドオン (issue #99)。IBus のエンジン (linux/ibus-engine-meltype) と同じく、キーを Meltype の本体
-// (libMeltypeNative.so、Windows 版と共通の C# の部分を NativeAOT にしたもの) に渡し、返ってきた結果 (確定する文字・変換中の文字・候補)
+// Galtype の fcitx5 のアドオン (issue #99)。IBus のエンジン (linux/ibus-engine-galtype) と同じく、キーを Galtype の本体
+// (libGaltypeNative.so、Windows 版と共通の C# の部分を NativeAOT にしたもの) に渡し、返ってきた結果 (確定する文字・変換中の文字・候補)
 // を入力欄に出す。本体は dlopen で読むので、ビルドに本体は要らない。
 
 #include <dlfcn.h>
@@ -32,13 +32,13 @@
 #include <fcitx/text.h>
 #include <fcitx/userinterface.h>
 
-#ifndef MELTYPE_DIR
-#define MELTYPE_DIR "/opt/meltype"
+#ifndef GALTYPE_DIR
+#define GALTYPE_DIR "/opt/galtype"
 #endif
 
 namespace {
 
-// ---- 本体 (libMeltypeNative.so) ----
+// ---- 本体 (libGaltypeNative.so) ----
 
 struct Native {
     void *handle = nullptr;
@@ -59,11 +59,12 @@ struct Native {
     void (*free)(void *) = nullptr;
 
     bool load() {
-        const char *dir = std::getenv("MELTYPE_DIR");
-        std::string base = dir && *dir ? dir : MELTYPE_DIR;
-        handle = dlopen((base + "/libMeltypeNative.so").c_str(), RTLD_NOW | RTLD_LOCAL);
+        const char *dir = std::getenv("GALTYPE_DIR");
+        std::string base = dir && *dir ? dir : GALTYPE_DIR;
+        setenv("GALTYPE_GALJP_RUNTIME", (base + "/galjp-runtime/index.mjs").c_str(), 0);
+        handle = dlopen((base + "/libGaltypeNative.so").c_str(), RTLD_NOW | RTLD_LOCAL);
         if (!handle) {
-            FCITX_ERROR() << "Meltype: libMeltypeNative.so を読めません: " << dlerror();
+            FCITX_ERROR() << "Galtype: libGaltypeNative.so を読めません: " << dlerror();
             return false;
         }
         auto sym = [this](const char *name) { return dlsym(handle, name); };
@@ -83,11 +84,11 @@ struct Native {
         roleKey = reinterpret_cast<decltype(roleKey)>(sym("meltype_role_key"));
         free = reinterpret_cast<decltype(free)>(sym("meltype_free"));
         if (!create || !destroy || !handleKey || !commit || !selectCandidate || !setDirect || !free) {
-            FCITX_ERROR() << "Meltype: libMeltypeNative.so の関数が足りません";
+            FCITX_ERROR() << "Galtype: libGaltypeNative.so の関数が足りません";
             return false;
         }
         if (initMozc && !initMozc((base + "/mozc/meltype_mozc_helper").c_str(), nullptr)) {
-            FCITX_WARN() << "Meltype: Mozc を使えません (漢字変換はひらがなのままになります)";
+            FCITX_WARN() << "Galtype: Mozc を使えません (漢字変換はひらがなのままになります)";
         }
         return true;
     }
@@ -266,7 +267,7 @@ private:
     }
 };
 
-// ---- キー: fcitx5 のキー → Meltype の本体が使う Windows の仮想キーコード (ibus-engine-meltype と同じ) ----
+// ---- キー: fcitx5 のキー → Galtype の本体が使う Windows の仮想キーコード (ibus-engine-galtype と同じ) ----
 
 constexpr int OtherCharacterKey = 0x07;
 
@@ -295,7 +296,7 @@ int specialKey(fcitx::KeySym sym) {
     }
 }
 
-// (仮想キーコード, 入力する文字)。Meltype が扱わないキーなら仮想キーコードは 0。
+// (仮想キーコード, 入力する文字)。Galtype が扱わないキーなら仮想キーコードは 0。
 std::pair<int, uint32_t> virtualKey(fcitx::KeySym sym) {
     if (int vk = specialKey(sym)) return {vk, sym == FcitxKey_space ? 0x20u : 0u};
     uint32_t c = fcitx::Key::keySymToUnicode(sym);
@@ -332,15 +333,15 @@ size_t charLength(const std::string &text) {
     return n;
 }
 
-class MeltypeEngine;
+class GaltypeEngine;
 
 // 入力欄ごとの本体のセッション
-class MeltypeState : public fcitx::InputContextProperty {
+class GaltypeState : public fcitx::InputContextProperty {
 public:
-    MeltypeState(const Native &native) : native_(native) {
+    GaltypeState(const Native &native) : native_(native) {
         if (native_.create) session_ = native_.create();
     }
-    ~MeltypeState() override {
+    ~GaltypeState() override {
         if (session_ && native_.destroy) native_.destroy(session_);
     }
     void *session() const { return session_; }
@@ -357,23 +358,23 @@ private:
     void *session_ = nullptr;
 };
 
-class MeltypeCandidate : public fcitx::CandidateWord {
+class GaltypeCandidate : public fcitx::CandidateWord {
 public:
-    MeltypeCandidate(MeltypeEngine *engine, std::string text, int index)
+    GaltypeCandidate(GaltypeEngine *engine, std::string text, int index)
         : fcitx::CandidateWord(fcitx::Text(std::move(text))), engine_(engine), index_(index) {}
     void select(fcitx::InputContext *ic) const override;
 
 private:
-    MeltypeEngine *engine_;
+    GaltypeEngine *engine_;
     int index_;
 };
 
-class MeltypeEngine : public fcitx::InputMethodEngineV2 {
+class GaltypeEngine : public fcitx::InputMethodEngineV2 {
 public:
-    explicit MeltypeEngine(fcitx::Instance *instance)
-        : instance_(instance), factory_([this](fcitx::InputContext &) { return new MeltypeState(native_); }) {
+    explicit GaltypeEngine(fcitx::Instance *instance)
+        : instance_(instance), factory_([this](fcitx::InputContext &) { return new GaltypeState(native_); }) {
         loaded_ = native_.load();
-        instance_->inputContextManager().registerProperty("meltypeState", &factory_);
+        instance_->inputContextManager().registerProperty("galtypeState", &factory_);
     }
 
     void keyEvent(const fcitx::InputMethodEntry &, fcitx::KeyEvent &event) override {
@@ -474,9 +475,9 @@ private:
     fcitx::Instance *instance_;
     Native native_;
     bool loaded_ = false;
-    fcitx::FactoryFor<MeltypeState> factory_;
+    fcitx::FactoryFor<GaltypeState> factory_;
 
-    void switchMode(fcitx::InputContext *ic, MeltypeState *state, bool toDirect, bool toggle) {
+    void switchMode(fcitx::InputContext *ic, GaltypeState *state, bool toDirect, bool toggle) {
         apply(ic, native_.take(native_.commit(state->session())));
         // CodeLine は Direct 中には切り替えられないので、先に直接入力を解除する。
         native_.setDirect(state->session(), 0);
@@ -537,7 +538,7 @@ private:
 
     // 確定し直し (DeleteBefore) は、入力欄が周りの文字の削除に対応しているときだけ本体が行う。
     // 本体を呼ぶ前に毎回伝える (入力欄を移った最初のキーで、前の入力欄の値のまま確定し直さないように)。
-    void syncCanDelete(fcitx::InputContext *ic, MeltypeState *state) {
+    void syncCanDelete(fcitx::InputContext *ic, GaltypeState *state) {
         auto *session = state->session();
         if (!session) return;
         bool canDelete = ic->capabilityFlags().test(fcitx::CapabilityFlag::SurroundingText) && ic->surroundingText().isValid();
@@ -570,7 +571,7 @@ private:
                     hidePreedit(ic);
                     ic->deleteSurroundingText(-static_cast<int>(length), static_cast<unsigned int>(length));
                 } else {
-                    if (remove > 0) FCITX_WARN() << "Meltype: 確定し直す文字を確認できないため、前の文字を消しません";
+                    if (remove > 0) FCITX_WARN() << "Galtype: 確定し直す文字を確認できないため、前の文字を消しません";
                     ic->inputPanel().reset();
                     ic->propertyFor(&factory_)->preeditVisible = false;
                 }
@@ -615,7 +616,7 @@ private:
             list->setPageSize(9);
             list->setLabels({"1. ", "2. ", "3. ", "4. ", "5. ", "6. ", "7. ", "8. ", "9. "});
             list->setCursorPositionAfterPaging(fcitx::CursorPositionAfterPaging::DonotChange);
-            for (size_t i = 0; i < candidates.size(); i++) list->append<MeltypeCandidate>(this, candidates[i], static_cast<int>(i));
+            for (size_t i = 0; i < candidates.size(); i++) list->append<GaltypeCandidate>(this, candidates[i], static_cast<int>(i));
             int selected = view.integer("selectedIndex", 0);
             if (selected >= 0 && selected < static_cast<int>(candidates.size())) list->setGlobalCursorIndex(selected);
             panel.setCandidateList(std::move(list));
@@ -632,12 +633,12 @@ private:
     }
 };
 
-void MeltypeCandidate::select(fcitx::InputContext *ic) const { engine_->selectCandidate(ic, index_); }
+void GaltypeCandidate::select(fcitx::InputContext *ic) const { engine_->selectCandidate(ic, index_); }
 
-class MeltypeEngineFactory : public fcitx::AddonFactory {
-    fcitx::AddonInstance *create(fcitx::AddonManager *manager) override { return new MeltypeEngine(manager->instance()); }
+class GaltypeEngineFactory : public fcitx::AddonFactory {
+    fcitx::AddonInstance *create(fcitx::AddonManager *manager) override { return new GaltypeEngine(manager->instance()); }
 };
 
 } // namespace
 
-FCITX_ADDON_FACTORY(MeltypeEngineFactory);
+FCITX_ADDON_FACTORY(GaltypeEngineFactory);

@@ -1,16 +1,16 @@
 ﻿# SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 lnkiai
 #
-# Meltype IME (TSF の DLL) をビルドする。Visual Studio Build Tools (C++) が要る。
+# Galtype IME (TSF の DLL) をビルドする。Visual Studio Build Tools (C++) が要る。
 #   powershell -ExecutionPolicy Bypass -File native\tip\build.ps1 [-Configuration Release|Debug]
-# 出力: native\tip\bin\x64\MeltypeTip.dll と native\tip\bin\x86\MeltypeTip.dll (32bit のアプリ用)
+# 出力: native\tip\bin\x64\GaltypeTip.dll と native\tip\bin\x86\GaltypeTip.dll (32bit のアプリ用)
 
 param([ValidateSet('Release', 'Debug')][string]$Configuration = 'Release')
 
 $ErrorActionPreference = 'Stop'
 $here = $PSScriptRoot
 $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
-if (-not (Test-Path -LiteralPath $vswhere)) { throw 'Visual Studio (Build Tools) の C++ ビルドツールが見つかりません。Meltype IME をビルドするには、Visual Studio Build Tools の「C++ によるデスクトップ開発」を入れてください。' }
+if (-not (Test-Path -LiteralPath $vswhere)) { throw 'Visual Studio (Build Tools) の C++ ビルドツールが見つかりません。Galtype IME をビルドするには、Visual Studio Build Tools の「C++ によるデスクトップ開発」を入れてください。' }
 $vs = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
 if (-not $vs) { throw 'Visual Studio の C++ ビルドツールが見つかりません。' }
 $vcvars = Join-Path $vs 'VC\Auxiliary\Build\vcvarsall.bat'
@@ -37,14 +37,14 @@ foreach ($arch in 'x64', 'x86') {
     $cmd = @(
         "`"$vcvars`" $vcarch >nul",
         "cd /d `"$here`"",
-        "rc /nologo /fo `"$obj\MeltypeTip.res`" MeltypeTip.rc",
-        "cl /nologo /Brepro /std:c++17 /EHsc /W4 /wd4100 /utf-8 /DUNICODE /D_UNICODE $optimize /Fo`"$obj\\`" /Fd`"$obj\\`" /LD $($sources -join ' ') `"$obj\MeltypeTip.res`" /link /Brepro /DEF:MeltypeTip.def /IMPLIB:`"$obj\MeltypeTip.lib`" /OUT:`"$out\MeltypeTip.dll`" $libs"
+        "rc /nologo /fo `"$obj\GaltypeTip.res`" GaltypeTip.rc",
+        "cl /nologo /Brepro /std:c++17 /EHsc /W4 /wd4100 /utf-8 /DUNICODE /D_UNICODE $optimize /Fo`"$obj\\`" /Fd`"$obj\\`" /LD $($sources -join ' ') `"$obj\GaltypeTip.res`" /link /Brepro /DEF:GaltypeTip.def /IMPLIB:`"$obj\GaltypeTip.lib`" /OUT:`"$out\GaltypeTip.dll`" $libs"
     ) -join ' && '
     Write-Host "== $arch =="
     cmd /c $cmd
     if ($LASTEXITCODE -ne 0) { throw "$arch のビルドに失敗しました。" }
     # 署名する前の中身のハッシュ。インストールのとき、登録済みの DLL と同じかを比べるのに使う (署名には毎回違う時刻が入るため)
-    $dll = Join-Path $out 'MeltypeTip.dll'
+    $dll = Join-Path $out 'GaltypeTip.dll'
     [IO.File]::WriteAllText("$dll.sha256", (Get-Sha256 $dll))
 }
 Write-Host 'できました:' (Join-Path $here 'bin')

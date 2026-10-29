@@ -6,21 +6,21 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>Meltype</AssemblyName>
+    <AssemblyName>Galtype</AssemblyName>
     <RootNamespace>Meltype</RootNamespace>
-    <Version>1.4.0</Version>
-    <Product>Meltype</Product>
-    <Authors>Yukishiro</Authors>
-    <Copyright>Copyright (C) 2026 雪代 / Yukishiro. GPL-3.0-or-later</Copyright>
-    <Description>半角/全角 キーを押さなくても日本語と英語を打ち分けられるようにする常駐ツール</Description>
-    <!-- Meltype.exe のアイコン (インストーラーの「アプリと機能」にも出る)。web/scripts/make-icons.mjs で作る -->
-    <ApplicationIcon>..\..\native\tip\meltype.ico</ApplicationIcon>
+    <Version>0.1.0</Version>
+    <Product>Galtype</Product>
+    <Authors>otoneko.</Authors>
+    <Copyright>Copyright (C) 2026 otoneko.. Meltype portions Copyright (C) 2026 Yukishiro. GPL-3.0-or-later</Copyright>
+    <Description>Meltype を元にしたギャル文字入力ツール</Description>
+    <!-- Galtype.exe のアイコン (インストーラーの「アプリと機能」にも出る)。web/scripts/make-icons.mjs で作る -->
+    <ApplicationIcon>..\..\native\tip\galtype.ico</ApplicationIcon>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
     <!-- WinRtCandidates で COM の関数表を直接呼ぶため -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Meltype.Tests" />
+    <InternalsVisibleTo Include="Galtype.Tests" />
     <ProjectReference Include="..\Meltype.Core\Meltype.Core.csproj" />
   </ItemGroup>
   <ItemGroup>

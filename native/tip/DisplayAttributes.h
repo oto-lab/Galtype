@@ -7,9 +7,9 @@
 
 #include "Globals.h"
 
-namespace meltype {
+namespace galtype {
 
 ITfDisplayAttributeInfo* CreateDisplayAttributeInfo(REFGUID guid);
 IEnumTfDisplayAttributeInfo* CreateDisplayAttributeEnum();
 
-}  // namespace meltype
+}  // namespace galtype

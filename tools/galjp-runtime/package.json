@@ -1,0 +1,8 @@
+{
+  "name": "galtype-galjp-runtime",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "galjp": "5.0.0"
+  }
+}

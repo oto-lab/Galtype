@@ -34,15 +34,21 @@ internal static class ZenzaiConverterTests
             {
                 port = Random.Shared.Next(20000, 60000);
                 try { _listener.Prefixes.Add($"http://127.0.0.1:{port}/"); _listener.Start(); break; }
-                catch (HttpListenerException) { _listener.Prefixes.Clear(); }
+                catch (HttpListenerException)
+                {
+                    // A failed HTTP.sys bind can dispose the listener; retry with a fresh instance.
+                    _listener.Close();
+                    _listener = new HttpListener();
+                }
             }
+            if (!_listener.IsListening) throw new InvalidOperationException("Could not bind the test HTTP server.");
             Endpoint = new Uri($"http://127.0.0.1:{port}/");
             Task.Run(Loop);
         }
 
         private void Loop()
         {
-            while (_listener.IsListening)
+            while (true)
             {
                 try
                 {

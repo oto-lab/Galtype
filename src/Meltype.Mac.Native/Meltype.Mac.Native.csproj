@@ -11,7 +11,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyName>MeltypeNative</AssemblyName>
+    <AssemblyName>GaltypeNative</AssemblyName>
     <RootNamespace>Meltype.Mac</RootNamespace>
     <InvariantGlobalization>false</InvariantGlobalization>
     <!-- 設定・学習データの JSON は、ビルド時に作った型の情報 (Meltype.Core の SettingsJsonContext など、ソース生成) で読み書きする。

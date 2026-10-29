@@ -1,10 +1,10 @@
 ﻿# SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 lnkiai
 #
-# Meltype IME (TSF の DLL) を Windows に登録する / 登録を外す。管理者権限が要る (IME の登録は PC 全体の設定のため)。
+# Galtype IME (TSF の DLL) を Windows に登録する / 登録を外す。管理者権限が要る (IME の登録は PC 全体の設定のため)。
 #   powershell -ExecutionPolicy Bypass -File Register-Tip.ps1 -Source <x64 と x86 のフォルダーがある所>
 #   powershell -ExecutionPolicy Bypass -File Register-Tip.ps1 -Unregister
-# DLL は C:\Program Files\Meltype\tip にコピーする (管理者として動くアプリにも読み込まれるので、ユーザーが書き換えられない場所に置く)。
+# DLL は C:\Program Files\Galtype\tip にコピーする (管理者として動くアプリにも読み込まれるので、ユーザーが書き換えられない場所に置く)。
 # 使っているアプリが古い DLL を掴んでいても入れ替えられるように、古いものは名前を変えて残し、次の登録のときに消す。
 
 param(
@@ -18,7 +18,7 @@ $ErrorActionPreference = 'Stop'
 # 環境変数 (ProgramW6432・SystemRoot など) はユーザーが上書きでき、管理者として動くこのスクリプトにも引き継がれるので使わない
 $programFiles = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64).OpenSubKey('SOFTWARE\Microsoft\Windows\CurrentVersion').GetValue('ProgramFilesDir')
 $windows = [Environment]::GetFolderPath('Windows')
-$target = Join-Path $programFiles 'Meltype\tip'
+$target = Join-Path $programFiles 'Galtype\tip'
 $regsvr64 = Join-Path $windows 'System32\regsvr32.exe'
 if (-not [Environment]::Is64BitProcess -and [Environment]::Is64BitOperatingSystem) { $regsvr64 = Join-Path $windows 'Sysnative\regsvr32.exe' }
 $regsvr32 = Join-Path $windows 'SysWOW64\regsvr32.exe'
@@ -43,7 +43,7 @@ $unregisterFailed = $false
 try {
     foreach ($arch in 'x64', 'x86') {
         $exe = if ($arch -eq 'x64') { $regsvr64 } else { $regsvr32 }
-        $dll = Join-Path $target "$arch\MeltypeTip.dll"
+        $dll = Join-Path $target "$arch\GaltypeTip.dll"
         if ($Unregister) {
             # 外せなくても (DLL が壊れているなど)、もう一方の DLL・レジストリ・ファイルは片付ける
             try { Invoke-Regsvr $exe $dll -Remove }
@@ -64,7 +64,7 @@ try {
         }
         # 前のハッシュは、登録できるまで消しておく (途中で失敗したら、次に入れ直したときに「同じ DLL」と思わずに登録し直す)
         Remove-Item -LiteralPath "$dll.sha256" -Force -ErrorAction SilentlyContinue
-        Copy-Item -LiteralPath (Join-Path $Source "$arch\MeltypeTip.dll") -Destination $dll -Force
+        Copy-Item -LiteralPath (Join-Path $Source "$arch\GaltypeTip.dll") -Destination $dll -Force
         try { Invoke-Regsvr $exe $dll }
         catch {
             # 新しい DLL を登録できない (壊れている・必要なものが無い): 登録済みの場所に置いたままにすると、アプリがそれを読み込むので、
@@ -83,12 +83,12 @@ try {
             throw $registerError
         }
         # 署名する前の中身のハッシュ (次の更新で、同じ DLL なら登録し直さないため)
-        $hash = Join-Path $Source "$arch\MeltypeTip.dll.sha256"
+        $hash = Join-Path $Source "$arch\GaltypeTip.dll.sha256"
         if (Test-Path -LiteralPath $hash) { Copy-Item -LiteralPath $hash -Destination "$dll.sha256" -Force }
     }
     if ($Unregister) {
         # DLL が無くて regsvr32 で外せなかったときのために、登録をレジストリから直接消す (有っても消してよい。64 ビットと 32 ビットの両方の場所)
-        $clsid = '{417D801B-A9BD-4C26-BD16-356A825A6998}'
+        $clsid = '{CB3A7F51-C145-492F-AA7B-FED5330A7DB5}'
         foreach ($view in [Microsoft.Win32.RegistryView]::Registry64, [Microsoft.Win32.RegistryView]::Registry32) {
             $machine = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, $view)
             try {
@@ -96,12 +96,12 @@ try {
             }
             finally { $machine.Dispose() }
         }
-        $folder = Join-Path $programFiles 'Meltype'
+        $folder = Join-Path $programFiles 'Galtype'
         Remove-Item -LiteralPath $folder -Recurse -Force -ErrorAction SilentlyContinue
         if (Test-Path -LiteralPath $folder) {
             # アプリが読み込んだままの DLL は消せないので、次に Windows を起動したときに消す。
             # 名前を変えてから消す予約をする (元の名前のまま予約すると、再起動の前に入れ直した DLL まで消える)
-            Add-Type -Namespace Meltype -Name Native -MemberDefinition '[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] public static extern bool MoveFileEx(string from, string to, int flags);'
+            Add-Type -Namespace Galtype -Name Native -MemberDefinition '[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] public static extern bool MoveFileEx(string from, string to, int flags);'
             $stamp = [DateTime]::Now.ToString('yyyyMMddHHmmss')
             foreach ($file in @(Get-ChildItem -LiteralPath $folder -Recurse -File -ErrorAction SilentlyContinue)) {
                 $path = $file.FullName
@@ -109,11 +109,11 @@ try {
                     $renamed = "$path.$stamp.old"
                     try { Move-Item -LiteralPath $path -Destination $renamed -Force -ErrorAction Stop; $path = $renamed } catch { }
                 }
-                [Meltype.Native]::MoveFileEx($path, $null, 4) | Out-Null  # 4 = MOVEFILE_DELAY_UNTIL_REBOOT
+                [Galtype.Native]::MoveFileEx($path, $null, 4) | Out-Null  # 4 = MOVEFILE_DELAY_UNTIL_REBOOT
             }
             # フォルダーは空のときだけ消える (入れ直していれば残る)
             $folders = @(Get-ChildItem -LiteralPath $folder -Recurse -Directory -ErrorAction SilentlyContinue | Sort-Object { $_.FullName.Length } -Descending | ForEach-Object { $_.FullName }) + $folder
-            foreach ($path in $folders) { [Meltype.Native]::MoveFileEx($path, $null, 4) | Out-Null }
+            foreach ($path in $folders) { [Galtype.Native]::MoveFileEx($path, $null, 4) | Out-Null }
             Write-Log '使われていて消せないファイルは、次に Windows を起動したときに消します。'
         }
     }

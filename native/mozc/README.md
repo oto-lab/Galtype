@@ -12,7 +12,7 @@ Meltype の変換エンジン「Mozc」(設定の「変換エンジン」が 両
 | `build-mozc-helper.sh` | 同じことを Linux で行う (`bin/linux/` に置く) |
 | `merge-ut-dictionary.py` | Mozc-UT の辞書 (`mozcdic-ut.txt`) を Mozc の辞書に統合する (下の「Mozc-UT の辞書を使う」) |
 | `tests/` | `merge-ut-dictionary.py` のテスト。本物の Mozc も UT の辞書も要らない |
-| `bin\` | ビルドしたヘルパー (Git には入れない)。`Build-Package.ps1` / `Install-Meltype.ps1` が `app\mozc\` に同梱する |
+| `bin\` | ビルドしたヘルパー (Git には入れない)。`Build-Package.ps1` / `Install-Galtype.ps1` が `app\mozc\` に同梱する |
 
 ## ビルド
 

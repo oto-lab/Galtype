@@ -3,7 +3,7 @@
 
 #include "DisplayAttributes.h"
 
-namespace meltype {
+namespace galtype {
 namespace {
 
 struct AttributeSpec {
@@ -16,9 +16,9 @@ struct AttributeSpec {
 
 // 色はアプリの文字の色のまま (TF_CT_NONE)。下線の形だけで区別する
 const AttributeSpec kSpecs[] = {
-    {&GUID_AttrInput, L"Meltype: 入力中", TF_LS_DOT, FALSE, TF_ATTR_INPUT},
-    {&GUID_AttrConverted, L"Meltype: 変換した文節", TF_LS_SOLID, FALSE, TF_ATTR_CONVERTED},
-    {&GUID_AttrTarget, L"Meltype: 選んでいる文節", TF_LS_SOLID, TRUE, TF_ATTR_TARGET_CONVERTED},
+    {&GUID_AttrInput, L"Galtype: 入力中", TF_LS_DOT, FALSE, TF_ATTR_INPUT},
+    {&GUID_AttrConverted, L"Galtype: 変換した文節", TF_LS_SOLID, FALSE, TF_ATTR_CONVERTED},
+    {&GUID_AttrTarget, L"Galtype: 選んでいる文節", TF_LS_SOLID, TRUE, TF_ATTR_TARGET_CONVERTED},
 };
 
 class DisplayAttributeInfo final : public ITfDisplayAttributeInfo {
@@ -131,4 +131,4 @@ ITfDisplayAttributeInfo* CreateDisplayAttributeInfo(REFGUID guid) {
 
 IEnumTfDisplayAttributeInfo* CreateDisplayAttributeEnum() { return new DisplayAttributeEnum(); }
 
-}  // namespace meltype
+}  // namespace galtype

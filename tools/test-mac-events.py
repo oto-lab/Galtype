@@ -24,7 +24,7 @@ def main():
     args = parser.parse_args()
     library = args.library.resolve(strict=True)
     repo = Path(__file__).resolve().parent.parent
-    sources = repo / 'mac/Sources/MeltypeIME'
+    sources = repo / 'mac/Sources/GaltypeIME'
     with tempfile.TemporaryDirectory(prefix='meltype-events-') as temporary:
         root = Path(temporary)
         contents = root / 'EventTests.app/Contents'
@@ -34,7 +34,7 @@ def main():
         executable.parent.mkdir()
         resources = contents / 'Resources'
         resources.mkdir()
-        shutil.copy2(library, frameworks / 'libMeltypeNative.dylib')
+        shutil.copy2(library, frameworks / 'libGaltypeNative.dylib')
         (contents / 'Info.plist').write_bytes(plistlib.dumps({
             'CFBundleExecutable': executable.name, 'CFBundleIdentifier': 'local.meltype.EventTests',
             'CFBundlePackageType': 'APPL'}))
@@ -90,7 +90,7 @@ swiftSettings: [.define("REAL_CONVERTER")], linkerSettings: [.linkedFramework("I
         data.mkdir()
         (data / 'config.json').write_text(json.dumps({'SpaceAroundEnglish': True, 'LiveConversion': False, 'SigilWordsDirect': False}))
         env = os.environ.copy()
-        env['MELTYPE_DATA_DIR'] = str(data)
+        env['GALTYPE_DATA_DIR'] = str(data)
         subprocess.run([str(executable)], env=env, check=True)
 
 
