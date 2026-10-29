@@ -27,6 +27,7 @@ on:
       - 'linux/uninstall.sh'
       - 'linux/fcitx5/**'
       - 'tools/ime-tests/**'
+      - 'tools/galjp-runtime/**'
       - '.github/workflows/ime-tests.yml'
   push:
     branches: [main]
@@ -54,6 +55,7 @@ on:
       - 'linux/uninstall.sh'
       - 'linux/fcitx5/**'
       - 'tools/ime-tests/**'
+      - 'tools/galjp-runtime/**'
       - '.github/workflows/ime-tests.yml'
   workflow_dispatch:
 

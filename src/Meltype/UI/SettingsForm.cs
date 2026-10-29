@@ -18,6 +18,7 @@ namespace Meltype.UI;
 /// </summary>
 internal sealed class SettingsForm : Form, IMessageFilter
 {
+    private static readonly JsonSerializerOptions DictionaryJsonOptions = new() { WriteIndented = true };
     private const string On = "ON";
     private const string Off = "OFF";
 
@@ -423,7 +424,7 @@ internal sealed class SettingsForm : Form, IMessageFilter
             return new Binding(property, box,
                 s => box.Text = JsonSerializer.Serialize(
                     (Dictionary<string, string>?)property.GetValue(s) ?? [],
-                    new JsonSerializerOptions { WriteIndented = true }),
+                    DictionaryJsonOptions),
                 s =>
                 {
                     try

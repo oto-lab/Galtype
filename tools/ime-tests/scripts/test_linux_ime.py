@@ -181,7 +181,7 @@ class LinuxImeRunnerTests(unittest.TestCase):
         context_path = "/org/freedesktop/IBus/InputContext_1"
         # Deliberately no InputContext API: another client's context cannot be called.
         bus = SimpleNamespace(is_connected=lambda: True, current_input_context=lambda: focused["context"],
-                              get_global_engine=lambda: SimpleNamespace(get_name=lambda: "meltype"))
+                              get_global_engine=lambda: SimpleNamespace(get_name=lambda: "galtype"))
         ibus = SimpleNamespace(Bus=lambda: bus)
         def command(args):
             commands.append(args)

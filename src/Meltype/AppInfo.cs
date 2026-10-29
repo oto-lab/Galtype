@@ -35,7 +35,7 @@ internal static class AppInfo
     public static string AboutText => $"""
         Galtype {Version}
         Copyright (C) 2026 otoneko.
-        Meltype portions: Copyright (C) 2026 雪代 / Yukishiro.
+        Meltype 原著作権者: 雪代 / Yukishiro (2026)。
 
         このプログラムはフリーソフトウェアです。GNU General Public License
         (バージョン 3、またはそれ以降のバージョン) の条件で再配布・改変できます。

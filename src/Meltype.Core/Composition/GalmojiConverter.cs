@@ -38,7 +38,7 @@ public sealed class GalmojiConverter
         Predictions = view.Predictions?.Select(text => Convert(text, options)).ToList(),
     };
 
-    private string? TryConvertWithNode(string input, GalmojiOptions options)
+    private static string? TryConvertWithNode(string input, GalmojiOptions options)
     {
         lock (_sync)
         {

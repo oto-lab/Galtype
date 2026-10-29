@@ -34,7 +34,7 @@ case "$(uname -m)" in
 esac
 
 BUILD=build
-VERSION="${MELTYPE_VERSION:-$(dotnet msbuild ../src/Meltype.Core/Meltype.Core.csproj -nologo -getProperty:Version)}"
+VERSION="${GALTYPE_VERSION:-$(dotnet msbuild ../src/Meltype.Core/Meltype.Core.csproj -nologo -getProperty:Version)}"
 if [[ "${GITHUB_REF:-}" == refs/tags/v* ]]; then VERSION="${GITHUB_REF_NAME#v}"; fi
 [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9.-]+)?$ ]] || { echo "版番号が不正です: $VERSION" >&2; exit 1; }
 APP="$BUILD/Galtype.app"
@@ -96,17 +96,6 @@ cp -R Resources/ja.lproj Resources/en.lproj "$APP/Contents/Resources/"
 for bundle in "$BIN"/*.bundle; do
     [[ -e "$bundle" ]] && cp -R "$bundle" "$APP/Contents/Resources/"
 done
-# 署名: 環境変数 MELTYPE_MAC_IDENTITY (Developer ID Application の証明書の名前) があれば配布用に署名する
-# (Hardened Runtime・タイムスタンプ付き。公証 (notarization) は mac.yml で行う)。無ければ自分の Mac で使うための署名。
-if [[ -n "${GALTYPE_MAC_IDENTITY:-}" ]]; then
-    for item in "$APP/Contents/Frameworks/"*; do
-        codesign --force --sign "$GALTYPE_MAC_IDENTITY" --options runtime --timestamp "$item"
-    done
-    codesign --force --deep --sign "$GALTYPE_MAC_IDENTITY" --options runtime --timestamp "$APP"
-    echo "配布用に署名しました: $GALTYPE_MAC_IDENTITY"
-else
-    codesign --force --deep --sign - "$APP"
-fi
 runtime="$APP/Contents/MacOS/galjp-runtime"
 npm --prefix "../tools/galjp-runtime" ci --omit=dev
 mkdir -p "$runtime"
@@ -117,6 +106,19 @@ cp "$node_path" "$runtime/node"
 cp "$(dirname "$node_path")/../LICENSE" "$runtime/NODE-LICENSE.txt"
 chmod +x "$runtime/node"
 
+
+# 署名: 環境変数 MELTYPE_MAC_IDENTITY (Developer ID Application の証明書の名前) があれば配布用に署名する
+# (Hardened Runtime・タイムスタンプ付き。公証 (notarization) は mac.yml で行う)。無ければ自分の Mac で使うための署名。
+if [[ -n "${GALTYPE_MAC_IDENTITY:-}" ]]; then
+    codesign --force --sign "$GALTYPE_MAC_IDENTITY" --options runtime --timestamp "$runtime/node"
+    for item in "$APP/Contents/Frameworks/"*; do
+        codesign --force --sign "$GALTYPE_MAC_IDENTITY" --options runtime --timestamp "$item"
+    done
+    codesign --force --deep --sign "$GALTYPE_MAC_IDENTITY" --options runtime --timestamp "$APP"
+    echo "配布用に署名しました: $GALTYPE_MAC_IDENTITY"
+else
+    codesign --force --deep --sign - "$APP"
+fi
 echo "作成しました: $APP"
 
 if [[ $INSTALL -eq 1 ]]; then
@@ -128,7 +130,7 @@ if [[ $INSTALL -eq 1 ]]; then
     /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$TARGET/Galtype.app"
     # Keep the build copy out of the input-source add dialog after installing.
     /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -u "$PWD/$APP" 2>/dev/null || true
-    if [[ "${MELTYPE_SKIP_START:-0}" != 1 ]]; then
+    if [[ "${GALTYPE_SKIP_START:-0}" != 1 ]]; then
         bash "$PWD/start-input-method.sh" "$TARGET/Galtype.app"
     fi
     echo "初めてのときは、いったんログアウトしてログインし直してから、"

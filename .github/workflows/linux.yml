@@ -14,6 +14,8 @@ on:
       - 'native/mozc/**'
       - 'src/Meltype.Core/**'
       - 'dictionaries/**'
+      - 'tools/galjp-runtime/**'
+      - 'tools/test-galjp-package.py'
       - 'tools/test-native-boundaries.py'
       - '.github/workflows/linux.yml'
   push:
@@ -24,6 +26,8 @@ on:
       - 'native/mozc/**'
       - 'src/Meltype.Core/**'
       - 'dictionaries/**'
+      - 'tools/galjp-runtime/**'
+      - 'tools/test-galjp-package.py'
       - 'tools/test-native-boundaries.py'
       - '.github/workflows/linux.yml'
 
@@ -102,6 +106,8 @@ jobs:
           cmake -S linux/fcitx5 -B linux/build/fcitx5-test -DBUILD_TESTING=ON
           cmake --build linux/build/fcitx5-test
           HOME="$RUNNER_TEMP/fcitx5-home" GALTYPE_DIR="$PWD/linux/build/fcitx5-native" ctest --test-dir linux/build/fcitx5-test --output-on-failure
+      - name: Packaged Galjp without system Node.js
+        run: python3 tools/test-galjp-package.py linux/build/Galtype-linux/libGaltypeNative.so linux/build/Galtype-linux/galjp-runtime
       - name: NativeAOT boundary tests
         run: python3 tools/test-native-boundaries.py linux/build/Galtype-linux/libGaltypeNative.so
       - name: IBus and real Mozc integration tests

@@ -34,6 +34,12 @@ internal static class SelfTest
 
         ApplicationConfiguration.Initialize();
         Check("バージョン", () => AppInfo.Version);
+        Check("Galjp runtime", () =>
+        {
+            var converted = new GalmojiConverter().Convert("学校", new GalmojiOptions());
+            if (converted != "學木交") throw new InvalidOperationException("Galjp runtime did not convert the sample.");
+            return converted;
+        });
         Check("ポータブル版のデータ保存先", () =>
         {
             if (!Config.AppPaths.IsPortable) return "portable marker が無い通常版";
