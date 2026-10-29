@@ -37,7 +37,7 @@ internal static class Program
     private static int Main(string[] args)
     {
         using var spellChecker = Detection.WindowsSpellChecker.Shared;
-        // Meltype.exe --version: 版だけを出して終わる (フック・UI は起動しない)。
+        // Galtype.exe --version: 版だけを出して終わる (フック・UI は起動しない)。
         // WinExe はコンソールを持たないので、親ターミナル (cmd / PowerShell) に付け直してから書く。
         if (args.FirstOrDefault() == "--version")
         {
@@ -46,17 +46,17 @@ internal static class Program
             writer.WriteLine($"Meltype {AppInfo.Version}");
             return 0;
         }
-        // Meltype.exe --selftest [結果ファイル]: キーボードフックを掛けずに、主な機能が動くかだけを確かめる。
+        // Galtype.exe --selftest [結果ファイル]: キーボードフックを掛けずに、主な機能が動くかだけを確かめる。
         if (args.FirstOrDefault() == "--selftest") return SelfTest.Run(args.ElementAtOrDefault(1));
-        // Meltype.exe --exit: 動いている Meltype を終了させる (インストール・アンインストール用。管理者として動いていても止められる)。
+        // Galtype.exe --exit: 動いている Meltype を終了させる (インストール・アンインストール用。管理者として動いていても止められる)。
         if (args.FirstOrDefault() == "--exit") return ExitSignal.Send() ? 0 : 1;
-        // Meltype.exe --judge-words <語の一覧> <結果>: 語ごとの自動の判定を書き出す。前の版の Meltype が、更新の前に
+        // Galtype.exe --judge-words <語の一覧> <結果>: 語ごとの自動の判定を書き出す。前の版の Meltype が、更新の前に
         // 「あなたの打ち方で変わる語」を調べるために、ダウンロードした新しい版をこれで動かす (issue #285)。
         if (args.FirstOrDefault() == "--judge-words" && args.Length >= 3) return JudgeWords(args[1], args[2]);
 
         // フックを二重に掛けると同じ打鍵を二重に保留・再入力してしまうので、多重起動させない。
-        using var mutex = new Mutex(initiallyOwned: true, @"Local\Meltype.SingleInstance", out var createdNew);
-        // Meltype.exe --restore <バックアップ>: 動いている Meltype が終わるのを待ってから、バックアップを戻して起動する
+        using var mutex = new Mutex(initiallyOwned: true, @"Local\Galtype.SingleInstance", out var createdNew);
+        // Galtype.exe --restore <バックアップ>: 動いている Meltype が終わるのを待ってから、バックアップを戻して起動する
         // (動いている Meltype が終わるときに学習データを書き戻すので、戻すのはその後)。
         var restore = args.FirstOrDefault() == "--restore" ? args.ElementAtOrDefault(1) : null;
         if (!createdNew && (restore is null || !WaitForExit(mutex))) return 0;
@@ -88,6 +88,7 @@ internal static class Program
         var settings = Settings.Load(AppPaths.ConfigFile);
         if (!File.Exists(AppPaths.ConfigFile))
         {
+            settings.GalmojiEnabled = true;
             try { settings.Save(AppPaths.ConfigFile); } catch { }
         }
 

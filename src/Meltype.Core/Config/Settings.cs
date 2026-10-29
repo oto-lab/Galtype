@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using Meltype.Composition;
 using Meltype.Input;
 
 namespace Meltype.Config;
@@ -486,6 +487,50 @@ public sealed class Settings
     [JsonConverter(typeof(InputStyleJsonConverter))]
     public InputStyle InputStyle { get; set; } = InputStyle.Romaji;
 
+    [Category("10. Galtype"), DisplayName("ギャル文字変換"),
+     Description("入力中の表示と確定結果を galjp の方式でギャル文字にします。OFF にすると Meltype 本来の出力になります。")]
+    public bool GalmojiEnabled { get; set; }
+
+    [Category("10. Galtype"), DisplayName("英字を変換する")]
+    public bool GalmojiLatin { get; set; } = true;
+
+    [Category("10. Galtype"), DisplayName("数字を変換する")]
+    public bool GalmojiDigit { get; set; } = true;
+
+    [Category("10. Galtype"), DisplayName("ひらがなを変換する")]
+    public bool GalmojiHiragana { get; set; } = true;
+
+    [Category("10. Galtype"), DisplayName("カタカナを変換する")]
+    public bool GalmojiKatakana { get; set; } = true;
+
+    [Category("10. Galtype"), DisplayName("漢字を変換する")]
+    public bool GalmojiKanji { get; set; } = true;
+
+    [Category("10. Galtype"), DisplayName("記号を変換する")]
+    public bool GalmojiSymbol { get; set; } = true;
+
+    [Category("10. Galtype"), DisplayName("漢字の分割方針")]
+    public GalmojiSplitPolicy GalmojiSplitPolicy { get; set; } = GalmojiSplitPolicy.Balanced;
+
+    [Category("10. Galtype"), DisplayName("漢字を旧字体にする")]
+    public bool GalmojiVariant { get; set; } = true;
+
+    [Category("10. Galtype"), DisplayName("単体漢字を装飾する")]
+    public bool GalmojiStyleStandalone { get; set; } = true;
+
+    [Category("10. Galtype"), DisplayName("漢字の最大分解深度")]
+    public int GalmojiMaxDepth { get; set; } = 2;
+
+    [Category("10. Galtype"), DisplayName("候補選択のシード")]
+    public string GalmojiSeed { get; set; } = "";
+
+    [Category("10. Galtype"), DisplayName("URL と絵文字を保護する")]
+    public bool GalmojiPreserveUrlsAndEmoji { get; set; } = true;
+
+    [Category("10. Galtype"), DisplayName("追加辞書 (JSON)"),
+     Description("galjp の変換を追加・上書きする辞書です。例: { \"学校\": \"學木交\" }")]
+    public Dictionary<string, string> GalmojiDictionary { get; set; } = [];
+
     [Category("2. 判定"), DisplayName("自動判定の強さ"),
      Description("積極的 = 英語らしければすぐ英字 / 標準 = 短い語 (no, to, ga) は前後が英語のときだけ英字 / 慎重 = 確信度が高いときだけ英字 / 手動 = 自動では切り替えず提案だけ (変換ボックスで Tab を押すと提案どおり英字に)。Meltype キーボード・英数状態の検知・かな入力のすべてに効きます。")]
     public DetectionLevel DetectionLevel { get; set; } = DetectionLevel.Balanced;
@@ -868,7 +913,7 @@ public sealed class Settings
     [Category("7. アプリ"), DisplayName("独自の種類"), Description("アプリ別設定の「種類」に使える、自分で作る種類です。一般 / コード を元に、判定の強さ・ライブ変換・最初は英数にするか を変えられます (「全体と同じ」なら上の設定のまま)。")]
     public List<AppKind> AppKinds { get; set; } = [];
 
-    [Category("8. ログ"), DisplayName("ファイルにログを書く"), Description("%LOCALAPPDATA%\\Meltype\\meltype.log にログを書きます (OFF でも、トレイの「ログ / 判定理由」で見られるログは Meltype が動いている間だけメモリに残ります)。判定した語の先頭の数文字・アプリ名・入力欄の名前が含まれます。確定した文字列などは「ログに入力した文字を残す」が ON のときだけ残ります。")]
+    [Category("8. ログ"), DisplayName("ファイルにログを書く"), Description("%LOCALAPPDATA%\\Meltype\\galtype.log にログを書きます (OFF でも、トレイの「ログ / 判定理由」で見られるログは Meltype が動いている間だけメモリに残ります)。判定した語の先頭の数文字・アプリ名・入力欄の名前が含まれます。確定した文字列などは「ログに入力した文字を残す」が ON のときだけ残ります。")]
     public bool FileLog { get; set; }
 
     [Category("8. ログ"), DisplayName("ログに入力した文字を残す"), Description("確定した文字列・打った英字・読み・直した語をログに残します (不具合を調べるとき用)。OFF なら文字数だけを残します。パスワード欄では入力を扱わないので残りません。")]
@@ -940,6 +985,7 @@ public sealed class Settings
         copy.AppKinds = AppKinds.Select(k => k.Clone()).ToList();
         copy.Profiles = (Profiles ?? []).Select(p => p.Clone()).ToList();
         copy.ToggleShortcuts = ToggleShortcuts?.Select(b => b is null ? null! : b with { }).ToList();
+        copy.GalmojiDictionary = GalmojiDictionary is null ? [] : new(GalmojiDictionary);
         return copy;
     }
 
@@ -966,6 +1012,9 @@ public sealed class Settings
         // 数値で書いた config.json の、今は無い番号 (消した IME 自動切替・両方を判定) は初期値にする
         if (!Enum.IsDefined(Mode)) Mode = InputMode.Tsf;
         if (!Enum.IsDefined(InputStyle)) InputStyle = InputStyle.Romaji;
+        if (!Enum.IsDefined(GalmojiSplitPolicy)) GalmojiSplitPolicy = GalmojiSplitPolicy.Balanced;
+        GalmojiDictionary ??= [];
+        GalmojiMaxDepth = Math.Clamp(GalmojiMaxDepth, 0, 8);
         AppRules ??= [];
         AppKinds ??= [];
         AppRules.RemoveAll(r => r is null || string.IsNullOrWhiteSpace(r.Process));
