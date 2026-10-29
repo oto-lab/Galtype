@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-3.0-or-later
+﻿# SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Yukishiro
 
 # -FromSettings: Windows の「設定 → アプリ」から実行したとき (画面が無いので、結果をメッセージボックスで知らせる)

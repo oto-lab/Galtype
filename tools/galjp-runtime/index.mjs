@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 otoneko.
+
 import readline from "node:readline";
 import { galjp } from "galjp";
 

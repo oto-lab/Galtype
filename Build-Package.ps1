@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-3.0-or-later
+﻿# SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Yukishiro
 
 # -Version を付けると、公開するリリースの名前 (dist\Galtype-<版>-windows.zip) にする (GitHub Actions がタグから付ける)。

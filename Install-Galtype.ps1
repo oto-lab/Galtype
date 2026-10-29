@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-3.0-or-later
+﻿# SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Yukishiro
 
 # -NoIme: Meltype IME を入れない (変換ボックスで入力する方式だけ。管理者権限が要らない)
