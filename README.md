@@ -36,7 +36,7 @@ Galjp の設定は変更できます。入力中の表示と確定結果には�
 - 旧字体、単体漢字の装飾、最大分解深度、シードの変更
 - URL と絵文字の保護
 - リテラル辞書置換
-- Windows / macOS / Linux の入力経路
+- Windows の変換ボックスと IME による入力経路
 
 Galtype の変換を OFF にすると、Meltype に近い通常の出力で入力できます。
 
@@ -44,13 +44,17 @@ Galtype の変換を OFF にすると、Meltype に近い通常の出力で入�
 
 Galtype は本家 Meltype と別のソフトとして配布します。設定・ログ・学習データ・入力方式登録・インストール先・更新先を共有しない方針です。両方を同じ PC に入れて使えることをリリース条件にします。
 
+## 対応 OS
+
+v0.1.0 は Windows のみを対象にします。macOS / Linux の実装は将来の対応候補として残しますが、この版のビルド・検証・配布には含めません。
+
 ## インストール
 
-v1.0.0 の配布準備中です。公開後は [Releases](https://github.com/oto-lab/Galtype/releases) から利用する OS の配布物を選んでください。開発版を試す場合は、[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) を確認してください。
+v0.1.0 の配布準備中です。公開後は [Releases](https://github.com/oto-lab/Galtype/releases) から利用する OS の配布物を選んでください。開発版を試す場合は、[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) を確認してください。
 
 初回起動時は Galmoji が ON です。設定画面から OFF に戻せます。
 
-Galjp の変換器は常駐プロセスとして起動します。各 OS の配布物には Node.js 本体と `galjp-runtime`、必要な npm パッケージを同梱します。利用者側で Node.js を追加する必要はありません。開発時は Node.js 24 と npm を使います。Node.js または Galjp が利用できない場合も入力自体は止めず、理由をログに残して Galmoji 部分だけを無効にします。
+Galjp の変換器は常駐プロセスとして起動します。Windows の配布物には Node.js 本体と `galjp-runtime`、必要な npm パッケージを同梱します。利用者側で Node.js を追加する必要はありません。開発時は Node.js 24 と npm を使います。Node.js または Galjp が利用できない場合も入力自体は止めず、理由をログに残して Galmoji 部分だけを無効にします。
 
 ## ライセンスと権利表記
 

@@ -432,4 +432,4 @@ UT 辞書を有効にしてビルドしたバイナリは、**あなた自身の
 
 ## Node.js
 
-Galtype の各 OS の配布物は Node.js を同梱します。Node.js とその同梱依存のライセンスは、配布物の `galjp-runtime/NODE-LICENSE.txt` にある公式の LICENSE 全文を参照してください。Windows は `app/galjp-runtime`、macOS は `Galtype.app/Contents/MacOS/galjp-runtime`、Linux は `galjp-runtime` に置きます。
+Galtype の Windows 配布物は Node.js を同梱します。Node.js とその同梱依存のライセンスは `app/galjp-runtime/NODE-LICENSE.txt` にある公式の LICENSE 全文を参照してください。

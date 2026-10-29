@@ -191,7 +191,9 @@ public sealed class MeltypeSession
     {
         Directory.CreateDirectory(dataDirectory);
         // 設定は入力欄を作るたびに読み直す (設定の変更は、次に開いた入力欄から効く)。
-        var settings = Settings.Load(Path.Combine(dataDirectory, "config.json"));
+        var configPath = Path.Combine(dataDirectory, "config.json");
+        var settings = Settings.Load(configPath);
+        if (!File.Exists(configPath)) settings.Save(configPath);
         // 設定で「ファイルにログを書く」を ON にしていれば、Mac でも galtype.log に書く (動かないときの調査用)。
         Diagnostics.Log.SetFileOutput(settings.FileLog ? Path.Combine(dataDirectory, "galtype.log") : null);
         Diagnostics.Log.RecordText = settings.LogTypedText;

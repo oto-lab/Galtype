@@ -17,11 +17,11 @@ namespace Meltype;
 internal static class Startup
 {
     private const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
-    private const string ValueName = "Meltype";
+    private const string ValueName = "Galtype";
     /// <summary>タスク スケジューラのタスクの名前 (アンインストールで消す: uninstall.ps1・Meltype.iss と合わせる)。</summary>
-    internal const string TaskName = "Meltype";
+    internal const string TaskName = "Galtype";
 
-    private static string Shortcut => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Meltype.lnk");
+    private static string Shortcut => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Galtype.lnk");
 
     /// <summary>
     /// 登録してあるか。調べるには schtasks.exe を起動して待つので、トレイのメニューを開くたびには調べない。
@@ -98,7 +98,7 @@ internal static class Startup
     /// <summary>このユーザーのログオン時に、遅らせずに exe を起動するタスクを作る (同じ名前があれば置き換える)。</summary>
     private static bool CreateTask(string exe)
     {
-        var xmlPath = Path.Combine(Path.GetTempPath(), $"meltype-startup-{Environment.ProcessId}.xml");
+        var xmlPath = Path.Combine(Path.GetTempPath(), $"galtype-startup-{Environment.ProcessId}.xml");
         try
         {
             File.WriteAllText(xmlPath, TaskXml(WindowsIdentity.GetCurrent().Name, exe), System.Text.Encoding.Unicode);

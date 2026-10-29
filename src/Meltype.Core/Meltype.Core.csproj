@@ -9,9 +9,9 @@
     <Nullable>enable</Nullable>
     <AssemblyName>Meltype.Core</AssemblyName>
     <RootNamespace>Meltype</RootNamespace>
-    <Version>1.0.0</Version>
-    <Product>Meltype</Product>
-    <Authors>Yukishiro</Authors>
+    <Version>0.1.0</Version>
+    <Product>Galtype</Product>
+    <Authors>otoneko.;Yukishiro</Authors>
     <Copyright>Copyright (C) 2026 雪代 / Yukishiro. GPL-3.0-or-later</Copyright>
   </PropertyGroup>
   <ItemGroup>

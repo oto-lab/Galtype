@@ -22,8 +22,8 @@ public static class ProjectInfo
     public static string CoreVersion =>
         typeof(ProjectInfo).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0] ?? "?";
 
-    /// <summary>公開した版 (1.0.0 以降) か。それまではリポジトリが非公開なので、GitHub で報告する道は出さない。</summary>
-    public static bool IsPublicRelease(string version) => Version.TryParse(version, out var parsed) && parsed.Major >= 1;
+    /// <summary>Whether this is a public Galtype release (0.1.0 or later).</summary>
+    public static bool IsPublicRelease(string version) => Version.TryParse(version, out var parsed) && parsed >= new Version(0, 1, 0);
 
     /// <summary>その版のリリースのページ (リリースノート)。</summary>
     public static string ReleaseUrl(string version) => $"{SourceUrl}/releases/tag/v{Uri.EscapeDataString(version)}";

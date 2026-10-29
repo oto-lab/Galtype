@@ -10,7 +10,7 @@ internal static class AppInfo
 {
     public const string SourceUrl = Config.ProjectInfo.SourceUrl;
 
-    /// <summary>公開した版 (1.0.0 以降) か。それまではリポジトリが非公開なので、GitHub で報告する道は出さない。</summary>
+    /// <summary>公開した版 (0.1.0 以降) か。</summary>
     public static bool IsPublicRelease => Config.ProjectInfo.IsPublicRelease(Version);
 
     /// <summary>GitHub の Issue の作成画面を、OS・版・実行環境を入れた状態で開く URL (template は 1-bug.yml など)。</summary>

@@ -2,7 +2,7 @@ name: build
 
 on:
   push:
-    branches: ['**']
+    branches: [main]
     tags: ['v*']
     paths:
       - 'src/**'
@@ -15,10 +15,8 @@ on:
       - 'packaging/**'
       - 'Casks/**'
       - 'docs/**'
-      - '.github/workflows/mac.yml'
-      - '.github/workflows/linux.yml'
       - '.github/workflows/build.yml'
-  # test・core は main の必須チェック。paths で絞ると、当たらない Pull Request で報告されずマージできなくなる。
+  # Every pull request runs the Windows tests, including the shared Core tests.
   pull_request:
   workflow_dispatch:
 
@@ -46,6 +44,8 @@ jobs:
       - name: Install Galjp runtime
         run: npm ci --omit=dev
         working-directory: tools/galjp-runtime
+      - name: Fork identity and installation boundaries
+        run: node --test tools/fork-identity.test.mjs
       - name: Build
         run: dotnet build Meltype.sln -c Release
 
@@ -96,35 +96,6 @@ jobs:
           Set-Content -LiteralPath (Join-Path $stage 'app\tip\Register-Tip.ps1') -Value '# dummy'
           & $iscc /Q "/DAppVersion=0.0.0-check-ime" "/DSourceDir=$stage" "/DOutputDir=$env:RUNNER_TEMP" packaging\Galtype.iss
           if ($LASTEXITCODE -ne 0) { throw "IME 同梱のインストーラーを Inno Setup で通せませんでした (exit code $LASTEXITCODE)。" }
-
-  # OS に依存しない部分 (Meltype.Core) を Linux と Mac でもテストする (Mac 版・Linux 版の土台)。
-  core:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
-        with:
-          dotnet-version: 10.0.x
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: tools/galjp-runtime/package-lock.json
-      - name: Install Galjp runtime
-        run: npm ci --omit=dev
-        working-directory: tools/galjp-runtime
-      - name: Test
-        run: dotnet run --project src/Meltype.Core.Tests/Meltype.Core.Tests.csproj -c Release
-      - name: Linux Unicode key mapping (without IBus)
-        run: python3 linux/tests/test_virtual_key.py
-      # Mozc-UT の辞書の統合 (native/mozc/merge-ut-dictionary.py)。本物の Mozc も辞書も要らない。
-      - name: Test Mozc-UT dictionary merge
-        run: python3 native/mozc/tests/test_merge_ut_dictionary.py
 
   # Mozc の変換ヘルパー (native/mozc) をビルドする。初回は 30〜40 分かかるので、配布用の zip を作るとき
   # (タグ・手動実行) と、ヘルパーのソースを変えたときだけ。Bazel の結果はキャッシュして次から速くする。

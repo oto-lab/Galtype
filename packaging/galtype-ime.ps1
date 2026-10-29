@@ -8,7 +8,7 @@
 # IME の登録は PC 全体の設定なので、ここだけ管理者権限を求める (UAC の確認が出る)。
 # 「言語と地域」のキーボードの一覧に足すのは、ふつうの権限で (今のユーザーの設定なので)。
 
-$GaltypeImeTip = '0411:{417D801B-A9BD-4C26-BD16-356A825A6998}{21F643F4-72D5-4946-BF70-0A126AB52D05}'
+$GaltypeImeTip = '0411:{CB3A7F51-C145-492F-AA7B-FED5330A7DB5}{B52F0FDF-86A6-4EEB-83E9-EEE13706A2D7}'
 
 # 64 ビットの Program Files (32 ビットの PowerShell から動かしても、64 ビットの方を使う)。
 # 管理者として動かす Register-Tip.ps1 は、32 ビットの PowerShell で動いても 64 ビットの場所と regsvr32 を使う。
@@ -23,14 +23,14 @@ function Test-Arm64Windows {
 }
 
 function Test-GaltypeImeRegistered {
-    return Test-Path -LiteralPath 'HKLM:\SOFTWARE\Microsoft\CTF\TIP\{417D801B-A9BD-4C26-BD16-356A825A6998}'
+    return Test-Path -LiteralPath 'HKLM:\SOFTWARE\Microsoft\CTF\TIP\{CB3A7F51-C145-492F-AA7B-FED5330A7DB5}'
 }
 
 # DLL の登録 (InprocServer32) が 64 ビット・32 ビットの両方にあり、その DLL があるか。
 # TIP のキーだけ残り、これが無いことがある (セキュリティソフトが登録を途中で止めたとき)
 function Test-GaltypeImeServer {
     foreach ($view in [Microsoft.Win32.RegistryView]::Registry64, [Microsoft.Win32.RegistryView]::Registry32) {
-        $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, $view).OpenSubKey('SOFTWARE\Classes\CLSID\{417D801B-A9BD-4C26-BD16-356A825A6998}\InprocServer32')
+        $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, $view).OpenSubKey('SOFTWARE\Classes\CLSID\{CB3A7F51-C145-492F-AA7B-FED5330A7DB5}\InprocServer32')
         if (-not $key) { return $false }
         try { $dll = $key.GetValue('') }
         finally { $key.Dispose() }
@@ -121,7 +121,7 @@ function Add-GaltypeImeToLanguageList {
 function Remove-GaltypeImeFromLanguageList {
     # 既定の入力方式が Galtype のままなら、決めていない状態に戻す
     $override = Get-WinDefaultInputMethodOverride -ErrorAction SilentlyContinue
-    if ("$($override | Out-String)" -match '417D801B-A9BD-4C26-BD16-356A825A6998') { Set-WinDefaultInputMethodOverride }
+    if ("$($override | Out-String)" -match 'CB3A7F51-C145-492F-AA7B-FED5330A7DB5') { Set-WinDefaultInputMethodOverride }
     $list = Get-WinUserLanguageList
     $changed = $false
     foreach ($language in $list) {

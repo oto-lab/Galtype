@@ -1,38 +1,37 @@
 # Galtype のリリース
 
-## v1.0.0 の準備
+## v0.1.0 の対象
 
-版番号は次のファイルでそろえます。ソースのプロジェクト名と C ABI の `meltype_*` は、内部の互換性のため維持しています。
+初回リリースは Windows のみです。macOS / Linux の実装は将来用に残しますが、ビルド、動作確認、パッケージの公開は今回の対象にしません。
 
-- `src/Meltype/Meltype.csproj`
-- `src/Meltype.Core/Meltype.Core.csproj`
-- `mac/Resources/Info.plist`
-- `linux/galtype.xml`
+版番号は `src/Meltype/Meltype.csproj` と `src/Meltype.Core/Meltype.Core.csproj` でそろえます。ソースのプロジェクト名と C ABI の `meltype_*` は内部名として維持します。
 
-`docs/release-notes/1.0.0.md` は Windows アプリ内で表示するリリースノートでもあります。タグを付ける前に本文を確認してください。
+`docs/release-notes/0.1.0.md` は Windows アプリ内で表示するリリースノートでもあります。
 
 ## 公開前の確認
 
-Pull Request の build、linux、mac、ime-tests、quality、pr-checks、CodeQL の結果を確認します。手動実行では Windows の通常版とポータブル版、インストーラー、macOS の zip、Linux の zip と deb と rpm を作れます。タグを作る前に、同じコミットの成果物を確認してください。
+PR の Windows build、インストーラー、quality、pr-checks、CodeQL を確認します。共通コアのテストは Windows テストに含まれます。
 
-- Node.js を PATH から外した環境で起動し、ギャル文字へ変換できる。
-- `gakkou` を入力して、入力中と Enter で確定した文字が一致する。
+- Node.js を PATH から外しても、同梱した `node.exe` でギャル文字へ変換できる。
+- `gakkou` の入力中と Enter で確定した文字が一致する。
 - ギャル文字変換を OFF にすると通常の日本語を入力できる。
-- Meltype と Galtype を同じ端末に入れ、一方の更新とアンインストールで他方のプロセス、設定、入力方式登録が変わらない。
-- 各 OS の配布物に Node.js、Galjp、依存パッケージ、ライセンス通知が入っている。
+- Meltype と Galtype を同じ PC に入れ、一方の更新とアンインストールで他方のプロセス、設定、IME 登録が変わらない。
+- 通常版、ポータブル版、インストーラーに Node.js、Galjp、依存パッケージ、ライセンス通知が入っている。
 
-OS の実入力や共存をまだ確認していない項目は、確認済みとして扱わないでください。
+実際の入力欄での操作や共存をまだ確かめていない項目は、確認済みとして扱わないでください。
 
-## タグと配布物
+## 配布物を作る
 
-レビュー後に main へ取り込み、公開するコミットへ `v1.0.0` タグを付けます。タグの push で Windows、macOS、Linux の workflow が配布物を作り、GitHub Release に添付します。タグの作成とリリース公開は別途、明示的に判断してください。
+Actions の build を対象ブランチで手動実行すると、Mozc をビルドしたあとに次の成果物を作ります。タグや公開済みリリースは不要です。
 
-Windows のパッケージは Node.js の Windows x64 版を、macOS と Linux はビルドした OS と CPU に対応する Node.js を同梱します。ビルドには Node.js と npm が必要ですが、利用者側での追加インストールは不要です。
+- `Galtype-<version>-windows.zip`
+- `Galtype-<version>-windows-portable.zip`
+- `Galtype-<version>-setup.exe`
 
-署名鍵が未設定なら Windows のコード署名、macOS の配布署名と公証は行いません。Linux の apt と dnf リポジトリ公開にも署名鍵と Pages の設定が必要です。秘密を設定せず、CI を通すためだけに検査を外さないでください。
+手動ビルドは日時を含むテスト版の名前になります。Windows の配布物は Defender 検査に通ってからアップロードします。署名鍵がなければコード署名は行いません。
+
+レビュー後に main へ取り込み、公開するコミットへ `v0.1.0` タグを付けると、同じ workflow がリリースへ配布物を添付します。マージ、タグ作成、リリース公開は別途判断してください。
 
 ## パッケージマネージャー
 
-`tools/make-manifests.mjs` は Galtype の成果物から Scoop、winget、Homebrew の定義を生成します。公開済みファイルの SHA-256 を使い、存在しない配布物や本家 Meltype のハッシュを使い回しません。
-
-Homebrew の定義は mac workflow の成果物から確認して、初回リリース後に tap へ追加します。winget の識別子は `otolab.Galtype` です。初回の登録が完了するまでは `WINGET_TOKEN` を設定しません。
+Scoop / winget の定義は `tools/make-manifests.mjs` で、公開する Windows 配布物の SHA-256 を使って生成します。本家の配布物やハッシュは使いません。winget の識別子は `otolab.Galtype` です。初回登録が完了するまでは `WINGET_TOKEN` を設定しません。

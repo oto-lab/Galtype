@@ -88,7 +88,7 @@ try {
     }
     if ($Unregister) {
         # DLL が無くて regsvr32 で外せなかったときのために、登録をレジストリから直接消す (有っても消してよい。64 ビットと 32 ビットの両方の場所)
-        $clsid = '{417D801B-A9BD-4C26-BD16-356A825A6998}'
+        $clsid = '{CB3A7F51-C145-492F-AA7B-FED5330A7DB5}'
         foreach ($view in [Microsoft.Win32.RegistryView]::Registry64, [Microsoft.Win32.RegistryView]::Registry32) {
             $machine = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, $view)
             try {

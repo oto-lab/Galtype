@@ -1,5 +1,7 @@
 # AGENTS.md
 
+v0.1.0 のリリース対象は Windows のみです。macOS / Linux のコードは将来用に残しています。明示的に頼まれるまでは、それらのビルドや配布を今回の必須作業に含めません。
+
 AI エージェント (Claude Code・Codex など) が Galtype で作業するときの決まりです。
 詳しい開発の手順は [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)、貢献の決まりは [CONTRIBUTING.md](CONTRIBUTING.md) にあります。
 

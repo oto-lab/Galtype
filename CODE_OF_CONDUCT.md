@@ -2,8 +2,8 @@
 <img src="docs/images/headings/code-of-conduct/title.svg" alt="行動規範" height="80">
 
 
-Meltype は、日本語と英語を混ぜて打つ人のための道具です。使う人・報告する人・直す人の誰もが、安心して参加できる場にしたいと考えています。
-この行動規範は、Meltype に関わるすべての場所 (GitHub の Issue・Pull Request・Discussions、テスターの Discord サーバー、不具合の報告フォーム、Meltype を代表して参加する場) に当てはまります。
+Galtype は、日本語と英語を混ぜて打つ人のための道具です。使う人・報告する人・直す人の誰もが、安心して参加できる場にしたいと考えています。
+この行動規範は、Galtype に関わるすべての場所 (GitHub の Issue・Pull Request・Discussions、テスターの Discord サーバー、不具合の報告フォーム、Galtype を代表して参加する場) に当てはまります。
 
 <br>
 
@@ -30,7 +30,7 @@ Meltype は、日本語と英語を混ぜて打つ人のための道具です。
 - 本人の許可なく、住所・メールアドレス・本名など個人を特定できる情報を公開すること
 - 報告や議論を荒らす・わざと妨害する行為
 - 変換のテスト (jht・ht など) やログを使って、ほかの人の打った文章をさらすこと
-- そのほか、Meltype に関わる場にふさわしくないと常識的に考えられる行為
+- そのほか、Galtype に関わる場にふさわしくないと常識的に考えられる行為
 
 <br>
 
@@ -44,7 +44,7 @@ Meltype は、日本語と英語を混ぜて打つ人のための道具です。
 1. **注意**: 何が問題だったかを、本人に (できるだけ非公開で) 伝えます
 2. **警告**: 続けた場合の対応を伝えます。一定の期間、関わる相手とのやりとりを控えてもらうことがあります
 3. **一時的な参加停止**: 一定の期間、Issue・Pull Request・Discord などへの参加を止めます
-4. **参加の禁止**: 繰り返す場合や、悪質な場合は、Meltype のすべての場への参加を禁止します
+4. **参加の禁止**: 繰り返す場合や、悪質な場合は、Galtype のすべての場への参加を禁止します
 
 <br>
 
@@ -54,7 +54,7 @@ Meltype は、日本語と英語を混ぜて打つ人のための道具です。
 
 行動規範に沿わない行為を見かけたり、受けたりしたときは、作者に知らせてください。
 
-- メール: ibutya0319@gmail.com (件名に「Meltype 行動規範」と入れてください)
+- [Galtype の管理者](https://github.com/oto-lab) に連絡してください。本家 Meltype の作者の連絡先は Galtype の報告窓口ではありません。
 - Discord サーバーでは、管理者に直接メッセージを送ってもかまいません
 
 報告した人の名前や内容は、本人の同意なく公開しません。報告したことを理由に、報告した人が不利な扱いを受けることはありません。
@@ -66,4 +66,4 @@ Meltype は、日本語と英語を混ぜて打つ人のための道具です。
 <img src="docs/images/headings/code-of-conduct/05.svg" alt="由来" height="53"><br>
 
 
-この行動規範は [Contributor Covenant](https://www.contributor-covenant.org/) 2.1 (CC BY 4.0) を参考に、Meltype に合わせて日本語で書いたものです。
+この行動規範は [Contributor Covenant](https://www.contributor-covenant.org/) 2.1 (CC BY 4.0) を参考に、Galtype に合わせて日本語で書いたものです。

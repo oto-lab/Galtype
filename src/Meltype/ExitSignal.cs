@@ -12,9 +12,9 @@ namespace Meltype;
 /// </summary>
 internal sealed class ExitSignal : NativeWindow, IDisposable
 {
-    private const string Caption = "Meltype.ExitSignal";
+    private const string Caption = "Galtype.ExitSignal";
     private const uint MSGFLT_ALLOW = 1;
-    private static readonly uint ExitMessage = RegisterWindowMessage("Meltype.Exit");
+    private static readonly uint ExitMessage = RegisterWindowMessage("Galtype.Exit");
 
     public ExitSignal()
     {
