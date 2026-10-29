@@ -22,8 +22,8 @@ Usage: mac/build-cli.sh [options]
 Options:
   --setup       Install .NET 10 SDK into ~/.dotnet if dotnet is missing.
   --test        Run Meltype.Core.Tests and the Mac shortcut tests.
-  --build       Build mac/build/Meltype.app without installing it.
-  --install     Build and install Meltype.app into ~/Library/Input Methods.
+  --build       Build mac/build/Galtype.app without installing it.
+  --install     Build and install Galtype.app into ~/Library/Input Methods.
   --all         Run --test --install. This is the default.
   -h, --help    Show this help.
 

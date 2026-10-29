@@ -123,7 +123,7 @@ internal static class ProtectionTests
 
     private static SessionResult TypeOne(MeltypeSession session, char c)
     {
-        // Linux ラッパー (ibus-engine-meltype) と同じく、英字は A-Z の仮想キー、他の文字は他文字キー (7)。
+        // Linux ラッパー (ibus-engine-galtype) と同じく、英字は A-Z の仮想キー、他の文字は他文字キー (7)。
         var vk = c switch
         {
             ' ' => VirtualKeys.Space,

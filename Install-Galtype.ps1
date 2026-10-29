@@ -1,4 +1,4 @@
-﻿# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Yukishiro
 
 # -NoIme: Meltype IME を入れない (変換ボックスで入力する方式だけ。管理者権限が要らない)
@@ -6,8 +6,8 @@ param([switch]$NoIme)
 
 $ErrorActionPreference = 'Stop'
 
-# Meltype はタスクトレイに常駐するプロセス (Meltype.exe) と、Windows の IME として入力欄に直接入力する
-# Meltype IME (native\tip の TSF の DLL。入力の本体は Meltype.exe に問い合わせる) でできている。
+# Meltype はタスクトレイに常駐するプロセス (Galtype.exe) と、Windows の IME として入力欄に直接入力する
+# Meltype IME (native\tip の TSF の DLL。入力の本体は Galtype.exe に問い合わせる) でできている。
 $project = Join-Path $PSScriptRoot 'src\Meltype\Meltype.csproj'
 $output = Join-Path $PSScriptRoot 'app-build'
 
@@ -16,7 +16,7 @@ Get-Process AutoIME -ErrorAction SilentlyContinue | Stop-Process -Force
 $oldShortcut = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs\Startup\AutoIME.lnk'
 if (Test-Path -LiteralPath $oldShortcut) { Remove-Item -LiteralPath $oldShortcut -Force }
 # 強制終了の前に終了の合図を送り、まだ書いていない学習データを書かせる
-$running = Join-Path $PSScriptRoot 'app-build\Meltype.exe'
+$running = Join-Path $PSScriptRoot 'app-build\Galtype.exe'
 if (Test-Path -LiteralPath $running) { Start-Process -FilePath $running -ArgumentList '--exit' -Wait -ErrorAction SilentlyContinue }
 Get-Process Meltype, meltype_mozc_helper -ErrorAction SilentlyContinue | Stop-Process -Force
 
@@ -30,8 +30,8 @@ if (Test-Path -LiteralPath (Join-Path $mozcBin 'meltype_mozc_helper.exe')) {
     Copy-Item -Path (Join-Path $mozcBin '*') -Destination (Join-Path $output 'mozc') -Force
 }
 
-$exe = Join-Path $output 'Meltype.exe'
-if (-not (Test-Path -LiteralPath $exe)) { throw "Meltype.exe が作成されませんでした: $exe" }
+$exe = Join-Path $output 'Galtype.exe'
+if (-not (Test-Path -LiteralPath $exe)) { throw "Galtype.exe が作成されませんでした: $exe" }
 
 if (-not $NoIme) {
     try {
@@ -39,12 +39,12 @@ if (-not $NoIme) {
         $tip = Join-Path $output 'tip'
         foreach ($arch in 'x64', 'x86') {
             New-Item -ItemType Directory -Force -Path (Join-Path $tip $arch) | Out-Null
-            Copy-Item -LiteralPath (Join-Path $PSScriptRoot "native\tip\bin\$arch\MeltypeTip.dll"), (Join-Path $PSScriptRoot "native\tip\bin\$arch\MeltypeTip.dll.sha256") -Destination (Join-Path $tip $arch) -Force
+            Copy-Item -LiteralPath (Join-Path $PSScriptRoot "native\tip\bin\$arch\GaltypeTip.dll"), (Join-Path $PSScriptRoot "native\tip\bin\$arch\GaltypeTip.dll.sha256") -Destination (Join-Path $tip $arch) -Force
         }
         Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'native\tip\Register-Tip.ps1') -Destination $tip -Force
-        . (Join-Path $PSScriptRoot 'packaging\meltype-ime.ps1')
+        . (Join-Path $PSScriptRoot 'packaging\galtype-ime.ps1')
         # 自分で実行したときなので、前に登録を断っていても、もう一度聞く
-        Install-MeltypeIme -Source $tip -Ask | Out-Null
+        Install-GaltypeIme -Source $tip -Ask | Out-Null
     }
     catch {
         # C++ のビルドツールが無いなど。Meltype 本体 (変換ボックスで入力する方式) は入れる

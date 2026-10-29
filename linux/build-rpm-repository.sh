@@ -20,7 +20,7 @@ declare -A architectures=()
 rpm_root="$site_root/rpm"
 packages="$rpm_root/packages"
 mkdir -p "$packages"
-find "$packages" -maxdepth 1 -type f -name 'meltype-*.rpm' -delete
+find "$packages" -maxdepth 1 -type f -name 'galtype-*.rpm' -delete
 
 for rpm in "${rpms[@]}"; do
   if [[ ! -f "$rpm" ]]; then
@@ -29,8 +29,8 @@ for rpm in "${rpms[@]}"; do
   fi
   name="$(rpm -qp --queryformat '%{NAME}' "$rpm")"
   architecture="$(rpm -qp --queryformat '%{ARCH}' "$rpm")"
-  if [[ "$name" != meltype || ( "$architecture" != x86_64 && "$architecture" != aarch64 ) ]]; then
-    echo "Error: expected a Meltype x86_64 or aarch64 package; got $name ($architecture)." >&2
+  if [[ "$name" != galtype || ( "$architecture" != x86_64 && "$architecture" != aarch64 ) ]]; then
+    echo "Error: expected a Galtype x86_64 or aarch64 package; got $name ($architecture)." >&2
     exit 1
   fi
   if [[ -n "${architectures[$architecture]:-}" ]]; then
@@ -43,7 +43,7 @@ done
 
 for architecture in x86_64 aarch64; do
   if [[ -z "${architectures[$architecture]:-}" ]]; then
-    echo "Error: missing Meltype .rpm for architecture $architecture." >&2
+    echo "Error: missing Galtype .rpm for architecture $architecture." >&2
     exit 1
   fi
 done
@@ -64,7 +64,7 @@ if [[ -z "$fingerprint" ]]; then
   echo "Error: no private signing key was found in APT_SIGNING_KEY_B64." >&2
   exit 1
 fi
-gpg --batch --armor --export "$fingerprint" > "$rpm_root/meltype-archive-key.asc"
+gpg --batch --armor --export "$fingerprint" > "$rpm_root/galtype-archive-key.asc"
 
 # rpmsign runs gpg itself; pass the passphrase through a file because it cannot prompt in CI.
 # Ubuntu's rpm sets %__gpg to /usr/bin/gpg2, which does not exist there.
@@ -74,22 +74,22 @@ rpmsign --addsign \
   --define "__gpg $(command -v gpg)" \
   --define "_gpg_name $fingerprint" \
   --define "_gpg_sign_cmd_extra_args --batch --pinentry-mode loopback --passphrase-file $passphrase_file" \
-  "$packages"/meltype-*.rpm
+  "$packages"/galtype-*.rpm
 
 createrepo_c "$rpm_root"
 gpg --batch --yes --pinentry-mode loopback \
   --passphrase "${APT_SIGNING_KEY_PASSPHRASE:-}" --local-user "$fingerprint" \
   --armor --detach-sign --output "$rpm_root/repodata/repomd.xml.asc" "$rpm_root/repodata/repomd.xml"
 
-# Users add the repository with: sudo dnf config-manager addrepo --from-repofile=<site>/rpm/meltype.repo
-cat > "$rpm_root/meltype.repo" << 'EOF'
-[meltype]
-name=Meltype
-baseurl=https://yksr-melt.github.io/Meltype/rpm
+# Users add the repository with: sudo dnf config-manager addrepo --from-repofile=<site>/rpm/galtype.repo
+cat > "$rpm_root/galtype.repo" << 'EOF'
+[galtype]
+name=Galtype
+baseurl=https://oto-lab.github.io/Galtype/rpm
 enabled=1
 gpgcheck=1
 repo_gpgcheck=1
-gpgkey=https://yksr-melt.github.io/Meltype/rpm/meltype-archive-key.asc
+gpgkey=https://oto-lab.github.io/Galtype/rpm/galtype-archive-key.asc
 EOF
 
 echo "Signed dnf repository created at $rpm_root"

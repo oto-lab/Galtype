@@ -60,7 +60,7 @@ jobs:
           persist-credentials: false
       # IBus のエンジン (Python) の書き間違いを、時間のかかるビルドの前に見つける
       - name: Check Python
-        run: python3 -c "import ast; ast.parse(open('linux/ibus-engine-meltype', encoding='utf-8').read())"
+        run: python3 -c "import ast; ast.parse(open('linux/ibus-engine-galtype', encoding='utf-8').read())"
       - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           dotnet-version: 10.0.x
@@ -95,12 +95,12 @@ jobs:
       - name: Test fcitx5 addon
         run: |
           mkdir -p linux/build/fcitx5-native
-          cp linux/build/Meltype-linux/libMeltypeNative.so linux/build/fcitx5-native/
+          cp linux/build/Meltype-linux/libGaltypeNative.so linux/build/fcitx5-native/
           cmake -S linux/fcitx5 -B linux/build/fcitx5-test -DBUILD_TESTING=ON
           cmake --build linux/build/fcitx5-test
           HOME="$RUNNER_TEMP/fcitx5-home" MELTYPE_DIR="$PWD/linux/build/fcitx5-native" ctest --test-dir linux/build/fcitx5-test --output-on-failure
       - name: NativeAOT boundary tests
-        run: python3 tools/test-native-boundaries.py linux/build/Meltype-linux/libMeltypeNative.so
+        run: python3 tools/test-native-boundaries.py linux/build/Meltype-linux/libGaltypeNative.so
       - name: IBus and real Mozc integration tests
         run: timeout 120 python3 linux/tests/test_integration.py linux/build/Meltype-linux
       - name: Private IBus daemon tests
@@ -110,11 +110,11 @@ jobs:
           # タグ (v1.0.0) なら Meltype-1.0.0-linux.zip (arm64 は Meltype-1.0.0-linux-arm64.zip)、それ以外はテスト版の名前
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then name="Meltype-${GITHUB_REF_NAME#v}-${{ matrix.asset }}.zip"; else name="Meltype-${{ matrix.asset }}-test-$(date +%Y%m%d-%H%M).zip"; fi
           (cd linux/build && zip -qr "$name" Meltype-linux)
-      # apt で入れられる .deb (#863)。中身は install.sh が入れるものと同じ。タグなら版、それ以外は meltype.xml の版 + テスト版の印
+      # apt で入れられる .deb (#863)。中身は install.sh が入れるものと同じ。タグなら版、それ以外は galtype.xml の版 + テスト版の印
       - name: Package (.deb)
         run: |
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then version="${GITHUB_REF_NAME#v}"; else
-            version="$(sed -n 's|.*<version>\(.*\)</version>.*|\1|p' linux/meltype.xml | head -n 1)~test.$(date +%Y%m%d%H%M)"; fi
+            version="$(sed -n 's|.*<version>\(.*\)</version>.*|\1|p' linux/galtype.xml | head -n 1)~test.$(date +%Y%m%d%H%M)"; fi
           linux/build-deb.sh "$version" linux/build/Meltype-linux linux/build
           dpkg-deb --info linux/build/meltype_*.deb
           dpkg-deb --contents linux/build/meltype_*.deb
@@ -123,14 +123,14 @@ jobs:
       - name: Test .deb
         run: |
           sudo apt-get install -y ./linux/build/meltype_*.deb
-          test -x /opt/meltype/ibus-engine-meltype
+          test -x /opt/meltype/ibus-engine-galtype
           test -x /opt/meltype/mozc/meltype_mozc_helper
-          grep -q '<exec>/opt/meltype/ibus-engine-meltype --ibus</exec>' /usr/share/ibus/component/meltype.xml
+          grep -q '<exec>/opt/meltype/ibus-engine-galtype --ibus</exec>' /usr/share/ibus/component/galtype.xml
           test -f /usr/share/fcitx5/inputmethod/meltype.conf
           test -f "$(dirname "$(find /usr/lib -name libclassicui.so -path '*fcitx5*' | head -n 1)")/meltype.so"
           sudo apt-get remove -y meltype
-          test ! -e /opt/meltype/ibus-engine-meltype
-          test ! -e /usr/share/ibus/component/meltype.xml
+          test ! -e /opt/meltype/ibus-engine-galtype
+          test ! -e /usr/share/ibus/component/galtype.xml
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: meltype-${{ matrix.asset }}
@@ -181,7 +181,7 @@ jobs:
       - name: Test fcitx5 addon
         run: |
           mkdir -p linux/build/fcitx5-native
-          cp linux/build/Meltype-linux/libMeltypeNative.so linux/build/fcitx5-native/
+          cp linux/build/Meltype-linux/libGaltypeNative.so linux/build/fcitx5-native/
           cmake -S linux/fcitx5 -B linux/build/fcitx5-test -DBUILD_TESTING=ON
           cmake --build linux/build/fcitx5-test
           HOME="$RUNNER_TEMP/fcitx5-home" MELTYPE_DIR="$PWD/linux/build/fcitx5-native" ctest --test-dir linux/build/fcitx5-test --output-on-failure
@@ -191,7 +191,7 @@ jobs:
       - name: Package (.rpm)
         run: |
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then version="${GITHUB_REF_NAME#v}"; else
-            version="$(sed -n 's|.*<version>\(.*\)</version>.*|\1|p' linux/meltype.xml | head -n 1)~test.$(date +%Y%m%d%H%M)"; fi
+            version="$(sed -n 's|.*<version>\(.*\)</version>.*|\1|p' linux/galtype.xml | head -n 1)~test.$(date +%Y%m%d%H%M)"; fi
           linux/build-rpm.sh "$version" linux/build/Meltype-linux linux/build
           rpm -qpi linux/build/meltype-*.rpm
           rpm -qpR linux/build/meltype-*.rpm
@@ -200,15 +200,15 @@ jobs:
       - name: Test .rpm
         run: |
           dnf install -y ./linux/build/meltype-*.rpm
-          test -x /opt/meltype/ibus-engine-meltype
+          test -x /opt/meltype/ibus-engine-galtype
           test -x /opt/meltype/mozc/meltype_mozc_helper
-          grep -q '<exec>/opt/meltype/ibus-engine-meltype --ibus</exec>' /usr/share/ibus/component/meltype.xml
-          ibus read-cache --system | grep -q /opt/meltype/ibus-engine-meltype
+          grep -q '<exec>/opt/meltype/ibus-engine-galtype --ibus</exec>' /usr/share/ibus/component/galtype.xml
+          ibus read-cache --system | grep -q /opt/meltype/ibus-engine-galtype
           test -f /usr/share/fcitx5/inputmethod/meltype.conf
           test -f /usr/lib64/fcitx5/meltype.so
           dnf remove -y meltype
-          test ! -e /opt/meltype/ibus-engine-meltype
-          test ! -e /usr/share/ibus/component/meltype.xml
+          test ! -e /opt/meltype/ibus-engine-galtype
+          test ! -e /usr/share/ibus/component/galtype.xml
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: meltype-${{ matrix.asset }}-rpm

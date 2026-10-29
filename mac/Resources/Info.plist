@@ -5,15 +5,15 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>ja</string>
 	<key>CFBundleExecutable</key>
-	<string>Meltype</string>
+	<string>Galtype</string>
 	<key>CFBundleIdentifier</key>
-	<string>io.github.yksr-melt.inputmethod.Meltype</string>
+	<string>io.github.oto-lab.galtype</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Meltype</string>
+	<string>Galtype</string>
 	<key>CFBundleDisplayName</key>
-	<string>Meltype</string>
+	<string>Galtype</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -33,46 +33,46 @@
 	<array>
 		<dict>
 			<key>NSMenuItem</key>
-			<dict><key>default</key><string>Meltype：日本語・英語の自動判定</string></dict>
+			<dict><key>default</key><string>Galtype：日本語・英語の自動判定</string></dict>
 			<key>NSMessage</key><string>changeInputMode</string>
-			<key>NSPortName</key><string>MeltypeModeServices</string>
+			<key>NSPortName</key><string>GaltypeModeServices</string>
 			<key>NSUserData</key><string>automatic</string>
 			<key>NSRequiredContext</key><dict/>
 		</dict>
 		<dict>
 			<key>NSMenuItem</key>
-			<dict><key>default</key><string>Meltype：英数の直接入力</string></dict>
+			<dict><key>default</key><string>Galtype：英数の直接入力</string></dict>
 			<key>NSMessage</key><string>changeInputMode</string>
-			<key>NSPortName</key><string>MeltypeModeServices</string>
+			<key>NSPortName</key><string>GaltypeModeServices</string>
 			<key>NSUserData</key><string>direct</string>
 			<key>NSRequiredContext</key><dict/>
 		</dict>
 		<dict>
 			<key>NSMenuItem</key>
-			<dict><key>default</key><string>Meltype：コード入力 (コメント・文字列は日本語)</string></dict>
+			<dict><key>default</key><string>Galtype：コード入力 (コメント・文字列は日本語)</string></dict>
 			<key>NSMessage</key><string>changeInputMode</string>
-			<key>NSPortName</key><string>MeltypeModeServices</string>
+			<key>NSPortName</key><string>GaltypeModeServices</string>
 			<key>NSUserData</key><string>code</string>
 			<key>NSRequiredContext</key><dict/>
 		</dict>
 		<dict>
 			<key>NSMenuItem</key>
-			<dict><key>default</key><string>Meltype：次の入力モード</string></dict>
+			<dict><key>default</key><string>Galtype：次の入力モード</string></dict>
 			<key>NSMessage</key><string>changeInputMode</string>
-			<key>NSPortName</key><string>MeltypeModeServices</string>
+			<key>NSPortName</key><string>GaltypeModeServices</string>
 			<key>NSUserData</key><string>cycle</string>
 			<key>NSRequiredContext</key><dict/>
 		</dict>
 	</array>
 
 	<key>InputMethodConnectionName</key>
-	<string>io.github.yksr-melt.inputmethod.Meltype_Connection</string>
+	<string>io.github.oto-lab.galtype_Connection</string>
 	<key>InputMethodServerControllerClass</key>
-	<string>MeltypeInputController</string>
+	<string>GaltypeInputController</string>
 	<key>InputMethodServerDelegateClass</key>
-	<string>MeltypeInputController</string>
+	<string>GaltypeInputController</string>
 	<key>TISInputSourceID</key>
-	<string>io.github.yksr-melt.inputmethod.Meltype</string>
+	<string>io.github.oto-lab.galtype</string>
 	<key>TISIntendedLanguage</key>
 	<string>ja</string>
 	<key>tsInputMethodIconFileKey</key>
@@ -91,10 +91,10 @@
 	<dict>
 		<key>tsInputModeListKey</key>
 		<dict>
-			<key>io.github.yksr-melt.inputmethod.Meltype.Japanese</key>
+			<key>io.github.oto-lab.galtype.Japanese</key>
 			<dict>
 				<key>TISInputSourceID</key>
-				<string>io.github.yksr-melt.inputmethod.Meltype.Japanese</string>
+				<string>io.github.oto-lab.galtype.Japanese</string>
 				<key>TISIntendedLanguage</key>
 				<string>ja</string>
 				<key>tsInputModeScriptKey</key>
@@ -122,7 +122,7 @@
 		</dict>
 		<key>tsVisibleInputModeOrderedArrayKey</key>
 		<array>
-			<string>io.github.yksr-melt.inputmethod.Meltype.Japanese</string>
+			<string>io.github.oto-lab.galtype.Japanese</string>
 		</array>
 	</dict>
 </dict>

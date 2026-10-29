@@ -52,7 +52,7 @@ enum ModeShortcutAction: Int, CaseIterable {
         }
     }
 
-    var serviceTitle: String { "Meltype：" + title }
+    var serviceTitle: String { "Galtype：" + title }
 
     init?(serviceIdentifier: String) {
         guard let action = Self.allCases.first(where: { $0.serviceIdentifier == serviceIdentifier }) else { return nil }
@@ -94,7 +94,7 @@ final class ModeSelection {
         self.defaults = defaults
         defaults.register(defaults: [Self.storageKey: MacInputMode.automatic.rawValue])
         guard let value = defaults.string(forKey: Self.storageKey), let mode = MacInputMode(rawValue: value) else {
-            preconditionFailure("MacSelectedInputMode must be a valid Meltype input mode")
+            preconditionFailure("MacSelectedInputMode must be a valid Galtype input mode")
         }
         current = mode
     }

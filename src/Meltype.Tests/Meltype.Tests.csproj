@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!-- NuGet feeds are disabled in this repo (nuget.config), so tests use a tiny built-in runner instead of xUnit. -->
   <PropertyGroup>
+    <AssemblyName>Galtype.Tests</AssemblyName>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>

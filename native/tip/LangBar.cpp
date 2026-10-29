@@ -5,7 +5,7 @@
 
 #include "TextService.h"
 
-namespace meltype {
+namespace galtype {
 namespace {
 
 constexpr DWORD kSinkCookie = 0x4D454C54;  // 'MELT'
@@ -115,7 +115,7 @@ STDMETHODIMP LangBarButton::GetInfo(TF_LANGBARITEMINFO* info) {
     info->guidItem = GUID_LBI_INPUTMODE;
     info->dwStyle = TF_LBI_STYLE_BTN_BUTTON | TF_LBI_STYLE_SHOWNINTRAY;
     info->ulSort = 0;
-    wcscpy_s(info->szDescription, L"Meltype の入力モード");
+    wcscpy_s(info->szDescription, L"Galtype の入力モード");
     return S_OK;
 }
 
@@ -128,7 +128,7 @@ STDMETHODIMP LangBarButton::GetStatus(DWORD* status) {
 STDMETHODIMP LangBarButton::GetTooltipString(BSTR* tooltip) {
     if (tooltip == nullptr) return E_INVALIDARG;
     bool open = service_ == nullptr || service_->IsOpen();
-    *tooltip = SysAllocString(open ? L"Meltype: 日本語 (クリックで英数)" : L"Meltype: 英数 (クリックで日本語)");
+    *tooltip = SysAllocString(open ? L"Galtype: 日本語 (クリックで英数)" : L"Galtype: 英数 (クリックで日本語)");
     return *tooltip ? S_OK : E_OUTOFMEMORY;
 }
 
@@ -172,4 +172,4 @@ void LangBarButton::Update() {
     if (sink_ != nullptr) sink_->OnUpdate(TF_LBI_ICON | TF_LBI_TEXT | TF_LBI_TOOLTIP);
 }
 
-}  // namespace meltype
+}  // namespace galtype

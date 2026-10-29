@@ -10,7 +10,7 @@
 set -euo pipefail
 
 here="$(cd "$(dirname "$0")" && pwd)"
-app="$HOME/Library/Input Methods/Meltype.app"
+app="$HOME/Library/Input Methods/Galtype.app"
 
 case "${1:-}" in
     -h|--help)

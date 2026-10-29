@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 lnkiai
 //
-// Meltype.exe から返ってくる JSON を読むための小さなパーサー (外部のライブラリに頼らない)。
+// Galtype.exe から返ってくる JSON を読むための小さなパーサー (外部のライブラリに頼らない)。
 
 #pragma once
 
@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-namespace meltype {
+namespace galtype {
 
 struct JsonValue {
     enum class Type { Null, Bool, Number, String, Array, Object };
@@ -39,4 +39,4 @@ bool ParseJson(const std::string& text, JsonValue& out);
 // JSON の文字列にする ("…" を含む)。UTF-8 で返す。
 std::string JsonString(const std::wstring& text);
 
-}  // namespace meltype
+}  // namespace galtype

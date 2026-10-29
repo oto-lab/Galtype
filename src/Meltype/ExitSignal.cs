@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace Meltype;
 
 /// <summary>
-/// 動いている Meltype に「終了して」と伝える (Meltype.exe --exit)。インストール・アンインストールの前に使う。
+/// 動いている Meltype に「終了して」と伝える (Galtype.exe --exit)。インストール・アンインストールの前に使う。
 /// 管理者として動いている Meltype は、ふつうの権限のプロセスからは止められない (Stop-Process が拒否される) ので、
 /// 見えない窓で終了の合図を受け取り、ふつうの権限からの合図も受け付ける (ChangeWindowMessageFilterEx)。
 /// </summary>

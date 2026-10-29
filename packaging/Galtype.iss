@@ -3,7 +3,7 @@
 ;
 ; Meltype の Windows インストーラー (Inno Setup 6)。Build-Package.ps1 で作った dist\Meltype\app を、
 ; zip の Install.cmd (install.ps1) と同じ場所 (%LOCALAPPDATA%\Programs\Meltype) に入れる。管理者権限は不要。
-;   ISCC.exe /DAppVersion=1.2.2-pre.2 /DSourceDir=..\dist\Meltype /DOutputDir=..\dist packaging\Meltype.iss
+;   ISCC.exe /DAppVersion=1.2.2-pre.2 /DSourceDir=..\dist\Meltype /DOutputDir=..\dist packaging\Galtype.iss
 ; → dist\Meltype-1.2.2-pre.2-setup.exe
 
 #ifndef AppVersion
@@ -15,7 +15,7 @@
 #ifndef OutputDir
   #define OutputDir "..\dist"
 #endif
-#define HasMeltypeIme FileExists(SourceDir + "\app\meltype-ime.ps1") && DirExists(SourceDir + "\app\tip")
+#define HasMeltypeIme FileExists(SourceDir + "\app\galtype-ime.ps1") && DirExists(SourceDir + "\app\tip")
 
 [Setup]
 ; 「設定 → アプリ」の項目 (HKCU\...\Uninstall\Meltype_is1)
@@ -32,7 +32,7 @@ DefaultDirName={localappdata}\Programs\Meltype
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyPage=yes
-UninstallDisplayIcon={app}\Meltype.exe
+UninstallDisplayIcon={app}\Galtype.exe
 UninstallDisplayName=Meltype
 OutputDir={#OutputDir}
 OutputBaseFilename=Meltype-{#AppVersion}-setup
@@ -67,8 +67,8 @@ Source: "setup-ime.ps1"; DestDir: "{app}"; Flags: ignoreversion
 #endif
 
 [Icons]
-Name: "{userprograms}\Meltype"; Filename: "{app}\Meltype.exe"; WorkingDir: "{app}"; Comment: "Meltype: 日本語と英語を自動で打ち分ける"
-Name: "{userstartup}\Meltype"; Filename: "{app}\Meltype.exe"; WorkingDir: "{app}"; Comment: "Meltype: 日本語と英語を自動で打ち分ける"; Tasks: startup
+Name: "{userprograms}\Meltype"; Filename: "{app}\Galtype.exe"; WorkingDir: "{app}"; Comment: "Meltype: 日本語と英語を自動で打ち分ける"
+Name: "{userstartup}\Meltype"; Filename: "{app}\Galtype.exe"; WorkingDir: "{app}"; Comment: "Meltype: 日本語と英語を自動で打ち分ける"; Tasks: startup
 
 [Run]
 #if HasMeltypeIme
@@ -77,10 +77,10 @@ Name: "{userstartup}\Meltype"; Filename: "{app}\Meltype.exe"; WorkingDir: "{app}
 Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\setup-ime.ps1"" {code:ImeAskParameter}"; StatusMsg: "Meltype IME を登録しています..."; Flags: runhidden waituntilterminated runasoriginaluser skipifsilent
 #endif
 ; 管理者として実行していても、ふつうの権限で起動する (install.ps1 と同じ)
-Filename: "{app}\Meltype.exe"; Description: "Meltype を起動する"; Flags: nowait postinstall runasoriginaluser
+Filename: "{app}\Galtype.exe"; Description: "Meltype を起動する"; Flags: nowait postinstall runasoriginaluser
 
 [UninstallRun]
-Filename: "{app}\Meltype.exe"; Parameters: "--exit"; Flags: runhidden waituntilterminated skipifdoesntexist; RunOnceId: "ExitMeltype"
+Filename: "{app}\Galtype.exe"; Parameters: "--exit"; Flags: runhidden waituntilterminated skipifdoesntexist; RunOnceId: "ExitMeltype"
 ; サインインしたらすぐ起動するタスク (Meltype が作る: #283)
 Filename: "{sys}\schtasks.exe"; Parameters: "/Delete /TN Meltype /F"; Flags: runhidden waituntilterminated; RunOnceId: "DeleteStartupTask"
 
@@ -102,10 +102,10 @@ var
   ResultCode: Integer;
   Installed: String;
 begin
-  Installed := ExpandConstant('{localappdata}\Programs\Meltype\Meltype.exe');
+  Installed := ExpandConstant('{localappdata}\Programs\Meltype\Galtype.exe');
   if FileExists(Installed) then
     Exec(Installed, '--exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-  Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /IM Meltype.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /IM Galtype.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
   Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /IM meltype_mozc_helper.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
   Sleep(300);
 end;

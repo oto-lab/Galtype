@@ -8,7 +8,7 @@ namespace Meltype.Tests;
 
 /// <summary>
 /// 配布用パッケージの .NET ランタイムを小さくするための道具 (Build-Package.ps1 から呼ぶ)。
-/// app フォルダーの Meltype.dll から、実際に使う「型」をたどって、同梱したランタイム (app\dotnet\shared) のうち
+/// app フォルダーの Galtype.dll から、実際に使う「型」をたどって、同梱したランタイム (app\dotnet\shared) のうち
 /// 必要なアセンブリのファイル名を 1 行ずつ出す。
 ///
 /// アセンブリの参照 (AssemblyRef) を単純にたどると、互換用のまとめ部品 (mscorlib, netstandard) がランタイムの
@@ -79,7 +79,7 @@ internal static class RuntimeClosure
             Scan(assembly);
         }
 
-        var app = Open(Path.Combine(appDirectory, "Meltype.dll")) ?? throw new FileNotFoundException("Meltype.dll が見つかりません。");
+        var app = Open(Path.Combine(appDirectory, "Galtype.dll")) ?? throw new FileNotFoundException("Galtype.dll が見つかりません。");
         Scan(app);
         // OS に依存しない部分 (Meltype.Core.dll) が使う型もたどる。
         if (Open(Path.Combine(appDirectory, "Meltype.Core.dll")) is { } core) Scan(core);

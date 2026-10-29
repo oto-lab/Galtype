@@ -109,7 +109,7 @@ internal sealed class Updater : IDisposable
 
     /// <summary>
     /// 更新の前に「あなたの打ち方で変わる語」を調べる (issue #285)。自分で英字 / かなに直した語 (languages.json) を、
-    /// 今の版とダウンロードした新しい版 (Meltype.exe --judge-words) の両方で判定し、見え方が変わる語を返す。
+    /// 今の版とダウンロードした新しい版 (Galtype.exe --judge-words) の両方で判定し、見え方が変わる語を返す。
     /// 調べられなければ (新しい版がこの仕組みを持たない・時間切れ) null。この PC の中だけで動かし、何も送らない。
     /// </summary>
     public static IReadOnlyList<Composition.WordChange>? PreviewChanges(IEnumerable<string> words)
@@ -117,7 +117,7 @@ internal sealed class Updater : IDisposable
         if (Staged() is not { } staged) return null;
         var list = words.Where(Composition.WordJudge.IsWord).Distinct(StringComparer.Ordinal).ToList();
         if (list.Count == 0) return [];
-        var exe = Path.Combine(staged.Folder, "app", "Meltype.exe");
+        var exe = Path.Combine(staged.Folder, "app", "Galtype.exe");
         if (!File.Exists(exe)) return null;
         var input = Path.Combine(Directory, "judge-words.txt");
         var output = Path.Combine(Directory, "judge-result.txt");

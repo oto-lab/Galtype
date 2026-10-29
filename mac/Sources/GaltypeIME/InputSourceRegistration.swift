@@ -5,7 +5,7 @@ import Carbon
 import Foundation
 
 enum InputSourceRegistration {
-    static let identifier = "io.github.yksr-melt.inputmethod.Meltype"
+    static let identifier = "io.github.oto-lab.inputmethod.Galtype"
     static let japaneseIdentifier = identifier + ".Japanese"
     static let legacyDomain = "com.apple.HIToolbox"
     static let thirdPartyDomain = "com.apple.inputsources"
@@ -30,7 +30,7 @@ enum InputSourceRegistration {
         init(_ message: String) { errorDescription = message }
     }
 
-    static func isMeltype(_ source: [String: Any]) -> Bool {
+    static func isGaltype(_ source: [String: Any]) -> Bool {
         (source["Bundle ID"] as? String) == identifier ||
         (source["Input Mode"] as? String) == japaneseIdentifier
     }
@@ -39,7 +39,7 @@ enum InputSourceRegistration {
         var seen = Set<String>()
         var result: [[String: Any]] = []
         for source in sources {
-            guard isMeltype(source) else {
+            guard isGaltype(source) else {
                 result.append(source)
                 continue
             }
@@ -62,8 +62,8 @@ enum InputSourceRegistration {
     }
 
     static func repaired(legacy: [[String: Any]], thirdParty: [[String: Any]]?) -> Sources {
-        Sources(legacy: legacy.contains(where: isMeltype) ? normalized(legacy) : legacy,
-                thirdParty: thirdParty.map { $0.contains(where: isMeltype) ? normalized($0) : $0 })
+        Sources(legacy: legacy.contains(where: isGaltype) ? normalized(legacy) : legacy,
+                thirdParty: thirdParty.map { $0.contains(where: isGaltype) ? normalized($0) : $0 })
     }
 
     static func validatedSources(_ value: Any?, name: String) throws -> [[String: Any]]? {
@@ -94,7 +94,7 @@ enum InputSourceRegistration {
                 (current != nil && previous != nil && NSArray(array: current!).isEqual(to: previous!)) else {
             throw Failure("\(domain)/\(key) changed during repair; run the command again")
         }
-        CFPreferencesSetValue("MeltypeInputSourcesBeforeRepair" as CFString, (previous ?? []) as CFArray,
+        CFPreferencesSetValue("GaltypeInputSourcesBeforeRepair" as CFString, (previous ?? []) as CFArray,
                               domain as CFString, kCFPreferencesCurrentUser, kCFPreferencesAnyHost)
         CFPreferencesSetValue(key as CFString, sources as CFArray,
                               domain as CFString, kCFPreferencesCurrentUser, kCFPreferencesAnyHost)
@@ -167,7 +167,7 @@ enum InputSourceRegistration {
                     wait()
                 } else {
                     FileHandle.standardError.write(Data(
-                        "Input-source registration is pending (enabled selectable Japanese modes: \(count)). Choose Meltype in Keyboard settings or log out and back in.\n".utf8))
+                        "Input-source registration is pending (enabled selectable Japanese modes: \(count)). Choose Galtype in Keyboard settings or log out and back in.\n".utf8))
                 }
             }
             return .pending

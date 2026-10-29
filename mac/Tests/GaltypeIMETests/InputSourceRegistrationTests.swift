@@ -3,7 +3,7 @@
 
 import Foundation
 import XCTest
-@testable import MeltypeIME
+@testable import GaltypeIME
 
 final class InputSourceRegistrationTests: XCTestCase {
     private let parent: [String: Any] = [

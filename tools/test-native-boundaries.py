@@ -3,8 +3,8 @@
 # Copyright (C) 2026 0924haruto12
 """NativeAOT の C ABI を検証する。変換コールバックはスタブ、設定・学習は一時ディレクトリ。
 
-python3 tools/test-native-boundaries.py path/to/MeltypeNative.dylib
-Linux の libMeltypeNative.so でも同じテストを実行できる。
+python3 tools/test-native-boundaries.py path/to/GaltypeNative.dylib
+Linux の libGaltypeNative.so でも同じテストを実行できる。
 """
 
 import argparse
@@ -24,7 +24,7 @@ class NativeBoundaryTests(unittest.TestCase):
         cls.data = tempfile.TemporaryDirectory(prefix="meltype-native-boundaries-")
         cls.addClassCleanup(cls.data.cleanup)
         # 起動時の旧データ移行も避けるため、既に存在する空のディレクトリを渡す。
-        os.environ["MELTYPE_DATA_DIR"] = cls.data.name
+        os.environ["GALTYPE_DATA_DIR"] = cls.data.name
         data = Path(cls.data.name)
         (data / "config.json").write_text(
             json.dumps({"SpaceAroundEnglish": True}), encoding="utf-8")

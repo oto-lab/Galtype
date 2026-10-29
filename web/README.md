@@ -25,7 +25,7 @@ node scripts/make-images.mjs
 
 Chrome / Edge / Chromium が見つからないときは `CHROMIUM_PATH` に場所を入れてください。`logo-small.png` は Windows の PowerShell で `scripts/make-images.ps1` を実行して作ります。
 
-アイコン (雪の結晶 + M) の元は `public/favicon.svg` です。変えたら `node scripts/make-icons.mjs` で `apple-touch-icon.png`・`native/tip/meltype.ico` (IME と Meltype.exe)・`linux/icon.png`・`mac/Resources/icon.tiff` (メニューバー用の白黒テンプレート) を作り直してください。
+アイコン (雪の結晶 + M) の元は `public/favicon.svg` です。変えたら `node scripts/make-icons.mjs` で `apple-touch-icon.png`・`native/tip/galtype.ico` (IME と Galtype.exe)・`linux/icon.png`・`mac/Resources/icon.tiff` (メニューバー用の白黒テンプレート) を作り直してください。
 
 ## デプロイ
 

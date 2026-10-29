@@ -21,8 +21,8 @@ internal static class ReleaseNotesTests
     [Test]
     public static void ReleaseUrls_PointToTheTagAndTheList()
     {
-        Assert.Equal("https://github.com/yksr-melt/Meltype/releases/tag/v1.3.1-pre.3", ProjectInfo.ReleaseUrl("1.3.1-pre.3"));
-        Assert.Equal("https://github.com/yksr-melt/Meltype/releases", ProjectInfo.ReleasesUrl);
+        Assert.Equal("https://github.com/oto-lab/Galtype/releases/tag/v1.3.1-pre.3", ProjectInfo.ReleaseUrl("1.3.1-pre.3"));
+        Assert.Equal("https://github.com/oto-lab/Galtype/releases", ProjectInfo.ReleasesUrl);
         Assert.True(!new Settings().ProfileValues().ContainsKey(nameof(Settings.ReleaseNotesShown)), "プロファイルでは変えない");
     }
 }

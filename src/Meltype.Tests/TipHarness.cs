@@ -8,7 +8,7 @@ namespace Meltype.Tests;
 
 /// <summary>
 /// 調査用: Meltype IME (TSF) のサーバーを、学習データを保存しない設定で単独で動かす / パイプにキーを送ってみる。
-///   Meltype.Tests --tip-server [秒]     … サーバーだけを動かす (DLL を試すとき。Meltype.exe は止めておく)
+///   Meltype.Tests --tip-server [秒]     … サーバーだけを動かす (DLL を試すとき。Galtype.exe は止めておく)
 ///   Meltype.Tests --tip-client kyouha   … サーバーを動かし、打鍵を送って応答を出す
 /// </summary>
 internal static class TipHarness

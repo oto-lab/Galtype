@@ -15,10 +15,10 @@ cask "meltype" do
   depends_on macos: ">= :ventura"
   depends_on arch: :arm64
 
-  input_method "Meltype-mac/Meltype.app"
+  input_method "Galtype-mac/Galtype.app"
 
   postflight do
-    app = "#{Dir.home}/Library/Input Methods/Meltype.app"
+    app = "#{Dir.home}/Library/Input Methods/Galtype.app"
     # 署名が自分用 (ad hoc) の版もあるので、隔離属性を外さないと macOS が起動させない (install.sh と同じ)
     system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", app], must_succeed: false
     # 入力ソースに登録する (#21、#134)
@@ -27,7 +27,7 @@ cask "meltype" do
     system_command register, args: [app], must_succeed: false if File.executable?(register)
     system_command "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister",
                    args: ["-f", app], must_succeed: false
-    system_command "/bin/bash", args: ["#{staged_path}/Meltype-mac/start-input-method.sh", app], must_succeed: false
+    system_command "/bin/bash", args: ["#{staged_path}/Galtype-mac/start-input-method.sh", app], must_succeed: false
   end
 
   uninstall launchctl: "io.github.yksr-melt.Meltype.manual",

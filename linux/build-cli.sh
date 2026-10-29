@@ -2,13 +2,13 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 hrmcngs
 #
-# WSL / Linux の CLI から Meltype をビルドするための入口。
+# WSL / Linux の CLI から Galtype をビルドするための入口。
 #   linux/build-cli.sh --setup --test --package
 #   linux/build-cli.sh --install
 # From any directory in Ubuntu/WSL:
-#   bash "$HOME/Meltype/linux/build-cli.sh" --setup --all
+#   bash "$HOME/Galtype/linux/build-cli.sh" --setup --all
 # Subsequent builds:
-#   bash "$HOME/Meltype/linux/build-cli.sh" --build
+#   bash "$HOME/Galtype/linux/build-cli.sh" --build
 set -euo pipefail
 
 here="$(cd "$(dirname "$0")" && pwd)"
@@ -30,10 +30,10 @@ Usage: linux/build-cli.sh [options]
 
 Options:
   --setup                 Install Ubuntu/WSL build dependencies with apt.
-  --test                  Run Meltype.Core.Tests.
+  --test                  Run Galtype.Core.Tests.
   --mozc                  Build the Linux Mozc helper.
   --build                 Build the Mozc helper and Linux package.
-  --package               Build linux/build/Meltype-linux.
+  --package               Build linux/build/Galtype-linux.
   --install               Install the built IBus engine into Linux.
   --all                   Run --test --mozc --package. This is the default.
   --mozc-source DIR       Mozc checkout directory. Default: ~/mozc.
@@ -131,7 +131,7 @@ fi
 
 if [[ $test_core -eq 1 ]]; then
     need dotnet
-    dotnet run --project "$root/src/Meltype.Core.Tests"
+    dotnet run --project "$root/src/Galtype.Core.Tests"
 fi
 
 if [[ $build_mozc -eq 1 ]]; then
@@ -152,9 +152,9 @@ if [[ $package -eq 1 ]]; then
 fi
 
 if [[ $install -eq 1 ]]; then
-    if [[ ! -f "$root/linux/build/Meltype-linux/install.sh" ]]; then
+    if [[ ! -f "$root/linux/build/Galtype-linux/install.sh" ]]; then
         echo "Build output is missing. Run linux/build-cli.sh --package first." >&2
         exit 1
     fi
-    (cd "$root/linux/build/Meltype-linux" && bash install.sh)
+    (cd "$root/linux/build/Galtype-linux" && bash install.sh)
 fi

@@ -24,7 +24,7 @@ import time
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PRODUCT_FILES = ("ibus-engine-meltype", "libMeltypeNative.so", "mozc/meltype_mozc_helper")
+PRODUCT_FILES = ("ibus-engine-galtype", "libGaltypeNative.so", "mozc/meltype_mozc_helper")
 KEYS = {"Return", "space", "Escape", "BackSpace", "Tab", "Shift+Tab", "Shift+Return",
         "Left", "Right", "Up", "Down", "Home", "End", "ctrl+a"}
 SETTINGS = {"LiveConversion": False, "LearningEnabled": False, "SpaceAroundEnglish": False,
@@ -127,8 +127,8 @@ def record_product_settings():
     # The initial config has no SettingsVersion. Settings.Load migrates and saves
     # it on the first product input context, dropping unrecognized property names.
     # This is evidence of product deserialization, not a live settings API.
-    settings = json.loads((Path(os.environ["MELTYPE_DATA_DIR"]) / "config.json").read_text())
-    path = Path(os.environ["MELTYPE_IME_ARTIFACTS"]) / "session.json"
+    settings = json.loads((Path(os.environ["GALTYPE_DATA_DIR"]) / "config.json").read_text())
+    path = Path(os.environ["GALTYPE_IME_ARTIFACTS"]) / "session.json"
     manifest = json.loads(path.read_text())
     manifest["settings"]["productSaved"] = settings
     path.write_text(json.dumps(manifest, indent=2))
@@ -235,7 +235,7 @@ def control(operation):
 def isolate_environment(root):
     for variable, leaf in (("HOME", "home"), ("XDG_DATA_HOME", "data"), ("XDG_CACHE_HOME", "cache"),
                            ("XDG_CONFIG_HOME", "config"), ("XDG_RUNTIME_DIR", "runtime"),
-                           ("MELTYPE_DATA_DIR", "settings"), ("TMPDIR", "tmp")):
+                           ("GALTYPE_DATA_DIR", "settings"), ("TMPDIR", "tmp")):
         directory = root / leaf
         directory.mkdir(mode=0o700)
         os.environ[variable] = str(directory)
@@ -253,7 +253,7 @@ def isolate_environment(root):
 
 def session(playwright_args):
     package, files = package_files(os.environ["MELTYPE_PACKAGE_DIR"])
-    artifacts = Path(os.environ["MELTYPE_IME_ARTIFACTS"]).resolve()
+    artifacts = Path(os.environ["GALTYPE_IME_ARTIFACTS"]).resolve()
     artifacts.mkdir(parents=True, exist_ok=True)
     processes, outputs = [], []
     with tempfile.TemporaryDirectory(prefix="meltype-real-ime-") as temporary:
@@ -280,7 +280,7 @@ def session(playwright_args):
             GLib, IBus = ibus_api()
             bus = IBus.Bus()
             wait_for(bus.is_connected, "private IBus connection", check)
-            product = start("meltype", [sys.executable, str(files["ibus-engine-meltype"])])
+            product = start("meltype", [sys.executable, str(files["ibus-engine-galtype"])])
             wait_for(lambda: any(e.get_name() == "meltype" for e in bus.list_active_engines()),
                      "product engine registration", check)
             runtime = {"version": 1, "ibusAddress": address, "daemonPid": daemon.pid, "productPid": product.pid}
@@ -329,7 +329,7 @@ def main():
     # Resolve the installed Playwright browser cache before isolating HOME.
     if "PLAYWRIGHT_BROWSERS_PATH" not in os.environ:
         os.environ["PLAYWRIGHT_BROWSERS_PATH"] = str(Path.home() / ".cache/ms-playwright")
-    os.environ["MELTYPE_IME_ARTIFACTS"] = str(Path(os.environ.get("MELTYPE_IME_ARTIFACTS", ROOT / "artifacts/real-ime")).resolve())
+    os.environ["GALTYPE_IME_ARTIFACTS"] = str(Path(os.environ.get("GALTYPE_IME_ARTIFACTS", ROOT / "artifacts/real-ime")).resolve())
     return subprocess.call(["xvfb-run", "-a", "-s", "-screen 0 1280x900x24 -nolisten tcp",
                             "dbus-run-session", "--", sys.executable, str(Path(__file__).resolve()), "session",
                             *args.arguments], cwd=ROOT)

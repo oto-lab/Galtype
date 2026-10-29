@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 lnkiai
 //
-// Meltype.exe (TipServer) との名前付きパイプ。1 要求 1 応答で、待つのは決まった時間まで。
+// Galtype.exe (TipServer) との名前付きパイプ。1 要求 1 応答で、待つのは決まった時間まで。
 
 #pragma once
 
@@ -9,7 +9,7 @@
 
 #include "Globals.h"
 
-namespace meltype {
+namespace galtype {
 
 class PipeClient {
 public:
@@ -31,11 +31,11 @@ private:
     static constexpr size_t kMaxResponse = 1024 * 1024;
     HANDLE pipe_ = INVALID_HANDLE_VALUE;
     HANDLE event_ = nullptr;
-    // つながらなかったとき、すぐにまた試さない (Meltype.exe が動いていないときに毎回待たないように)
+    // つながらなかったとき、すぐにまた試さない (Galtype.exe が動いていないときに毎回待たないように)
     ULONGLONG retryAfter_ = 0;
     ULONGLONG lastTimeout_ = 0;   // 最後に時間切れになった時刻 (optional の問い合わせは数えない)
     DWORD lastConnectError_ = 0;  // 最後につながらなかった理由 (同じ理由をログに書き続けない)
     bool refusalLogged_ = false;  // つなぐのを断ったことをログに書いた (続けて書かない)
 };
 
-}  // namespace meltype
+}  // namespace galtype

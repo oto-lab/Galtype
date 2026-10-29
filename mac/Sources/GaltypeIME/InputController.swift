@@ -5,11 +5,11 @@ import Carbon.HIToolbox
 import Cocoa
 import InputMethodKit
 
-/// 入力欄 (クライアント) ごとの IME。キーを本体 (libMeltypeNative.dylib) に渡し、
+/// 入力欄 (クライアント) ごとの IME。キーを本体 (libGaltypeNative.dylib) に渡し、
 /// 返ってきた結果 (確定する文字・変換中の表示・候補) を入力欄に反映する。
 /// Info.plist の InputMethodServerControllerClass に書いた名前で、Input Method Kit が作る。
-@objc(MeltypeInputController)
-final class MeltypeInputController: IMKInputController, ModeServiceTarget {
+@objc(GaltypeInputController)
+final class GaltypeInputController: IMKInputController, ModeServiceTarget {
     private var session: UnsafeMutableRawPointer?
     private var candidateList: [String] = []
     private var hasMarkedText = false
@@ -40,7 +40,7 @@ final class MeltypeInputController: IMKInputController, ModeServiceTarget {
         NativeCore.shared.setCodeInput(session, codeInput)
         // 送るのは同じプロセスの importUserDictionary だけなので、ほかのプロセスから届く分散通知では受けない
         dictionaryObserver = NotificationCenter.default.addObserver(
-            forName: Notification.Name("MeltypeUserDictionaryChanged"), object: nil, queue: .main
+            forName: Notification.Name("GaltypeUserDictionaryChanged"), object: nil, queue: .main
         ) { [weak self] _ in
             guard let self else { return }
             self.commitComposition(self.client())
@@ -181,9 +181,9 @@ final class MeltypeInputController: IMKInputController, ModeServiceTarget {
         indicator.state = ModeIndicatorSettings.shared.isEnabled ? .on : .off
         let importItem = menu.addItem(withTitle: "macOSのユーザー辞書を取り込む…", action: #selector(importUserDictionary(_:)), keyEquivalent: "")
         importItem.target = self
-        let configItem = menu.addItem(withTitle: "Meltype の設定ファイル (config.json) を開く…", action: #selector(openConfigFile(_:)), keyEquivalent: "")
+        let configItem = menu.addItem(withTitle: "Galtype の設定ファイル (config.json) を開く…", action: #selector(openConfigFile(_:)), keyEquivalent: "")
         configItem.target = self
-        menu.addItem(withTitle: "Meltype のデータフォルダを開く (設定・ユーザー辞書)", action: #selector(openDataFolder(_:)), keyEquivalent: "")
+        menu.addItem(withTitle: "Galtype のデータフォルダを開く (設定・ユーザー辞書)", action: #selector(openDataFolder(_:)), keyEquivalent: "")
         menu.addItem(withTitle: "不具合の報告・提案… (Mac 版はプレビュー版です)", action: #selector(openReport(_:)), keyEquivalent: "")
         return menu
     }
@@ -250,7 +250,7 @@ final class MeltypeInputController: IMKInputController, ModeServiceTarget {
         do {
             let count = try MacUserDictionary.importFile(source, directory: directory)
             alert.messageText = "ユーザー辞書に\(count)語を追加しました"
-            NotificationCenter.default.post(name: Notification.Name("MeltypeUserDictionaryChanged"), object: nil)
+            NotificationCenter.default.post(name: Notification.Name("GaltypeUserDictionaryChanged"), object: nil)
         } catch {
             alert.messageText = "ユーザー辞書を取り込めませんでした"
             alert.informativeText = error.localizedDescription
@@ -291,7 +291,7 @@ final class MeltypeInputController: IMKInputController, ModeServiceTarget {
                 } else {
                     // 消す文字を確認できないときは、前の文字は消さずに今打った文字だけを入れる
                     // (本体は text が入った前提で状態を進めるので、edit ごと捨てない)。
-                    NSLog("Meltype: 確定し直す文字を確認できないため、前の文字を消しません")
+                    NSLog("Galtype: 確定し直す文字を確認できないため、前の文字を消しません")
                 }
             }
             client.insertText(NSAttributedString(string: edit.text), replacementRange: range)

@@ -50,14 +50,14 @@
 
 (defun test-update (work)
   (let* ((source (uiop:read-file-string (merge-pathnames "mac/update.sh" *root*)))
-         (original "$HOME/Library/Input Methods/Meltype.app")
+         (original "$HOME/Library/Input Methods/Galtype.app")
          (position (search original source))
-         (app (namestring (merge-pathnames "Meltype.app" work))))
+         (app (namestring (merge-pathnames "Galtype.app" work))))
     (assert position)
     (write-file (merge-pathnames "update.sh" work)
                 (concatenate 'string (subseq source 0 position) app
                              (subseq source (+ position (length original))))))
-  (fake-tool work "Meltype.app/Contents/MacOS/Meltype"
+  (fake-tool work "Galtype.app/Contents/MacOS/Meltype"
              "echo \"app:$*\" >> \"$MELTYPE_TEST_LOG\"")
   (fake-tool work "build-cli.sh"
              "echo \"build:$MELTYPE_SKIP_START:$*\" >> \"$MELTYPE_TEST_LOG\"")
@@ -79,12 +79,12 @@
               (uiop:read-file-string (merge-pathnames "mac/start-input-method.sh" *root*)))
   (fake-tool work "launchctl"
              (format nil "echo \"$*\" >> \"$MELTYPE_TEST_LOG\"~%case \"$1\" in~% list) echo '\"PID\" = 123; Meltype_Connection' ;;~%esac"))
-  (run-script work "start-input-method.sh" "/tmp/Meltype.app")
+  (run-script work "start-input-method.sh" "/tmp/Galtype.app")
   (let ((lines (uiop:read-file-lines (merge-pathnames "calls" work))))
     (assert (equal "remove io.github.yksr-melt.Meltype.manual" (first lines)))
     (assert (uiop:string-prefix-p "submit -l io.github.yksr-melt.Meltype.manual -o " (second lines)))
     (assert (search "Meltype.stdout.log -e " (second lines)))
-    (assert (search "Meltype.stderr.log -- /tmp/Meltype.app/Contents/MacOS/Meltype" (second lines)))
+    (assert (search "Meltype.stderr.log -- /tmp/Galtype.app/Contents/MacOS/Meltype" (second lines)))
     (assert (equal "list io.github.yksr-melt.Meltype.manual" (third lines)))))
 
 (defun test-update-failure-recovery (work)
@@ -92,7 +92,7 @@
   (dolist (failure '("build" "check"))
     (write-file (merge-pathnames "calls" work) "")
     (fake-tool work "build-cli.sh" (if (equal failure "build") "exit 23" "exit 0"))
-    (fake-tool work "Meltype.app/Contents/MacOS/Meltype"
+    (fake-tool work "Galtype.app/Contents/MacOS/Meltype"
                (if (equal failure "check")
                    (format nil "if [[ \"$1\" == --check-inputs ]]; then exit 23; fi~%echo \"app:$*\" >> \"$MELTYPE_TEST_LOG\"")
                    "echo \"app:$*\" >> \"$MELTYPE_TEST_LOG\""))
@@ -111,13 +111,13 @@
   (fake-tool work "sleep" "exit 0")
   (fake-tool work "launchctl"
              (format nil "echo \"$*\" >> \"$MELTYPE_TEST_LOG\"~%case \"$1\" in~%submit) n=$(cat \"$MELTYPE_START_LOG_DIR/attempts\" 2>/dev/null || echo 0); echo $((n+1)) > \"$MELTYPE_START_LOG_DIR/attempts\" ;;~%list) n=$(cat \"$MELTYPE_START_LOG_DIR/attempts\"); if [[ $n -ge 2 ]]; then echo '\"PID\" = 123; Meltype_Connection'; fi ;;~%esac"))
-  (run-script work "start-input-method.sh" "/tmp/Meltype.app")
+  (run-script work "start-input-method.sh" "/tmp/Galtype.app")
   (assert (= 2 (parse-integer (uiop:read-file-string (merge-pathnames "attempts" work)))))
   (write-file (merge-pathnames "attempts" work) "0")
   (fake-tool work "launchctl"
              (format nil "case \"$1\" in~%submit) n=$(cat \"$MELTYPE_START_LOG_DIR/attempts\"); echo $((n+1)) > \"$MELTYPE_START_LOG_DIR/attempts\" ;;~%esac"))
   (let ((failed nil))
-    (handler-case (run-script work "start-input-method.sh" "/tmp/Meltype.app")
+    (handler-case (run-script work "start-input-method.sh" "/tmp/Galtype.app")
       (uiop:subprocess-error () (setf failed t)))
     (assert failed))
   (assert (= 3 (parse-integer (uiop:read-file-string (merge-pathnames "attempts" work))))))
@@ -151,7 +151,7 @@
                                (namestring (merge-pathnames "installed" work)))
                  "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
                  "lsregister")))
-  (fake-tool work "Meltype.app/Contents/MacOS/Meltype"
+  (fake-tool work "Galtype.app/Contents/MacOS/Meltype"
              "echo \"app:$*\" >> \"$MELTYPE_TEST_LOG\"")
   (fake-tool work "start-input-method.sh"
              "echo started >> \"$MELTYPE_TEST_LOG\"")
@@ -191,7 +191,7 @@
     (fake-tool work "codesign" (if (equal failure "signature") "exit 23" "exit 0"))
     (fake-tool work "mv"
                (if (equal failure "replace")
-                   "if [[ \"$1\" == */Meltype.app && \"$2\" == */installed.app ]]; then exit 23; fi; exec /bin/mv \"$@\""
+                   "if [[ \"$1\" == */Galtype.app && \"$2\" == */installed.app ]]; then exit 23; fi; exec /bin/mv \"$@\""
                    "exec /bin/mv \"$@\""))
     (let ((status nil))
       (handler-case
@@ -212,7 +212,7 @@
   (dolist (restore-fails '(nil t))
     (fake-tool work "mv"
                (concatenate 'string
-                            "if [[ \"$1\" == */Meltype.app && \"$2\" == */installed.app ]]; then mkdir -p \"$2\"; echo incomplete > \"$2/version\"; exit 23; fi; "
+                            "if [[ \"$1\" == */Galtype.app && \"$2\" == */installed.app ]]; then mkdir -p \"$2\"; echo incomplete > \"$2/version\"; exit 23; fi; "
                             (if restore-fails
                                 "if [[ \"$1\" == */previous.app && \"$2\" == */installed.app ]]; then exit 27; fi; "
                                 "")

@@ -1,6 +1,6 @@
 name: mac
 
-# Mac 版 (mac/) をビルドして、テスター向けの zip (Meltype.app + install.sh + 説明) を実行結果 (Artifacts) に置く。
+# Mac 版 (mac/) をビルドして、テスター向けの zip (Galtype.app + install.sh + 説明) を実行結果 (Artifacts) に置く。
 # Actions の画面から手動で実行するか、Mac 版・共通部分を変えて push したとき。タグ (v*) ならリリースにも添付する。
 on:
   workflow_dispatch:
@@ -75,9 +75,9 @@ jobs:
         run: ./build.sh --no-install
       - name: NativeAOT and Swift boundary tests
         run: |
-          python3 tools/test-native-boundaries.py mac/build/Meltype.app/Contents/Frameworks/libMeltypeNative.dylib
-          python3 tools/test-mac-boundaries.py mac/build/Meltype.app/Contents/Frameworks/libMeltypeNative.dylib
-          python3 tools/test-mac-events.py mac/build/Meltype.app/Contents/Frameworks/libMeltypeNative.dylib
+          python3 tools/test-native-boundaries.py mac/build/Galtype.app/Contents/Frameworks/libGaltypeNative.dylib
+          python3 tools/test-mac-boundaries.py mac/build/Galtype.app/Contents/Frameworks/libGaltypeNative.dylib
+          python3 tools/test-mac-events.py mac/build/Galtype.app/Contents/Frameworks/libGaltypeNative.dylib
       # 公証 (notarization): 署名したときだけ。秘密 NOTARY_APPLE_ID・NOTARY_TEAM_ID・NOTARY_PASSWORD (App 用パスワード)
       - name: Notarize
         if: env.MELTYPE_MAC_IDENTITY != ''
@@ -86,13 +86,13 @@ jobs:
           NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
           NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
         run: |
-          ditto -c -k --keepParent mac/build/Meltype.app "$RUNNER_TEMP/notarize.zip"
+          ditto -c -k --keepParent mac/build/Galtype.app "$RUNNER_TEMP/notarize.zip"
           xcrun notarytool submit "$RUNNER_TEMP/notarize.zip" --apple-id "$NOTARY_APPLE_ID" --team-id "$NOTARY_TEAM_ID" --password "$NOTARY_PASSWORD" --wait
-          xcrun stapler staple mac/build/Meltype.app
+          xcrun stapler staple mac/build/Galtype.app
       - name: Package
         run: |
           # タグ (v1.0.0) なら Meltype-1.0.0-mac.zip、それ以外はテスト版の名前
-          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then name="Meltype-${GITHUB_REF_NAME#v}-mac.zip"; else name="Meltype-mac-test-$(date +%Y%m%d-%H%M).zip"; fi
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then name="Meltype-${GITHUB_REF_NAME#v}-mac.zip"; else name="Galtype-mac-test-$(date +%Y%m%d-%H%M).zip"; fi
           bash mac/package.sh "$name"
           ls -la dist
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

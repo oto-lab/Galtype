@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 lnkiai
 //
-// Meltype IME (TSF のテキストサービス) の共通の定義。
+// Galtype IME (TSF のテキストサービス) の共通の定義。
 
 #pragma once
 
@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-namespace meltype {
+namespace galtype {
 
 // テキストサービスの CLSID (COM のクラス)
 // {417D801B-A9BD-4C26-BD16-356A825A6998}
@@ -37,7 +37,7 @@ inline constexpr GUID GUID_AttrConverted = {0xe17aa399, 0xc5eb, 0x42e6, {0xbe, 0
 inline constexpr GUID GUID_AttrTarget = {0xcef94813, 0xc47f, 0x48c1, {0xb4, 0xef, 0xd4, 0x58, 0x2d, 0x5d, 0x40, 0x54}};
 
 inline constexpr LANGID kLangId = MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN);
-inline constexpr wchar_t kDisplayName[] = L"Meltype";
+inline constexpr wchar_t kDisplayName[] = L"Galtype";
 
 extern HINSTANCE g_module;
 extern LONG g_locks;
@@ -49,7 +49,7 @@ inline void DllRelease() { InterlockedDecrement(&g_locks); }
 std::string ToUtf8(const std::wstring& text);
 std::wstring FromUtf8(const std::string& text);
 
-// デバッグ用のログ (%LOCALAPPDATA%\Meltype\tip.log、MELTYPE_TIP_LOG=1 のときだけ)
+// デバッグ用のログ (%LOCALAPPDATA%\Galtype\tip.log、GALTYPE_TIP_LOG=1 のときだけ)
 void TipLog(const wchar_t* format, ...);
 
-}  // namespace meltype
+}  // namespace galtype

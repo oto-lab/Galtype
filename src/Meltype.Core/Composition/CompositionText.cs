@@ -1252,7 +1252,7 @@ public sealed class CompositionText
         for (var s = 0; s < segments.Count; s++)
         {
             var segment = segments[s];
-            // 英語の語.の後ろの英字 (ドメイン・拡張子: Meltype.amr、MeltypeTip.dll) も、表示のまま英字にする (amr を あめ に直していた: issue #260)
+            // 英語の語.の後ろの英字 (ドメイン・拡張子: Meltype.amr、GaltypeTip.dll) も、表示のまま英字にする (amr を あめ に直していた: issue #260)
             if (segment.IsEnglish && s >= 2 && segments[s - 1] is { IsEnglish: true, Raw: "." } && segments[s - 2].IsEnglish && segments[s - 2].Raw.Any(char.IsAsciiLetter))
             {
                 for (var i = 0; i < segment.Raw.Length; i++) mask.Add(true);

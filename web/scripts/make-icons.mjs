@@ -6,7 +6,7 @@
 //   node scripts/make-icons.mjs            (Chrome / Edge / Chromium の場所は CHROMIUM_PATH で指定できる)
 // 作るもの:
 //   web/public/apple-touch-icon.png  180x180、明るい背景で余白を付ける (角は iOS が丸める)
-//   native/tip/meltype.ico           16〜256 の 9 サイズ (Meltype IME と Meltype.exe)
+//   native/tip/meltype.ico           16〜256 の 9 サイズ (Galtype IME と Galtype.exe)
 //   linux/icon.png                   64x64
 //   mac/Resources/icon.tiff          18pt (18px / 36px) の白黒テンプレート (メニューバー用。macOS がダークモードで白く出す)
 

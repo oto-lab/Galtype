@@ -12,7 +12,7 @@
 #include "DisplayAttributes.h"
 #include "LangBar.h"
 
-namespace meltype {
+namespace galtype {
 namespace {
 
 class EditSession final : public ITfEditSession {
@@ -55,7 +55,7 @@ bool IsSecretScope(InputScope scope) {
     }
 }
 
-// 送り直したキーに付ける印 (SendInput の dwExtraInfo)。'MLTP' (Meltype.exe のキーボードフックが送る印 'MELT' とは別にする)
+// 送り直したキーに付ける印 (SendInput の dwExtraInfo)。'MLTP' (Galtype.exe のキーボードフックが送る印 'MELT' とは別にする)
 constexpr ULONG_PTR kReinjectMarker = 0x4D4C5450;
 
 // 修飾キーだけのキー (それ自体では入力にならない)
@@ -111,7 +111,7 @@ void MaskSystemModifier() {
     SendInput(2, mask, sizeof(INPUT));
 }
 
-// 変換中に Meltype.exe が受け持つ Ctrl+英字 (CompositionController.ControlShortcut と合わせる)。Alt・Windows キーと一緒なら違う
+// 変換中に Galtype.exe が受け持つ Ctrl+英字 (CompositionController.ControlShortcut と合わせる)。Alt・Windows キーと一緒なら違う
 bool IsCompositionShortcut(UINT vk) {
     if (!KeyDown(VK_CONTROL) || KeyDown(VK_MENU) || KeyDown(VK_LWIN) || KeyDown(VK_RWIN)) return false;
     return vk == 'H' || vk == 'U' || vk == 'I' || vk == 'O' || vk == 'P';
@@ -163,7 +163,7 @@ bool IsOwnProcess() {
     GetModuleFileNameW(nullptr, path, MAX_PATH);
     const wchar_t* name = wcsrchr(path, L'\\');
     name = name ? name + 1 : path;
-    return _wcsicmp(name, L"Meltype.exe") == 0;
+    return _wcsicmp(name, L"Galtype.exe") == 0;
 }
 
 std::wstring ProcessName() {
@@ -243,7 +243,7 @@ STDMETHODIMP TextService::ActivateEx(ITfThreadMgr* threadMgr, TfClientId clientI
     threadMgr_->AddRef();
     clientId_ = clientId;
     // Windows は、同じアプリの中で一度終えた IME を、同じオブジェクトのまま起動し直すことがある。前の状態をすべて初期化する
-    // (終わったときの印 deactivated_ が残ると、二度と Meltype.exe とやり取りしなくなる)
+    // (終わったときの印 deactivated_ が残ると、二度と Galtype.exe とやり取りしなくなる)
     deactivated_ = false;
     serverActive_ = false;
     serverStateKnown_ = false;
@@ -273,8 +273,8 @@ STDMETHODIMP TextService::ActivateEx(ITfThreadMgr* threadMgr, TfClientId clientI
     for (bool& eaten : eatenDown_) eaten = false;
     for (bool& toggle : toggleDown_) toggle = false;
     // サインインや UAC の画面では何もしない。
-    // Meltype.exe より高い権限で動いているアプリ (管理者として動くアプリなど) は、つなぐときに断る (Pipe.cpp の IsTrustedServer)
-    // (Meltype.exe 自身の画面でも使う。そのときは Meltype.exe が画面のスレッドを通さずに処理する: TipServer の Serve)
+    // Galtype.exe より高い権限で動いているアプリ (管理者として動くアプリなど) は、つなぐときに断る (Pipe.cpp の IsTrustedServer)
+    // (Galtype.exe 自身の画面でも使う。そのときは Galtype.exe が画面のスレッドを通さずに処理する: TipServer の Serve)
     const wchar_t* reason = (flags & TF_TMAE_SECUREMODE) ? L"セキュリティ保護された画面" : nullptr;
     ownProcess_ = IsOwnProcess();
     disabled_ = reason != nullptr;
@@ -301,8 +301,8 @@ STDMETHODIMP TextService::ActivateEx(ITfThreadMgr* threadMgr, TfClientId clientI
         category->Release();
     }
 
-    // 日本語 / 英数 (IME の ON/OFF)。Meltype は日本語から始める (半角/全角 を押さなくてよいのが Meltype なので)
-    // 何もしないプロセス (Meltype.exe 自身・サインインの画面) では、入力モードを変えず、タスクバーの「あ」も出さない (キーはそのまま通るので)
+    // 日本語 / 英数 (IME の ON/OFF)。Galtype は日本語から始める (半角/全角 を押さなくてよいのが Galtype なので)
+    // 何もしないプロセス (Galtype.exe 自身・サインインの画面) では、入力モードを変えず、タスクバーの「あ」も出さない (キーはそのまま通るので)
     ITfCompartmentMgr* compartments = nullptr;
     if (!disabled_ && SUCCEEDED(threadMgr_->QueryInterface(IID_ITfCompartmentMgr, reinterpret_cast<void**>(&compartments)))) {
         ITfCompartment* openClose = nullptr;
@@ -363,7 +363,7 @@ STDMETHODIMP TextService::Deactivate() {
         JsonValue reply;
         Request("{\"op\":\"close\",\"sid\":\"" + sid_ + "\"}", reply);
     }
-    // ここから後 (アプリが変換中の文字を確定した通知・あとから動く非同期の編集セッション) は、Meltype.exe につなぎ直さない
+    // ここから後 (アプリが変換中の文字を確定した通知・あとから動く非同期の編集セッション) は、Galtype.exe につなぎ直さない
     deactivated_ = true;
     resumeRange_.Reset();
     resumeContext_.Reset();
@@ -480,9 +480,9 @@ bool TextService::IsSecretField(TfEditCookie ec, ITfContext* context) {
     // 種類は 2 か所にある: Windows が持つもの (SetInputScope などで決めたもの) と、アプリが自分で知らせるもの (自前で TSF に対応したアプリ。
     // ブラウザーなど)。どちらかがパスワードと言えばパスワード欄とする。どちらにも無ければ、種類を決めていない入力欄
     // (ふつうのアプリの多く。ブラウザーはパスワード欄では IME を無効にもするので、それは ContextDisabled で見る)。
-    // 種類の値はあるのに中身を読めないときは、パスワード欄かもしれないので、パスワード欄として扱う (打った文字を Meltype.exe に送らない)。
+    // 種類の値はあるのに中身を読めないときは、パスワード欄かもしれないので、パスワード欄として扱う (打った文字を Galtype.exe に送らない)。
     // 問い合わせ自体ができないとき (対応していないアプリ・選択が無い) は、種類を決めていない入力欄と同じにする
-    // (止めると、そのアプリでは Meltype IME がまったく使えなくなるため)
+    // (止めると、そのアプリでは Galtype IME がまったく使えなくなるため)
     // 入力を覚えないように求める入力欄 (IS_PRIVATE。ブラウザーのシークレット / InPrivate ウィンドウ) かも、ここで読んで privateField_ に残す
     privateField_ = false;
     auto unreadable = [](const wchar_t* step) {
@@ -704,7 +704,7 @@ void TextService::StartHelloUpdates() {
     WNDCLASSW cls{};
     cls.lpfnWndProc = HelloWindowProc;
     cls.hInstance = g_module;
-    cls.lpszClassName = L"Meltype.Tip.Hello";
+    cls.lpszClassName = L"Galtype.Tip.Hello";
     RegisterClassW(&cls);
     helloWindow_ = CreateWindowExW(0, cls.lpszClassName, L"", 0, 0, 0, 0, 0,
         HWND_MESSAGE, nullptr, g_module, this);
@@ -721,7 +721,7 @@ void TextService::StopHelloUpdates() {
     helloPipe_.reset();
     // クラスはプロセス内で共有する。他スレッドのウィンドウが残る間の解除失敗は許容し、
     // 最後のインスタンスがウィンドウを破棄したときに解除する。
-    UnregisterClassW(L"Meltype.Tip.Hello", g_module);
+    UnregisterClassW(L"Galtype.Tip.Hello", g_module);
 }
 
 bool TextService::ServerReady() {
@@ -795,7 +795,7 @@ void TextService::ApplyHello(const JsonValue& reply, bool currentState) {
     }
     if (bindingsChanged || wereShortcutsEnabled != shortcutsEnabled_ || preservedToggles_.empty()) RefreshPreservedShortcuts();
     if (wasActive != serverActive_) directEnglishWord_ = false;
-    if (wasActive != serverActive_) TipLog(L"Meltype.exe: %s", serverActive_ ? L"つながりました" : L"使えません (動いていない・モードが Meltype IME でない)");
+    if (wasActive != serverActive_) TipLog(L"Galtype.exe: %s", serverActive_ ? L"つながりました" : L"使えません (動いていない・モードが Galtype IME でない)");
 }
 
 void TextService::UnpreserveShortcuts() {
@@ -911,15 +911,15 @@ bool TextService::WouldEat(ITfContext* context, UINT vk, LPARAM lParam, wchar_t&
             secretWhileComposing_ = true;
             return true;
         }
-        // Ctrl・Alt・Windows キーとの組み合わせ (Ctrl + S など): Meltype.exe も確定してアプリに渡すだけなので、ここで確定して
+        // Ctrl・Alt・Windows キーとの組み合わせ (Ctrl + S など): Galtype.exe も確定してアプリに渡すだけなので、ここで確定して
         // 受け取らずに通す (受け取ってから送り直すと、送り直しが届かないアプリでキーが消える)。
         // ここで確定できなければ受け取り、キーの処理の中で確定してから送り直す (キーが先に届いて、確定が後になるのを防ぐ)
-        // ただし変換ボックスの中で使う Ctrl+英字 (Ctrl+U/I/O/P はかな・英字の切り替え、Ctrl+H は BackSpace) は、確定せずに Meltype.exe に送る
+        // ただし変換ボックスの中で使う Ctrl+英字 (Ctrl+U/I/O/P はかな・英字の切り替え、Ctrl+H は BackSpace) は、確定せずに Galtype.exe に送る
         if ((KeyDown(VK_CONTROL) || KeyDown(VK_MENU) || KeyDown(VK_LWIN) || KeyDown(VK_RWIN)) && !IsCompositionShortcut(vk) && CommitNow()) return false;
         return true;  // 変換中はほかのキーを全部受け取る (つながらなければ確定して通す)
     }
-    // 半角/全角: 未登録ならモードは切り替えず、誤入力だけを防ぐ。Meltype.exe が使えないときも受け取る
-    // (アプリに通すと、PowerShell (PSReadLine) は文字の無いキーを @ として入れる。管理者として動くアプリでは Meltype.exe につながらない)
+    // 半角/全角: 未登録ならモードは切り替えず、誤入力だけを防ぐ。Galtype.exe が使えないときも受け取る
+    // (アプリに通すと、PowerShell (PSReadLine) は文字の無いキーを @ として入れる。管理者として動くアプリでは Galtype.exe につながらない)
     if (IsAltGraveToggle(vk, lParam)) return true;
     if (IsHankakuZenkaku(vk)) return !KeyDown(VK_CONTROL) && !KeyDown(VK_MENU);
     // 調べるとき用: 文字を生むキーを通した理由 (どのキーかは書かない)
@@ -940,12 +940,12 @@ bool TextService::WouldEat(ITfContext* context, UINT vk, LPARAM lParam, wchar_t&
         if (continuesWord) return pass(L"英語の単語の続き");
         directEnglishWord_ = false;
     }
-    // Shift+Space は全角スペース (Microsoft IME と同じ。Meltype.exe が入れる: issue #246)
-    // 設定「スペースを全角で入力」が ON なら、日本語入力のときの Space も受け取る (Space が全角・Shift+Space が半角。Meltype.exe が入れる: issue #881)
+    // Shift+Space は全角スペース (Microsoft IME と同じ。Galtype.exe が入れる: issue #246)
+    // 設定「スペースを全角で入力」が ON なら、日本語入力のときの Space も受け取る (Space が全角・Shift+Space が半角。Galtype.exe が入れる: issue #881)
     bool starts = (ch >= L'a' && ch <= L'z') || (ch >= L'A' && ch <= L'Z') || (ch >= L'!' && ch <= L'~') ||
                   (vk == VK_SPACE && (KeyDown(VK_SHIFT) || (open_ && fullWidthSpace_)));
     if (!starts) return false;
-    if (!ServerReady()) return pass(L"Meltype.exe が使えない");
+    if (!ServerReady()) return pass(L"Galtype.exe が使えない");
     // パスワード欄か。OnTestKeyDown で読んだ結果は、続く同じキー・同じ入力欄の OnKeyDown で 1 回だけ使う (ほかのキー・入力欄には使わない)
     ULONGLONG now = GetTickCount64();
     int secret;
@@ -1079,7 +1079,7 @@ STDMETHODIMP TextService::OnKeyUp(ITfContext* context, WPARAM wParam, LPARAM lPa
 }
 
 void TextService::HandleKey(ITfContext* context, UINT vk, wchar_t ch, bool toggleText) {
-    // 8 = Windows キー (Meltype.exe は Mac の Command と同じく、確定してアプリに渡す)
+    // 8 = Windows キー (Galtype.exe は Mac の Command と同じく、確定してアプリに渡す)
     int mods = (KeyDown(VK_SHIFT) ? 1 : 0) | (KeyDown(VK_CONTROL) ? 2 : 0) | (KeyDown(VK_MENU) ? 4 : 0) | (KeyDown(VK_LWIN) || KeyDown(VK_RWIN) ? 8 : 0);
     // 登録キーの修飾キーは文字変換の指定には引き継がない。
     if (toggleText) mods = 0;
@@ -1089,7 +1089,7 @@ void TextService::HandleKey(ITfContext* context, UINT vk, wchar_t ch, bool toggl
     bool insertedDirect = false;
     bool switchToJapanese = false;
     HRESULT hr = RunEditSession(context, clientId_, TF_ES_SYNC | TF_ES_READWRITE, [&](TfEditCookie ec) {
-        // キーを受け取る前に入力欄の種類を読めなかった: ここで確かめ、パスワード欄なら Meltype.exe に送らずにアプリへ返す
+        // キーを受け取る前に入力欄の種類を読めなかった: ここで確かめ、パスワード欄なら Galtype.exe に送らずにアプリへ返す
         // (変換中なら、変換中の文字を確定してから。変換中にパスワード欄になったのに、受け取る前に確定できなかったときも)
         if (secretWhileComposing_ || (!secretChecked_ && IsSecretField(ec, context))) {
             if (composition_ != nullptr) CommitInSession(ec, context, true);
@@ -1101,9 +1101,9 @@ void TextService::HandleKey(ITfContext* context, UINT vk, wchar_t ch, bool toggl
         std::string request = "{\"op\":\"key\",\"sid\":\"" + sid_ + "\",\"vk\":" + std::to_string(vk) + ",\"ch\":" + std::to_string(ch) +
                               ",\"mods\":" + std::to_string(mods) + ",\"process\":" + JsonString(ProcessName()) + ",\"code\":true" +
                               std::string(",\"direct\":") + (!open_ ? "true" : "false");
-        // 前に確定してからキャレットが動いた: Meltype.exe に、前の語を確定し直さないように伝える
+        // 前に確定してからキャレットが動いた: Galtype.exe に、前の語を確定し直さないように伝える
         if (caretMoved_) request += ",\"moved\":true";
-        // 入力を覚えないように求める入力欄: Meltype.exe に学習しないように伝える
+        // 入力を覚えないように求める入力欄: Galtype.exe に学習しないように伝える
         if (privateField_) request += ",\"private\":true";
         request += PendingPassed();
         caretMoved_ = false;
@@ -1112,19 +1112,19 @@ void TextService::HandleKey(ITfContext* context, UINT vk, wchar_t ch, bool toggl
             SurroundingText(ec, context, before, after);
             request += ",\"before\":" + JsonString(before) + ",\"after\":" + JsonString(after);
         } else {
-            // 変換中: Meltype.exe に入力の続きが無ければ (つなぎ直した)、新しく始めずに知らせてもらう
+            // 変換中: Galtype.exe に入力の続きが無ければ (つなぎ直した)、新しく始めずに知らせてもらう
             request += ",\"composing\":true";
         }
         request += "}";
         JsonValue reply;
         if (!Request(request, reply)) {
-            // Meltype.exe が応答しない: 変換中の文字はそのまま確定する。打った文字はここで入れる
+            // Galtype.exe が応答しない: 変換中の文字はそのまま確定する。打った文字はここで入れる
             // (送り直すと、その間に打った次のキーより後に届いて順番が入れ替わる)
             keyFailed_ = true;
             ++serverStateRevision_;
             serverStateKnown_ = false;
             serverActive_ = false;
-            // 次のキーで、すぐに問い合わせ直す (Meltype.exe の画面のスレッドが少しふさがっただけなら、次のキーから使える)
+            // 次のキーで、すぐに問い合わせ直す (Galtype.exe の画面のスレッドが少しふさがっただけなら、次のキーから使える)
             lastHello_ = 0;
             if (candidates_) candidates_->Hide();
             EndComposition(ec);
@@ -1173,7 +1173,7 @@ void TextService::HandleKey(ITfContext* context, UINT vk, wchar_t ch, bool toggl
         // キーを送り直す前に、変換中の文字を確定する (キャレットは動かさない)
         if (composition_ != nullptr) CommitAsync(true);
     } else if (keyFailed_) {
-        TipLog(L"Meltype.exe から応答が来ないので、打った文字をそのまま入れました");
+        TipLog(L"Galtype.exe から応答が来ないので、打った文字をそのまま入れました");
     }
     if (!toggleText && ((keyFailed_ && !insertedOnFailure) || (!consumed_ && !insertedDirect))) Reinject(vk);
 }
@@ -1202,13 +1202,13 @@ bool TextService::SetCodeLine(ITfContext* context, bool japanese) {
                           ",\"japanese\":" + (japanese ? "true" : "false") + PendingPassed();
     bool secret = false;
     std::wstring before, after;
-    // キャレットの前を読む。キーの処理の外 (タスクバーのボタン) で読めなければ、Meltype.exe が追いかけている今の行で決める
+    // キャレットの前を読む。キーの処理の外 (タスクバーのボタン) で読めなければ、Galtype.exe が追いかけている今の行で決める
     HRESULT hr = RunEditSession(context, clientId_, TF_ES_SYNC | TF_ES_READ, [&](TfEditCookie ec) {
         secret = IsSecretField(ec, context);
         if (!secret) SurroundingText(ec, context, before, after);
         return S_OK;
     });
-    // パスワード欄の文字は Meltype.exe に送らない
+    // パスワード欄の文字は Galtype.exe に送らない
     if (secret) return false;
     if (SUCCEEDED(hr)) request += ",\"before\":" + JsonString(before);
     request += "}";
@@ -1249,7 +1249,7 @@ void TextService::RememberPassed(UINT vk) {
 }
 
 std::string TextService::PendingPassed() {
-    // アプリに通したキーを、まだ Meltype.exe に伝えていなければ伝える (編集の通知が来ないアプリでも、矢印などで移ったと分かるように)
+    // アプリに通したキーを、まだ Galtype.exe に伝えていなければ伝える (編集の通知が来ないアプリでも、矢印などで移ったと分かるように)
     if (!passedPending_) return "";
     passedPending_ = false;
     return ",\"passed\":" + std::to_string(passedVk_) + (passedControl_ ? ",\"ctrl\":true" : "");
@@ -1319,7 +1319,7 @@ void TextService::Reinject(UINT vk) {
 bool TextService::Request(const std::string& json, JsonValue& reply, DWORD timeoutMs, bool optional) {
     if (deactivated_) return false;
     std::string response;
-    // Meltype.exe 自身の中: どのスレッドからの要求かを付ける (画面のスレッドからなら、Meltype.exe はそのスレッドを待たずに処理する。
+    // Galtype.exe 自身の中: どのスレッドからの要求かを付ける (画面のスレッドからなら、Galtype.exe はそのスレッドを待たずに処理する。
     // 待つと、応答を待って止まっているこのスレッドとお互いに待ち合って固まる)
     std::string request = json;
     if (ownProcess_ && !request.empty() && request.back() == '}') {
@@ -1338,7 +1338,7 @@ void TextService::SurroundingText(TfEditCookie ec, ITfContext* context, std::wst
     TF_SELECTION selection = {};
     ULONG fetched = 0;
     if (FAILED(context->GetSelection(ec, TF_DEFAULT_SELECTION, 1, &selection, &fetched)) || fetched == 0) return;
-    // 前は最大 4000 文字 (コードエディターで、複数行のコメント・文字列の中かを見分けるため。コードでなければ Meltype.exe が 20 文字にする)
+    // 前は最大 4000 文字 (コードエディターで、複数行のコメント・文字列の中かを見分けるため。コードでなければ Galtype.exe が 20 文字にする)
     constexpr LONG kBefore = 4000;
     std::wstring longBuffer(kBefore, L'\0');
     wchar_t buffer[32];
@@ -1400,7 +1400,7 @@ void TextService::Apply(TfEditCookie ec, ITfContext* context, const JsonValue& r
     } else {
         if (composition_ != nullptr) {
             // 変換中の文字を消した (BackSpace で全部消した・Esc で取り消した)。
-            // Meltype.exe がこの入力を受け持っていない (一時停止した・つなぎ直して入力の続きが無い) ときは、消さずにそのまま確定する
+            // Galtype.exe がこの入力を受け持っていない (一時停止した・つなぎ直して入力の続きが無い) ときは、消さずにそのまま確定する
             ITfRange* range = nullptr;
             if (reply[L"active"].Bool() && SUCCEEDED(composition_->GetRange(&range))) {
                 range->SetText(ec, 0, L"", 0);
@@ -1565,7 +1565,7 @@ void TextService::EndComposition(TfEditCookie ec) {
 
 STDMETHODIMP TextService::OnCompositionTerminated(TfEditCookie ec, ITfComposition* composition) {
     // アプリの側で変換中の文字を確定した (入力欄の外をクリックしたなど)。文字は入力欄に残っているので、
-    // Meltype.exe の側も確定したことにする (返ってきた確定の文字は入れない)
+    // Galtype.exe の側も確定したことにする (返ってきた確定の文字は入れない)
     TipLog(L"アプリが変換中の文字を確定しました");
     // 下線が残らないように (その変換中の文字がある入力欄で消す)
     ClearAttributeOf(ec, composition);
@@ -1574,7 +1574,7 @@ STDMETHODIMP TextService::OnCompositionTerminated(TfEditCookie ec, ITfCompositio
         ForgetAbandoned(composition);
         return S_OK;
     }
-    // 打っている途中 (変換していない) なら、Meltype.exe の側はまだ確定しない。空のノートに最初の文字を入れたときなどに、
+    // 打っている途中 (変換していない) なら、Galtype.exe の側はまだ確定しない。空のノートに最初の文字を入れたときなどに、
     // アプリが入力欄を作り直して確定してしまうことがある (そのまま確定すると、ka が「kあ」になる)。
     // キャレットがその文字の後ろのままなら、次のキーで変換中に戻して続ける (ResumeOrCommit)
     resumeRange_.Reset();
@@ -1677,7 +1677,7 @@ void TextService::CommitAsync(bool keepAppCaret) {
 }
 
 void TextService::AbandonComposition() {
-    // 前の入力欄の変換中の文字を、入力欄には触らずに手放す (文字はそのまま残る)。Meltype.exe の側も確定したことにする
+    // 前の入力欄の変換中の文字を、入力欄には触らずに手放す (文字はそのまま残る)。Galtype.exe の側も確定したことにする
     TipLog(L"前の入力欄の変換中の文字を確定できないので、手放します");
     Microsoft::WRL::ComPtr<ITfComposition> old;
     old.Attach(composition_);
@@ -1868,4 +1868,4 @@ STDMETHODIMP TextService::GetDisplayAttributeInfo(REFGUID guid, ITfDisplayAttrib
     return *ppInfo ? S_OK : E_INVALIDARG;
 }
 
-}  // namespace meltype
+}  // namespace galtype

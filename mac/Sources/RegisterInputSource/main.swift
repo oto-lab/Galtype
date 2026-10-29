@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Yukishiro
 //
-// Meltype.app を「有効な入力ソース」として macOS に登録し直し、入力メニューの表示も作り直す、小さな道具 (#134)。
-// install.sh / build.sh が Meltype.app を入れ替えたあとに呼ぶ。
-//   RegisterInputSource [Meltype.app のパス]   (省略したときは、この道具が入っている Meltype.app)
+// Galtype.app を「有効な入力ソース」として macOS に登録し直し、入力メニューの表示も作り直す、小さな道具 (#134)。
+// install.sh / build.sh が Galtype.app を入れ替えたあとに呼ぶ。
+//   RegisterInputSource [Galtype.app のパス]   (省略したときは、この道具が入っている Galtype.app)
 //
-// 更新のたびに入力ソースから消える問題の対策。~/Library/Input Methods/Meltype.app を入れ替えるとき、
+// 更新のたびに入力ソースから消える問題の対策。~/Library/Input Methods/Galtype.app を入れ替えるとき、
 // バンドルが無い一瞬に入力ソースの走査が走ると、macOS は登録を消す。消えたあとは、バンドルを戻して
 // 走査し直しても戻らないことがあり、これまではログアウトするしかなかった。
 // TISRegisterInputSource なら、実行中でもその場で登録を戻せる (ログアウトは要らない)。
@@ -25,7 +25,7 @@ import Foundation
 let appPath = CommandLine.arguments.count >= 2 ? CommandLine.arguments[1] : Bundle.main.bundlePath
 
 guard FileManager.default.fileExists(atPath: appPath) else {
-    FileHandle.standardError.write(Data("Meltype.app が見つかりません: \(appPath)\n".utf8))
+    FileHandle.standardError.write(Data("Galtype.app が見つかりません: \(appPath)\n".utf8))
     exit(1)
 }
 
@@ -82,5 +82,5 @@ if let bundleID = Bundle(path: appPath)?.bundleIdentifier {
         print("まだ入力ソースとして有効になっていません。ログアウトしてログインし直すと直ります。")
     }
 } else {
-    print("Meltype.app の Bundle ID が読めませんでした。ログアウトしてログインし直すと直ります。")
+    print("Galtype.app の Bundle ID が読めませんでした。ログアウトしてログインし直すと直ります。")
 }

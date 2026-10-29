@@ -9,7 +9,7 @@ using Meltype.Detection;
 namespace Meltype;
 
 /// <summary>
-/// 自己診断 (Meltype.exe --selftest 結果ファイル)。キーボードフックは掛けずに、主な機能が動くかだけを確かめる。
+/// 自己診断 (Galtype.exe --selftest 結果ファイル)。キーボードフックは掛けずに、主な機能が動くかだけを確かめる。
 /// 配布用パッケージでは .NET ランタイムから使わない部品を削っているので、削りすぎていないかを作成時に確かめるのに使う。
 /// </summary>
 internal static class SelfTest
@@ -114,7 +114,7 @@ internal static class SelfTest
             try
             {
                 new ConversionHistory(Path.Combine(directory, "conversions.json")).Remember("はしを", "箸を");
-                Diagnostics.Log.SetFileOutput(Path.Combine(directory, "meltype.log"));
+                Diagnostics.Log.SetFileOutput(Path.Combine(directory, "galtype.log"));
                 Diagnostics.Log.Info("自己診断");
                 Diagnostics.Log.SetFileOutput(null);
                 return string.Join(",", Directory.GetFiles(directory).Select(Path.GetFileName));

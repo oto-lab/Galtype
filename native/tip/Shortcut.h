@@ -3,9 +3,9 @@
 #pragma once
 #include <vector>
 
-namespace meltype
+namespace galtype
 {
-  // Meltype.Input.ToggleShortcut と修飾キーフラグの定義を一致させる。
+  // Galtype.Input.ToggleShortcut と修飾キーフラグの定義を一致させる。
   // Shift=1, Ctrl=2, Alt=4, Win=8
   struct ToggleShortcut
   {
@@ -40,8 +40,8 @@ namespace meltype
              NormalizeHankakuKey(vk) == NormalizeHankakuKey(key);
     }
 
-    // Meltype の修飾キーフラグを TSF 用に変換する。
-    // Meltype: Shift=1, Ctrl=2, Alt=4, Win=8
+    // Galtype の修飾キーフラグを TSF 用に変換する。
+    // Galtype: Shift=1, Ctrl=2, Alt=4, Win=8
     // TSF (TF_MOD_*): Alt=1, Ctrl=2, Shift=4。Win は TSF では表現できない。
     unsigned TsfModifiers() const { return ((mods & 4) ? 1u : 0u) | ((mods & 2) ? 2u : 0u) | ((mods & 1) ? 4u : 0u); }
   };
@@ -87,4 +87,4 @@ namespace meltype
     }
     return result;
   }
-} // namespace meltype
+} // namespace galtype

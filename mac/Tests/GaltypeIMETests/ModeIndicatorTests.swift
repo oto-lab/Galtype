@@ -3,7 +3,7 @@
 
 import Cocoa
 import XCTest
-@testable import MeltypeIME
+@testable import GaltypeIME
 
 final class ModeIndicatorTests: XCTestCase {
     func testSavedSelectionIsRestoredInNewSession() {

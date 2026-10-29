@@ -1,8 +1,8 @@
-﻿# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Yukishiro
 #
 # Mozc の変換ヘルパー (meltype_mozc_helper.exe) をビルドして native\mozc\bin に置く。
-# Build-Package.ps1 / Install-Meltype.ps1 は、bin にヘルパーがあれば Meltype に同梱する (無ければ Microsoft IME だけで動く)。
+# Build-Package.ps1 / Install-Galtype.ps1 は、bin にヘルパーがあれば Meltype に同梱する (無ければ Microsoft IME だけで動く)。
 # GitHub Actions (.github/workflows/build.yml の mozc) でも同じスクリプトでビルドする。
 #
 # 必要なもの (Mozc の docs/build_mozc_in_windows.md と同じ):

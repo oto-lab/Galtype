@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Meltype;
 
-/// <summary>バージョン・著作権・ライセンスの表示 (トレイの「Meltype について...」)。</summary>
+/// <summary>バージョン・著作権・ライセンスの表示 (トレイの「Galtype について...」)。</summary>
 internal static class AppInfo
 {
     public const string SourceUrl = Config.ProjectInfo.SourceUrl;
@@ -26,15 +26,15 @@ internal static class AppInfo
     public static string ReportUrl(string environment) => Config.ProjectInfo.ReportUrl(Diagnostics.ReportInfo.OsName, Version, environment);
 
     /// <summary>自動更新で最新のリリースを見に行く GitHub のリポジトリ (公開されている必要がある)。</summary>
-    public const string UpdateRepository = "yksr-melt/Meltype";
+    public const string UpdateRepository = "oto-lab/Galtype";
     public const string Contact = "ibutya0319@gmail.com";
 
     public static string Version =>
         typeof(AppInfo).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0] ?? "?";
 
     public static string AboutText => $"""
-        Meltype {Version}
-        Copyright (C) 2026 雪代 / Yukishiro (@yksr_melt / @yksr-melt)
+        Galtype {Version}
+        Copyright (C) 2026 otoneko.
 
         このプログラムはフリーソフトウェアです。GNU General Public License
         (バージョン 3、またはそれ以降のバージョン) の条件で再配布・改変できます。
@@ -42,6 +42,7 @@ internal static class AppInfo
         https://www.gnu.org/licenses/gpl-3.0.html
 
         ソースコード: {SourceUrl}
+        原著作物: {Config.ProjectInfo.UpstreamUrl}
         GPL v3 の条件で使えない (非公開で利用したい) 場合は、メールでご相談ください: {Contact}
 
         同梱の .NET ランタイムは MIT ライセンスです (app\dotnet\LICENSE.txt)。

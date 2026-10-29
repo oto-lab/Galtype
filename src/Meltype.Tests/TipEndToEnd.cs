@@ -56,7 +56,7 @@ internal static class TipEndToEnd
         });
         serverThread.SetApartmentState(ApartmentState.STA);
         serverThread.IsBackground = true;
-        // MELTYPE_E2E_EXTERNAL_SERVER=1: このプロセスではサーバーを動かさず、常駐している Meltype.exe につなぐ
+        // MELTYPE_E2E_EXTERNAL_SERVER=1: このプロセスではサーバーを動かさず、常駐している Galtype.exe につなぐ
         if (Environment.GetEnvironmentVariable("MELTYPE_E2E_EXTERNAL_SERVER") != "1")
         {
             serverThread.Start();

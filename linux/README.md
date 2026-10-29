@@ -1,24 +1,24 @@
 <p align="center">
-  <img src="../docs/images/logo.png" alt="Meltype" width="360">
+  <img src="../docs/images/galtype-logo.svg" alt="Galtype" width="360">
 </p>
 
-<a name="meltype-for-linux"></a>
-<p align="center"><img src="../docs/images/headings/linux/title.svg" alt="Meltype for Linux" height="80"></p>
+<a name="galtype-for-linux"></a>
+<p align="center"><img src="../docs/images/headings/linux/title.svg" alt="Galtype for Linux" height="80"></p>
 
 <p align="center"><b>雪解けのように、半角/全角の壁を溶かす日本語入力。</b></p>
 
 <p align="center">
-  <a href="https://github.com/yksr-melt/Meltype/releases/latest"><img src="https://img.shields.io/github/v/release/yksr-melt/Meltype?color=5ec4f0" alt="release"></a>
+  <a href="https://github.com/oto-lab/Galtype/releases/latest"><img src="https://img.shields.io/github/v/release/oto-lab/Galtype?color=5ec4f0" alt="release"></a>
   <img src="https://img.shields.io/badge/Linux-IBus%20%2F%20fcitx5-7a96f0?logo=linux&logoColor=white" alt="IBus / fcitx5">
   <img src="https://img.shields.io/badge/プレビュー版-ff8ab4" alt="プレビュー版">
 </p>
 
 <p align="center">
-  <a href="https://github.com/yksr-melt/Meltype/releases/latest"><b>ダウンロード</b></a>
+  <a href="https://github.com/oto-lab/Galtype/releases/latest"><b>ダウンロード</b></a>
   &nbsp;·&nbsp;
   <a href="../README.md">トップの README</a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/yksr-melt/Meltype/issues/new/choose">不具合の報告・提案</a>
+  <a href="https://github.com/oto-lab/Galtype/issues/new/choose">不具合の報告・提案</a>
 </p>
 
 <p align="center">
@@ -27,10 +27,10 @@
   <a href="README.md"><img src="../docs/images/cards/os-linux.svg" alt="Linux" width="30%"></a>
 </p>
 
-Meltype は Linux では「入力ソース」(日本語入力) として動きます。IBus のエンジンと fcitx5 のアドオンの両方があります。
+Galtype は Linux では「入力ソース」(日本語入力) として動きます。IBus のエンジンと fcitx5 のアドオンの両方があります。
 Windows 版と同じく、日本語を打っている途中の英単語は英字のまま出ます！
 
-> **プレビュー版です。** 動かないところがあります。気づいたことはなんでも [Issues](https://github.com/yksr-melt/Meltype/issues) で教えてください！
+> **プレビュー版です。** 動かないところがあります。気づいたことはなんでも [Issues](https://github.com/oto-lab/Galtype/issues) で教えてください！
 
 <br>
 
@@ -47,25 +47,25 @@ fcitx5 のアドオンは、Ubuntu 24.04 の fcitx5 5.1 で作っています。
 <a name="インストール"></a>
 <img src="../docs/images/headings/linux/02.svg" alt="インストール" height="53"><br>
 
-1. [Releases](https://github.com/yksr-melt/Meltype/releases/latest) から `Meltype-<version>-linux.zip` (ARM64 のパソコンは `Meltype-<version>-linux-arm64.zip`) をダウンロードして展開する
+1. [Releases](https://github.com/oto-lab/Galtype/releases/latest) から `Galtype-<version>-linux.zip` (ARM64 のパソコンは `Galtype-<version>-linux-arm64.zip`) をダウンロードして展開する
 2. 「端末」(ターミナル) を開いて、展開したフォルダーで次を実行する (管理者のパスワードを聞かれます。足りない部品があれば自動で入れます)
    ```bash
    bash install.sh
    ```
 
 Debian / Ubuntu では、`.deb` からも入れられます (apt で外せます。中身は `install.sh` で入れるものと同じです)。
-[Releases](https://github.com/yksr-melt/Meltype/releases/latest) から CPU に合う `.deb` をダウンロードして、次のコマンドでインストールします。
+[Releases](https://github.com/oto-lab/Galtype/releases/latest) から CPU に合う `.deb` をダウンロードして、次のコマンドでインストールします。
 
 x86_64:
 
 ```bash
-sudo apt install ./meltype_<version>_amd64.deb
+sudo apt install ./galtype_<version>_amd64.deb
 ```
 
 ARM64:
 
 ```bash
-sudo apt install ./meltype_<version>_arm64.deb
+sudo apt install ./galtype_<version>_arm64.deb
 ```
 
 `.deb` は IBus と fcitx5 の両方に入れます (IBus の部品は「おすすめ」なので、ふつうは一緒に入ります)。
@@ -74,61 +74,61 @@ apt リポジトリから入れると、以後 `sudo apt update && sudo apt upgr
 
 ```bash
 sudo install -d -m 0755 /etc/apt/keyrings
-curl -fsSL https://yksr-melt.github.io/Meltype/apt/meltype-archive-key.asc | sudo tee /etc/apt/keyrings/meltype-archive-key.asc >/dev/null
-sudo chmod 0644 /etc/apt/keyrings/meltype-archive-key.asc
-sudo tee /etc/apt/sources.list.d/meltype.sources >/dev/null <<'EOF'
+curl -fsSL https://oto-lab.github.io/Galtype/apt/galtype-archive-key.asc | sudo tee /etc/apt/keyrings/galtype-archive-key.asc >/dev/null
+sudo chmod 0644 /etc/apt/keyrings/galtype-archive-key.asc
+sudo tee /etc/apt/sources.list.d/galtype.sources >/dev/null <<'EOF'
 Types: deb
-URIs: https://yksr-melt.github.io/Meltype/apt
+URIs: https://oto-lab.github.io/Galtype/apt
 Suites: stable
 Components: main
 Architectures: amd64 arm64
-Signed-By: /etc/apt/keyrings/meltype-archive-key.asc
+Signed-By: /etc/apt/keyrings/galtype-archive-key.asc
 EOF
 sudo apt update
-sudo apt install meltype
+sudo apt install galtype
 ```
 
 apt リポジトリがまだ公開されていない場合は、上の Releases から `.deb` を入れる方法を使ってください.
 
 Fedora では、`.rpm` から入れられます (dnf で外せます。中身は `.deb` と同じです。Fedora 44 でビルドしています)。
-[Releases](https://github.com/yksr-melt/Meltype/releases/latest) から CPU に合う `.rpm` をダウンロードして、次のコマンドでインストールします。
+[Releases](https://github.com/oto-lab/Galtype/releases/latest) から CPU に合う `.rpm` をダウンロードして、次のコマンドでインストールします。
 
 x86_64:
 
 ```bash
-sudo dnf install ./meltype-<version>-1.x86_64.rpm
+sudo dnf install ./galtype-<version>-1.x86_64.rpm
 ```
 
 ARM64:
 
 ```bash
-sudo dnf install ./meltype-<version>-1.aarch64.rpm
+sudo dnf install ./galtype-<version>-1.aarch64.rpm
 ```
 
 dnf リポジトリから入れると、以後 `sudo dnf upgrade` で更新できます。初回だけ、リポジトリを登録します (公開鍵は最初のインストールのときに確認を求められます)。
 
 ```bash
-sudo dnf config-manager addrepo --from-repofile=https://yksr-melt.github.io/Meltype/rpm/meltype.repo
-sudo dnf install meltype
+sudo dnf config-manager addrepo --from-repofile=https://oto-lab.github.io/Galtype/rpm/galtype.repo
+sudo dnf install galtype
 ```
 
 <a name="ibus-のとき"></a>
 <img src="../docs/images/headings/linux/s01.svg" alt="IBus のとき" height="40">
 
 1. いったんログアウトしてログインし直す
-2. 設定 → キーボード → 入力ソース →「+ 入力ソースを追加」→ 日本語 → Meltype を追加
-3. 画面右上の入力ソースのメニュー (または <kbd>Super</kbd> + <kbd>Space</kbd>) で Meltype を選ぶ
+2. 設定 → キーボード → 入力ソース →「+ 入力ソースを追加」→ 日本語 → Galtype を追加
+3. 画面右上の入力ソースのメニュー (または <kbd>Super</kbd> + <kbd>Space</kbd>) で Galtype を選ぶ
 
 <a name="fcitx5-のとき"></a>
 <img src="../docs/images/headings/linux/s02.svg" alt="fcitx5 のとき" height="40">
 
 fcitx5 が入っていれば、`install.sh` が fcitx5 にも入れます (fcitx5 だけに入れるなら `bash install.sh --fcitx5`)。
 
-1. fcitx5 の設定 (`fcitx5-configtool`) →「入力メソッド」で Meltype を追加する
-2. <kbd>Ctrl</kbd> + <kbd>Space</kbd> などで Meltype に切り替える
+1. fcitx5 の設定 (`fcitx5-configtool`) →「入力メソッド」で Galtype を追加する
+2. <kbd>Ctrl</kbd> + <kbd>Space</kbd> などで Galtype に切り替える
 
-動いている fcitx5 があれば、`install.sh` は Meltype を読み込ませます (入れ直したときは、新しい版に切り替えます)。
-「新しい Meltype を読み込ませられませんでした」と出たときは、案内のとおり fcitx5 を起動し直してください。
+動いている fcitx5 があれば、`install.sh` は Galtype を読み込ませます (入れ直したときは、新しい版に切り替えます)。
+「新しい Galtype を読み込ませられませんでした」と出たときは、案内のとおり fcitx5 を起動し直してください。
 KDE Plasma の Wayland では fcitx5 を KWin が起動しているため、ログアウトしてログインし直すのが確実です。
 
 <br>
@@ -148,7 +148,7 @@ KDE Plasma の Wayland では fcitx5 を KWin が起動しているため、ロ�
 | <kbd>F9</kbd> / <kbd>F10</kbd> | 全角英数 / 半角英数 |
 | <kbd>半角/全角</kbd> | 英数と日本語の切り替え |
 
-設定と学習データは `~/.local/share/Meltype` にあります (`config.json` は Windows 版と同じ形式)。
+設定と学習データは `~/.local/share/Galtype` にあります (`config.json` は Windows 版と同じ形式)。
 
 <br>
 
@@ -160,7 +160,7 @@ KDE Plasma の Wayland では fcitx5 を KWin が起動しているため、ロ�
 動かないときは、端末で次を実行してから操作すると、エラーが表示されます。表示された内容を送ってください (終わるときは <kbd>Ctrl</kbd> + <kbd>C</kbd>)。
 
 ```bash
-ibus restart; sleep 2; pkill -f ibus-engine-meltype; /opt/meltype/ibus-engine-meltype
+ibus restart; sleep 2; pkill -f ibus-engine-galtype; /opt/galtype/ibus-engine-galtype
 ```
 
 入力ソースに出てこないときは、[WSL / Linux でビルドする](../docs/WSL.md#入力ソースに出てこないとき) の「入力ソースに出てこないとき」も見てください。
@@ -178,7 +178,7 @@ bash uninstall.sh
 bash uninstall.sh --data
 ```
 
-`.deb` で入れたときは `sudo apt remove meltype`、`.rpm` で入れたときは `sudo dnf remove meltype` で外します (設定と学習データ `~/.local/share/Meltype` は残るので、要らなければ消してください)。
+`.deb` で入れたときは `sudo apt remove galtype`、`.rpm` で入れたときは `sudo dnf remove galtype` で外します (設定と学習データ `~/.local/share/Galtype` は残るので、要らなければ消してください)。
 
 <br>
 
@@ -187,9 +187,9 @@ bash uninstall.sh --data
 
 | 部分 | 中身 |
 | --- | --- |
-| IBus のエンジン (`ibus-engine-meltype`, Python) | IBus からキーを受け取り、判定の本体に渡して、変換中の文字・候補・確定を入力欄に反映する |
+| IBus のエンジン (`ibus-engine-galtype`, Python) | IBus からキーを受け取り、判定の本体に渡して、変換中の文字・候補・確定を入力欄に反映する |
 | fcitx5 のアドオン (`fcitx5/`, C++) | fcitx5 からキーを受け取り、判定の本体に渡す |
-| 判定の本体 (`libMeltypeNative.so`) | Windows 版と共通の C# の部分 (`src/Meltype.Core`) を NativeAOT で Linux 用のライブラリにしたもの |
+| 判定の本体 (`libGaltypeNative.so`) | Windows 版と共通の C# の部分 (`src/Galtype.Core`) を NativeAOT で Linux 用のライブラリにしたもの |
 | 漢字変換 | Mozc の変換ヘルパー (`native/mozc`) |
 
 - ビルドとインストール → [docs/WSL.md](../docs/WSL.md) (`linux/build.sh`)

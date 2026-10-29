@@ -16,9 +16,9 @@ debs=("$1" "$2")
 site_root="$3"
 declare -A architectures=()
 apt_root="$site_root/apt"
-pool="$apt_root/pool/main/m/meltype"
+pool="$apt_root/pool/main/m/galtype"
 mkdir -p "$pool"
-find "$pool" -maxdepth 2 -type f -name 'meltype_*.deb' -delete
+find "$pool" -maxdepth 2 -type f -name 'galtype_*.deb' -delete
 
 for deb in "${debs[@]}"; do
   if [[ ! -f "$deb" ]]; then
@@ -27,8 +27,8 @@ for deb in "${debs[@]}"; do
   fi
   package="$(dpkg-deb --field "$deb" Package)"
   architecture="$(dpkg-deb --field "$deb" Architecture)"
-  if [[ "$package" != meltype || ( "$architecture" != amd64 && "$architecture" != arm64 ) ]]; then
-    echo "Error: expected a Meltype amd64 or arm64 package; got $package ($architecture)." >&2
+  if [[ "$package" != galtype || ( "$architecture" != amd64 && "$architecture" != arm64 ) ]]; then
+    echo "Error: expected a Galtype amd64 or arm64 package; got $package ($architecture)." >&2
     exit 1
   fi
   if [[ -n "${architectures[$architecture]:-}" ]]; then
@@ -42,7 +42,7 @@ done
 
 for architecture in amd64 arm64; do
   if [[ -z "${architectures[$architecture]:-}" ]]; then
-    echo "Error: missing Meltype .deb for architecture $architecture." >&2
+    echo "Error: missing Galtype .deb for architecture $architecture." >&2
     exit 1
   fi
 done
@@ -63,19 +63,19 @@ if [[ -z "$fingerprint" ]]; then
   echo "Error: no private signing key was found in APT_SIGNING_KEY_B64." >&2
   exit 1
 fi
-gpg --batch --armor --export "$fingerprint" > "$apt_root/meltype-archive-key.asc"
+gpg --batch --armor --export "$fingerprint" > "$apt_root/galtype-archive-key.asc"
 
 (
   cd "$apt_root"
   for architecture in amd64 arm64; do
     index="dists/stable/main/binary-$architecture"
     mkdir -p "$index"
-    apt-ftparchive packages "pool/main/m/meltype/$architecture" > "$index/Packages"
+    apt-ftparchive packages "pool/main/m/galtype/$architecture" > "$index/Packages"
     gzip -n -9 -c "$index/Packages" > "$index/Packages.gz"
   done
   apt-ftparchive \
-    -o APT::FTPArchive::Release::Origin="Meltype" \
-    -o APT::FTPArchive::Release::Label="Meltype" \
+    -o APT::FTPArchive::Release::Origin="Galtype" \
+    -o APT::FTPArchive::Release::Label="Galtype" \
     -o APT::FTPArchive::Release::Suite="stable" \
     -o APT::FTPArchive::Release::Codename="stable" \
     -o APT::FTPArchive::Release::Components="main" \

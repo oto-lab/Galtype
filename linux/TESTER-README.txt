@@ -1,9 +1,9 @@
-Meltype for Linux テスト版
+Galtype for Linux テスト版
 
 ※ テスト版です。内容は公開しないでください。
 ※ 試作のため、動かないところがあります。気づいたことはなんでも教えてください。
 
-Meltype は「入力ソース」(日本語入力、IBus のエンジン・fcitx5 のアドオン) です。下の手順でインストールして、入力ソースに追加して使います。
+Galtype は「入力ソース」(日本語入力、IBus のエンジン・fcitx5 のアドオン) です。下の手順でインストールして、入力ソースに追加して使います。
 
 ■ 動く環境
   Ubuntu 24.04 など (x86_64)。入力の仕組みが IBus (GNOME、Ubuntu の標準) か fcitx5 (KDE など) のもの
@@ -16,24 +16,24 @@ Meltype は「入力ソース」(日本語入力、IBus のエンジン・fcitx5
      (管理者のパスワードを聞かれます。足りない部品があれば自動で入れます)
   IBus のとき:
   3. いったんログアウトしてログインし直す
-  4. 設定 → キーボード → 入力ソース →「+ 入力ソースを追加」→ 日本語 → Meltype を追加
-  5. 画面右上の入力ソースのメニュー (または Super + Space) で Meltype を選ぶ
+  4. 設定 → キーボード → 入力ソース →「+ 入力ソースを追加」→ 日本語 → Galtype を追加
+  5. 画面右上の入力ソースのメニュー (または Super + Space) で Galtype を選ぶ
   fcitx5 のとき (fcitx5 が入っていれば、install.sh が fcitx5 にも入れます。fcitx5 だけに入れるなら bash install.sh --fcitx5):
-  3. fcitx5 の設定 (fcitx5-configtool) →「入力メソッド」で Meltype を追加する
-     (「新しい Meltype を読み込ませられませんでした」と出たら、ログアウトしてログインし直してから追加する)
-  4. Ctrl + Space などで Meltype に切り替える
+  3. fcitx5 の設定 (fcitx5-configtool) →「入力メソッド」で Galtype を追加する
+     (「新しい Galtype を読み込ませられませんでした」と出たら、ログアウトしてログインし直してから追加する)
+  4. Ctrl + Space などで Galtype に切り替える
 
 ■ 使い方
   ・ふつうにローマ字で打つと日本語、英単語 (google、github …) は英字のまま
   ・Space で変換、Enter で確定、← → で文節を選ぶ、Esc で取り消し
   ・F6 ひらがな / F7 カタカナ / F8 半角カタカナ / F9 全角英数 / F10 半角英数
   ・半角/全角 キーで英数 ⇔ 日本語
-  ・設定と学習データは ~/.local/share/Meltype にあります (config.json は Windows 版と同じ形式)
+  ・設定と学習データは ~/.local/share/Galtype にあります (config.json は Windows 版と同じ形式)
 
 ■ 不具合を報告するとき
   ・どのアプリで、何と打って、どうなったか (できればスクリーンショットも)
   ・動かないときは、端末で次を実行してから操作すると、エラーが表示されます
-       ibus restart; sleep 2; pkill -f ibus-engine-meltype; /opt/meltype/ibus-engine-meltype
+       ibus restart; sleep 2; pkill -f ibus-engine-galtype; /opt/galtype/ibus-engine-galtype
      (表示された内容を送ってください。終わるときは Ctrl + C)
 
 ■ アンインストール

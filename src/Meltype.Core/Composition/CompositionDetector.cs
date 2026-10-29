@@ -111,7 +111,7 @@ public sealed partial class CompositionDetector
 
     /// <summary>
     /// 英字の後ろの記号 units[i] を、英文の記号 (半角のまま) として扱うか。設定が ON でも、キャレットの前が英語なら英文の続き。
-    /// すぐ後ろに英数字が続く . は、ドメイン・拡張子の区切り (tetr.io、MeltypeTip.dll)。
+    /// すぐ後ろに英数字が続く . は、ドメイン・拡張子の区切り (tetr.io、GaltypeTip.dll)。
     /// </summary>
     private bool KeepsPunctuationAfterEnglish(IReadOnlyList<CompositionUnit> units, int i, string pending, bool? precedingEnglish)
     {
@@ -369,7 +369,7 @@ public sealed partial class CompositionDetector
         while (i < n)
         {
             var found = -1;
-            // ドメイン・拡張子の . の後ろは、ローマ字として読めても英字のままにする (tetr.io、Wakatte.TV、MeltypeTip.dll)。
+            // ドメイン・拡張子の . の後ろは、ローマ字として読めても英字のままにする (tetr.io、Wakatte.TV、GaltypeTip.dll)。
             if (!kanaInput && level != DetectionLevel.Manual && i > 0 && units[i - 1].Raw == "." && PrecededByEnglish(i) == true) found = DotSuffixEnd(units, i, pending, final);
             if (!kanaInput && found < 0 && level != DetectionLevel.Manual) found = ReadableStemDotSuffixEnd(units, i, pending, final, level);
             if (!kanaInput && found < 0) found = LeadingDotfileEnd(units, i, pending, final, level);
@@ -1078,10 +1078,10 @@ public sealed partial class CompositionDetector
     }
 
     /// <summary>
-    /// 英語の語のすぐ後ろの . に続く、ドメイン・拡張子 (tetr.io、MeltypeTip.dll、abi.json、go.mod) の終わり。無ければ -1 (issue #260)。
+    /// 英語の語のすぐ後ろの . に続く、ドメイン・拡張子 (tetr.io、GaltypeTip.dll、abi.json、go.mod) の終わり。無ければ -1 (issue #260)。
     /// ドメインは語全体が一致するときだけ (config の co、index の in を英字にして、残りをローマ字にしていた)。
     /// 拡張子は、ローマ字として読めない (dll、aab)・数字や . / を含む (e57、go.mod)・よく使う拡張子 (ace、ini) なら英字のまま。
-    /// 最後までローマ字として読める語 (Meltype.desu) は、今までどおり判定する。後ろの助詞からは日本語 (MeltypeTip.dll|wokesu)。
+    /// 最後までローマ字として読める語 (Meltype.desu) は、今までどおり判定する。後ろの助詞からは日本語 (GaltypeTip.dll|wokesu)。
     /// </summary>
     private int DotSuffixEnd(IReadOnlyList<CompositionUnit> units, int start, string pending, bool final)
     {

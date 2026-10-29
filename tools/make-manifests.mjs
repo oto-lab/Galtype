@@ -113,9 +113,9 @@ ManifestVersion: 1.6.0
 }
 
 // --- Homebrew Cask (このリポジトリを URL 指定の tap として使う) ---
-// input_method で ~/Library/Input Methods/Meltype.app に入れ、postflight で mac/install.sh と同じこと
+// input_method で ~/Library/Input Methods/Galtype.app に入れ、postflight で mac/install.sh と同じこと
 // (隔離属性を外す・入力ソースに登録・LaunchServices に登録・GUI のセッションで起動) をする。
-// start-input-method.sh は zip の中 (Meltype-mac/) のものを使う (Homebrew は Meltype.app だけを動かし、ほかは staged_path に残す)。
+// start-input-method.sh は zip の中 (Galtype-mac/) のものを使う (Homebrew は Galtype.app だけを動かし、ほかは staged_path に残す)。
 if (macZip) {
   const macName = path.basename(macZip);
   write('homebrew/Casks/meltype.rb', `cask "meltype" do
@@ -135,10 +135,10 @@ if (macZip) {
   depends_on macos: ">= :ventura"
   depends_on arch: :arm64
 
-  input_method "Meltype-mac/Meltype.app"
+  input_method "Galtype-mac/Galtype.app"
 
   postflight do
-    app = "#{Dir.home}/Library/Input Methods/Meltype.app"
+    app = "#{Dir.home}/Library/Input Methods/Galtype.app"
     # 署名が自分用 (ad hoc) の版もあるので、隔離属性を外さないと macOS が起動させない (install.sh と同じ)
     system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", app], must_succeed: false
     # 入力ソースに登録する (#21、#134)
@@ -147,7 +147,7 @@ if (macZip) {
     system_command register, args: [app], must_succeed: false if File.executable?(register)
     system_command "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister",
                    args: ["-f", app], must_succeed: false
-    system_command "/bin/bash", args: ["#{staged_path}/Meltype-mac/start-input-method.sh", app], must_succeed: false
+    system_command "/bin/bash", args: ["#{staged_path}/Galtype-mac/start-input-method.sh", app], must_succeed: false
   end
 
   uninstall launchctl: "io.github.yksr-melt.Meltype.manual",

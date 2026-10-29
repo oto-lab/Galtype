@@ -16,11 +16,11 @@
 #include <mutex>
 #include <cmath>
 
-namespace meltype {
+namespace galtype {
 namespace {
 
-constexpr wchar_t kClassName[] = L"MeltypeCandidateWindow";
-constexpr wchar_t kMeaningClassName[] = L"MeltypeMeaningWindow";
+constexpr wchar_t kClassName[] = L"GaltypeCandidateWindow";
+constexpr wchar_t kMeaningClassName[] = L"GaltypeMeaningWindow";
 constexpr int kPageSize = 9;
 constexpr UINT_PTR kMeaningTimer = 1;
 constexpr UINT kMeaningDelayMs = 1500;
@@ -604,4 +604,4 @@ void CandidateWindow::Show(const CandidateView& view, const RECT& anchor) {
     d.ScheduleMeaning();
 }
 
-}  // namespace meltype
+}  // namespace galtype

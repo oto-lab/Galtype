@@ -15,10 +15,10 @@
     <Copyright>Copyright (C) 2026 雪代 / Yukishiro. GPL-3.0-or-later</Copyright>
   </PropertyGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Meltype" />
-    <InternalsVisibleTo Include="Meltype.Tests" />
+    <InternalsVisibleTo Include="Galtype" />
+    <InternalsVisibleTo Include="Galtype.Tests" />
     <InternalsVisibleTo Include="Meltype.Core.Tests" />
-    <InternalsVisibleTo Include="MeltypeNative" />
+    <InternalsVisibleTo Include="GaltypeNative" />
     <EmbeddedResource Include="..\..\dictionaries\*.txt" LogicalName="Meltype.dictionaries.%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>

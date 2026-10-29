@@ -9,7 +9,8 @@ namespace Meltype.Config;
 /// <summary>Windows 版・Mac 版・Linux 版で共通の、プロジェクトの情報と不具合報告の URL。</summary>
 public static class ProjectInfo
 {
-    public const string SourceUrl = "https://github.com/yksr-melt/Meltype";
+    public const string SourceUrl = "https://github.com/oto-lab/Galtype";
+    public const string UpstreamUrl = "https://github.com/yksr-melt/Meltype";
 
     /// <summary>
     /// 不具合報告のフォーム (Google フォームの「事前入力した URL」。OS に Windows 11、版に 0.0.0、実行環境に ENV を入れて作ったもの)。
@@ -81,7 +82,7 @@ public static class ProjectInfo
     /// <summary>Mac 版・Linux 版の実行環境 (不具合報告に入れる。入力した文字は入れない)。</summary>
     public static string Environment(Settings settings, string platform) => string.Join("\n",
     [
-        $"Meltype: {CoreVersion} ({platform}、プレビュー版)",
+        $"Galtype: {CoreVersion} ({platform}、プレビュー版)",
         $"OS: {RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})",
         $".NET: {System.Environment.Version}",
         $"自動判定の強さ: {settings.DetectionLevel}",

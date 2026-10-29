@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 lnkiai
 //
-// Meltype IME のテキストサービス本体。キーを Meltype.exe に渡し、返ってきた結果
+// Galtype IME のテキストサービス本体。キーを Galtype.exe に渡し、返ってきた結果
 // (確定する文字・未確定の文字・候補) を入力欄に反映する。
 
 #pragma once
@@ -18,7 +18,7 @@
 #include "Pipe.h"
 #include "Shortcut.h"
 
-namespace meltype {
+namespace galtype {
 
 class LangBarButton;
 
@@ -96,16 +96,16 @@ private:
     // タイマーを止め、取得処理の終了を待ってから接続を解放する。
     void StopHelloUpdates();
     static LRESULT CALLBACK HelloWindowProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
-    // Meltype.exe から受け取った入力モード切り替えショートカットを TSF (PreserveKey) に再登録する
+    // Galtype.exe から受け取った入力モード切り替えショートカットを TSF (PreserveKey) に再登録する
     void RefreshPreservedShortcuts();
     // TSF に登録した入力モード切り替えショートカットを解除する
     void UnpreserveShortcuts();
     // 押されたキーと修飾キーの状態が、登録された切り替えショートカットのいずれかに一致するか判定する
     bool MatchesToggle(UINT vk, LPARAM lParam);
     void HandleKey(ITfContext* context, UINT vk, wchar_t ch, bool toggleText = false);
-    // コードの行を日本語にする / 英数に戻すよう Meltype.exe に頼む。そうしたなら true
+    // コードの行を日本語にする / 英数に戻すよう Galtype.exe に頼む。そうしたなら true
     bool SetCodeLine(ITfContext* context, bool japanese);
-    // キャレットが動いたときに、次に打つキーが英数か Meltype.exe に聞く (コードエディターのとき。編集の通知の中で呼ぶ)
+    // キャレットが動いたときに、次に打つキーが英数か Galtype.exe に聞く (コードエディターのとき。編集の通知の中で呼ぶ)
     void QueryMode(TfEditCookie ec, ITfContext* context, bool selectionChanged);
     // アプリに通したキーを覚える (QueryMode で伝える)
     void RememberPassed(UINT vk);
@@ -167,22 +167,22 @@ private:
     bool serverStateKnown_ = false; // 未取得・通信失敗は「無効」という応答と区別する
     unsigned long long serverStateRevision_ = 0; // 入力要求の完了ごとに進める状態の世代
     unsigned long long helloStateRevision_ = 0; // 設定取得を開始した時点の世代
-    bool directDetection_ = false; // 英数状態でもローマ字検知が有効 (Meltype.exe の応答)
+    bool directDetection_ = false; // 英数状態でもローマ字検知が有効 (Galtype.exe の応答)
     bool directEnglishWord_ = false;
-    bool fullWidthSpace_ = false;  // 設定「スペースを全角で入力」(Meltype.exe の応答の fullWidthSpace。日本語入力のときは Space も受け取る)
+    bool fullWidthSpace_ = false;  // 設定「スペースを全角で入力」(Galtype.exe の応答の fullWidthSpace。日本語入力のときは Space も受け取る)
     ULONGLONG lastHello_ = 0;
     HWND helloWindow_ = nullptr; // IME のスレッドでタイマーを受ける、表示しないウィンドウ
     std::shared_ptr<PipeClient> helloPipe_; // 設定取得専用。入力用の pipe_ と同時に使える
     std::future<std::pair<bool, JsonValue>> helloResult_; // 取得中の要求は 1 つだけ。成功したかと応答を保持
     bool open_ = true;
-    bool codeApp_ = false;         // コードエディター・ターミナル (Meltype.exe の応答の code)
-    bool codeEnglish_ = false;     // 次に打つキーがコードの行なので英数のまま通る (Meltype.exe の応答の english)
-    UINT passedVk_ = 0;            // 最後にアプリに通したキー (キャレットが動いたときに Meltype.exe に伝える)
+    bool codeApp_ = false;         // コードエディター・ターミナル (Galtype.exe の応答の code)
+    bool codeEnglish_ = false;     // 次に打つキーがコードの行なので英数のまま通る (Galtype.exe の応答の english)
+    UINT passedVk_ = 0;            // 最後にアプリに通したキー (キャレットが動いたときに Galtype.exe に伝える)
     bool passedControl_ = false;   // そのとき Ctrl を押していたか
     ULONGLONG passedTime_ = 0;
-    bool passedPending_ = false;   // そのキーをまだ Meltype.exe に伝えていない
+    bool passedPending_ = false;   // そのキーをまだ Galtype.exe に伝えていない
     bool disabled_ = false;
-    bool ownProcess_ = false;      // Meltype.exe 自身の中で動いている (要求にスレッドを付ける)  // Meltype.exe 自身の中では動かない (自分のサーバーを待って固まるため)
+    bool ownProcess_ = false;      // Galtype.exe 自身の中で動いている (要求にスレッドを付ける)  // Galtype.exe 自身の中では動かない (自分のサーバーを待って固まるため)
     bool eatenDown_[256] = {};
     bool toggleDown_[256] = {};
     bool shortcutsEnabled_ = true; // 初回接続前は従来の初期登録。接続後は最後に受け取った設定。
@@ -216,7 +216,7 @@ private:
     Reinjected reinjected_[4];     // 送り直して、まだ届いていないキー (それぞれ 1 回だけ素通しする)
     UINT passVk_ = 0;              // OnTestKeyDown で素通しにしたキー
     ULONGLONG passTime_ = 0;
-    bool caretMoved_ = false;      // 前に確定してから、キャレットが動いたかもしれない (次のキーで Meltype.exe に伝える)
+    bool caretMoved_ = false;      // 前に確定してから、キャレットが動いたかもしれない (次のキーで Galtype.exe に伝える)
     bool ownEdit_ = false;         // 自分の編集セッションが終わった通知を、キャレットが動いたことにしない
     bool secretChecked_ = false;   // このキーで、入力欄の種類 (パスワード欄でないこと) を確かめた
     bool secretWhileComposing_ = false;  // 変換中にパスワード欄になったが、受け取る前に確定できなかった (キーの処理の中で確定して送り直す)
@@ -229,7 +229,7 @@ private:
     bool privateField_ = false;    // 前に入力欄の種類を読んだとき、入力を覚えないように求める入力欄 (IS_PRIVATE) だった
     const wchar_t* scopeSource_ = nullptr;  // 入力欄の種類を前に読んだところ (ログ用)
     bool keepAppCaret_ = false;    // 確定したあと、キャレットを動かさない (クリック・別の入力欄で確定したとき)
-    bool deactivated_ = false;     // 終わった後は Meltype.exe とやり取りしない
+    bool deactivated_ = false;     // 終わった後は Galtype.exe とやり取りしない
     const wchar_t* passReason_ = nullptr;  // 最後にキーを通した理由 (ログに同じ理由を続けて書かない)
     bool keyFailed_ = false;
     bool consumed_ = true;
@@ -241,4 +241,4 @@ private:
 // ITfEditSession を関数で作る
 HRESULT RunEditSession(ITfContext* context, TfClientId clientId, DWORD flags, std::function<HRESULT(TfEditCookie)> action);
 
-}  // namespace meltype
+}  // namespace galtype

@@ -15,7 +15,7 @@ namespace Meltype.Tip;
 
 /// <summary>
 /// Meltype IME (TSF の DLL, native/tip) とつなぐ名前付きパイプのサーバー。
-/// DLL はアプリのプロセスに読み込まれるので、入力の本体 (辞書・学習・変換) はここ (Meltype.exe) に 1 つだけ置き、
+/// DLL はアプリのプロセスに読み込まれるので、入力の本体 (辞書・学習・変換) はここ (Galtype.exe) に 1 つだけ置き、
 /// DLL からはキーを 1 つずつ受け取って <see cref="SessionResult"/> を JSON で返す。
 ///
 /// やり取りは 1 メッセージ 1 JSON (UTF-8)。要求:
@@ -37,8 +37,8 @@ namespace Meltype.Tip;
 /// ほかのプロセスが同じ名前のパイプを先に作ると、DLL はそちらにつなごうとする。パイプの名前はセッションをまたいで共通で、名前の SID も
 /// ほかのユーザーから分かるので、同じ PC のほかのユーザーのプロセスも先に作れる。同じユーザーのプロセスなら打鍵を横取りできてしまう。
 /// ほかのユーザーのプロセスなら DLL がつながないので打鍵は渡らないが、このユーザーは Meltype IME を使えなくなる。最初のパイプは
-/// FirstPipeInstance で作り、先に作られていたら始めない (ログに書く)。Meltype.exe より高い権限で動くアプリ (管理者として動くアプリなど) とサインインの画面には、
-/// DLL の側でつながない (Meltype.exe の権限より上の入力を扱わない)。
+/// FirstPipeInstance で作り、先に作られていたら始めない (ログに書く)。Galtype.exe より高い権限で動くアプリ (管理者として動くアプリなど) とサインインの画面には、
+/// DLL の側でつながない (Galtype.exe の権限より上の入力を扱わない)。
 /// </summary>
 internal sealed class TipServer : IDisposable
 {
@@ -146,7 +146,7 @@ internal sealed class TipServer : IDisposable
 
     public void Start()
     {
-        // Start は UI スレッドから呼ぶ。Meltype.exe 自身の画面から来た要求を見分けるのに、このスレッドを覚えておく
+        // Start は UI スレッドから呼ぶ。Galtype.exe 自身の画面から来た要求を見分けるのに、このスレッドを覚えておく
         _uiThread = GetCurrentThreadId();
         _ = Task.Run(AcceptLoop);
         Log.Info($"Meltype IME のサーバーを開始しました (\\\\.\\pipe\\{PipeName})。");
@@ -367,7 +367,7 @@ internal sealed class TipServer : IDisposable
     private static extern bool GetNamedPipeClientProcessId(SafeHandle pipe, out uint processId);
 
     /// <summary>
-    /// Meltype.exe 自身の UI スレッド (設定・はじめにの画面など) から来た要求か。
+    /// Galtype.exe 自身の UI スレッド (設定・はじめにの画面など) から来た要求か。
     /// そのとき UI スレッドは、DLL の中でこの応答を待って止まっているので、Invoke で UI スレッドに頼むとお互いに待ち合って固まる。
     /// 代わりにこのスレッドで処理する (UI スレッドは止まっているので、ほかの処理と同時には動かない)。
     /// </summary>
@@ -410,7 +410,7 @@ internal sealed class TipServer : IDisposable
 
     private async Task Serve(NamedPipeServerStream pipe)
     {
-        // このつながりの入力の本体 (UI スレッドからだけ触る。Meltype.exe 自身の UI スレッドのつながりは、UI スレッドが止まっている間に触る)
+        // このつながりの入力の本体 (UI スレッドからだけ触る。Galtype.exe 自身の UI スレッドのつながりは、UI スレッドが止まっている間に触る)
         var sessions = new Dictionary<string, MeltypeSession>();
         var ownClient = GetNamedPipeClientProcessId(pipe.SafePipeHandle, out var clientProcess) && clientProcess == (uint)Environment.ProcessId;
         var buffer = new byte[64 * 1024];
@@ -611,7 +611,7 @@ internal sealed class TipServer : IDisposable
 
     /// <summary>
     /// 設定「スペースを全角で入力」(issue #259)。DLL は、これが ON で日本語入力のときに、何も打っていなくても Space を受け取って
-    /// Meltype.exe に送る (OFF なら Space はそのままアプリに通す。Shift+Space はいつも送る: issue #246, #881)
+    /// Galtype.exe に送る (OFF なら Space はそのままアプリに通す。Shift+Space はいつも送る: issue #246, #881)
     /// </summary>
     private string FullWidthSpaceJson() => $"\"fullWidthSpace\":{(_settings().FullWidthSpaceByDefault ? "true" : "false")},";
 

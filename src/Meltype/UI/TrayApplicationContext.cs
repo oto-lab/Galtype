@@ -161,7 +161,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         menu.Items.Add(backup);
         menu.Items.Add("不具合の報告・提案...", null, (_, _) => OpenReport());
         menu.Items.Add("直した誤判定を報告...", null, (_, _) => new CorrectionReportDialog(_composition.Corrections, _engine.Settings).Show());
-        menu.Items.Add("Meltype について...", null, (_, _) => MessageBox.Show(AppInfo.AboutText, "Meltype について", MessageBoxButtons.OK, MessageBoxIcon.Information));
+        menu.Items.Add("Galtype について...", null, (_, _) => MessageBox.Show(AppInfo.AboutText, "Galtype について", MessageBoxButtons.OK, MessageBoxIcon.Information));
         menu.Items.Add("学習した語...", null, (_, _) => ShowLearnedWords());
         var forget = new ToolStripMenuItem("学習データを消す");
         forget.DropDownItems.Add("この 1 時間に覚えたもの...", null, (_, _) => ForgetRecentLearning(DateTime.UtcNow.AddHours(-1), "この 1 時間"));
@@ -248,13 +248,13 @@ internal sealed class TrayApplicationContext : ApplicationContext
     }
 
     /// <summary>
-    /// Meltype IME を入れるかを聞けるか。Meltype IME を使ったことがない・登録されていない・インストール先に meltype-ime.ps1 と DLL がある・
+    /// Meltype IME を入れるかを聞けるか。Meltype IME を使ったことがない・登録されていない・インストール先に galtype-ime.ps1 と DLL がある・
     /// 前に断っていない (UAC で断ったときと、インストーラーでチェックを外したときに HKCU\Software\Meltype の ImeDeclined に残す) とき。
     /// </summary>
     private bool CanOfferTsf()
     {
         if (_engine.Settings.TsfIntroduced || !Tip.TipServer.IsKnownUnregistered || RuntimeInformation.OSArchitecture == Architecture.Arm64) return false;
-        if (!File.Exists(Path.Combine(AppContext.BaseDirectory, "meltype-ime.ps1")) || !Directory.Exists(Path.Combine(AppContext.BaseDirectory, "tip"))) return false;
+        if (!File.Exists(Path.Combine(AppContext.BaseDirectory, "galtype-ime.ps1")) || !Directory.Exists(Path.Combine(AppContext.BaseDirectory, "tip"))) return false;
         try
         {
             using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Meltype");
@@ -266,7 +266,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         }
     }
 
-    /// <summary>Meltype IME を入れるかを聞き、「はい」なら meltype-ime.ps1 で登録して、動作モードを Meltype IME にする。</summary>
+    /// <summary>Meltype IME を入れるかを聞き、「はい」なら galtype-ime.ps1 で登録して、動作モードを Meltype IME にする。</summary>
     private async void OfferTsf()
     {
         // 起動したときに出すので、ほかのウィンドウの後ろに隠れないように最前面にする
@@ -281,7 +281,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         var quote = (string text) => "'" + text.Replace("'", "''") + "'";
         var start = new ProcessStartInfo(Updater.PowerShell) { UseShellExecute = false, CreateNoWindow = true };
         foreach (var arg in new[] { "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command",
-            $". {quote(Path.Combine(directory, "meltype-ime.ps1"))}; Install-MeltypeIme -Source {quote(Path.Combine(directory, "tip"))} -Ask | Out-Null" })
+            $". {quote(Path.Combine(directory, "galtype-ime.ps1"))}; Install-GaltypeIme -Source {quote(Path.Combine(directory, "tip"))} -Ask | Out-Null" })
         {
             start.ArgumentList.Add(arg);
         }
@@ -409,7 +409,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         try
         {
             // 更新の前に、あなたの打ち方で変わる語があれば見せる (issue #285)。
-            // 判定は新しい版の Meltype.exe を起動して待つので、UI スレッドの外で行う (待つ間も Meltype IME に応答するため)
+            // 判定は新しい版の Galtype.exe を起動して待つので、UI スレッドの外で行う (待つ間も Meltype IME に応答するため)
             if (Updater.Staged() is { } staged)
             {
                 var words = _composition.Languages.Entries().Select(e => e.Word).Distinct().ToList();
@@ -570,7 +570,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         else if (tsf)
         {
             _tray.Icon = _onIcon;
-            status = registered ? "Meltype IME (Win + Space で Meltype を選んで入力)" : "Meltype IME が登録されていません (Install.cmd か Install-Meltype.ps1 で入れるか、別の動作モードを選んでください)";
+            status = registered ? "Meltype IME (Win + Space で Meltype を選んで入力)" : "Meltype IME が登録されていません (Install.cmd か Install-Galtype.ps1 で入れるか、別の動作モードを選んでください)";
         }
         else
         {
@@ -776,7 +776,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         var script = Path.Combine(AppContext.BaseDirectory, "uninstall.ps1");
         if (!File.Exists(script))
         {
-            MessageBox.Show("アンインストール用のファイルが見つかりません。Windows の「設定」→「アプリ」→「インストールされているアプリ」か、zip の中の Uninstall.cmd でアンインストールしてください。\nソースから Install-Meltype.ps1 で入れた場合は、ソースのフォルダーの Uninstall-Meltype.ps1 を実行してください (Meltype IME の登録も外します)。", "Meltype", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("アンインストール用のファイルが見つかりません。Windows の「設定」→「アプリ」→「インストールされているアプリ」か、zip の中の Uninstall.cmd でアンインストールしてください。\nソースから Install-Galtype.ps1 で入れた場合は、ソースのフォルダーの Uninstall-Galtype.ps1 を実行してください (Meltype IME の登録も外します)。", "Meltype", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
         var answer = MessageBox.Show("Meltype をアンインストールします。設定・学習データ・ユーザー辞書も削除します。よろしいですか？\n(残したいときは、先に「バックアップ」→「バックアップを書き出す...」で書き出してください)", "Meltype のアンインストール", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);

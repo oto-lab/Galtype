@@ -34,7 +34,7 @@ cleanup() {
             exit "$result"
         fi
     fi
-    for staged_app in "$stage/Meltype.app" "$stage/previous.app" "$stage/failed.app"; do
+    for staged_app in "$stage/Galtype.app" "$stage/previous.app" "$stage/failed.app"; do
         /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -u "$staged_app" 2>/dev/null || true
     done
     rm -rf "$stage"
@@ -48,13 +48,13 @@ target_device="$(stat -f %d "$(dirname "$target_app")")"
     echo "Staging and installation must be on the same volume." >&2
     exit 1
 }
-ditto "$source_app" "$stage/Meltype.app"
-codesign --verify --deep --strict "$stage/Meltype.app"
+ditto "$source_app" "$stage/Galtype.app"
+codesign --verify --deep --strict "$stage/Galtype.app"
 pkill -x Meltype 2>/dev/null || true
 if [[ -e "$target_app" ]]; then
     mv "$target_app" "$stage/previous.app"
     backup_ready=1
 fi
 replacement_started=1
-mv "$stage/Meltype.app" "$target_app"
+mv "$stage/Galtype.app" "$target_app"
 codesign --verify --deep --strict "$target_app"

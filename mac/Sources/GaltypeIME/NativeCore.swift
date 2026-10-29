@@ -4,7 +4,7 @@
 import AppKit
 import Foundation
 
-// libMeltypeNative.dylib (C# の Meltype.Core を NativeAOT にしたもの) の関数。src/Meltype.Mac.Native/Exports.cs と合わせる。
+// libGaltypeNative.dylib (C# の Galtype.Core を NativeAOT にしたもの) の関数。src/Galtype.Mac.Native/Exports.cs と合わせる。
 typealias ClausesCallback = @convention(c) (UnsafePointer<CChar>?, UnsafePointer<CChar>?) -> UnsafeMutablePointer<CChar>?
 typealias CandidatesCallback = @convention(c) (UnsafePointer<CChar>?) -> UnsafeMutablePointer<CChar>?
 typealias IsWordCallback = @convention(c) (UnsafePointer<CChar>?) -> Int32
@@ -25,7 +25,7 @@ private typealias FreeFunction = @convention(c) (UnsafeMutableRawPointer?) -> Vo
 /// (ひらがな, 文脈) → 「読み\t変換結果」を改行でつないだもの (文節ごと)。
 private let clausesCallback: ClausesCallback = { hiragana, context in
     guard let hiragana else { return nil }
-    let clauses = MeltypeConverter.shared.clauses(for: String(cString: hiragana), context: context.map { String(cString: $0) })
+    let clauses = GaltypeConverter.shared.clauses(for: String(cString: hiragana), context: context.map { String(cString: $0) })
     guard !clauses.isEmpty else { return nil }
     return strdup(clauses.map { "\($0.reading)\t\($0.text)" }.joined(separator: "\n"))
 }
@@ -33,7 +33,7 @@ private let clausesCallback: ClausesCallback = { hiragana, context in
 /// 読み → 候補を改行でつないだもの。
 private let candidatesCallback: CandidatesCallback = { reading in
     guard let reading else { return nil }
-    let candidates = MeltypeConverter.shared.candidates(for: String(cString: reading))
+    let candidates = GaltypeConverter.shared.candidates(for: String(cString: reading))
     return strdup(candidates.joined(separator: "\n"))
 }
 
@@ -98,7 +98,7 @@ struct CompositionView: Decodable {
     let suggestion: String?
 }
 
-/// libMeltypeNative.dylib を読み込んで呼ぶ。Meltype.app/Contents/Frameworks に置く (build.sh)。
+/// libGaltypeNative.dylib を読み込んで呼ぶ。Galtype.app/Contents/Frameworks に置く (build.sh)。
 final class NativeCore {
     static let shared = NativeCore()
     var spellCheckCount: Int { spellCacheLock.withLock { spellChecks } }
@@ -117,12 +117,12 @@ final class NativeCore {
     private let freeFunction: FreeFunction?
 
     private init() {
-        let path = (Bundle.main.privateFrameworksPath ?? "") + "/libMeltypeNative.dylib"
+        let path = (Bundle.main.privateFrameworksPath ?? "") + "/libGaltypeNative.dylib"
         // 初期化が終わるまで self のプロパティは使えないので、ローカルの handle から関数を探す。
         let handle = dlopen(path, RTLD_NOW)
         library = handle
         if handle == nil, let error = dlerror() {
-            NSLog("Meltype: %@ を読み込めませんでした: %@", path, String(cString: error))
+            NSLog("Galtype: %@ を読み込めませんでした: %@", path, String(cString: error))
         }
         func symbol<T>(_ name: String, as type: T.Type) -> T? {
             guard let handle, let pointer = dlsym(handle, name) else { return nil }
@@ -211,7 +211,7 @@ final class NativeCore {
         do {
             return try JSONDecoder().decode(SessionResult.self, from: json)
         } catch {
-            NSLog("Meltype: 結果を読めませんでした: %@", String(describing: error))
+            NSLog("Galtype: 結果を読めませんでした: %@", String(describing: error))
             return nil
         }
     }

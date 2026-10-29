@@ -789,7 +789,7 @@ internal static class SessionFacadeTests
     [Test]
     public static void SigilWord_EndsWhenSpaceReachedTheAppDirectly()
     {
-        // #242: Meltype IME は変換中でないときの Space・Enter を Meltype.exe に送らず、アプリに通す。
+        // #242: Meltype IME は変換中でないときの Space・Enter を Galtype.exe に送らず、アプリに通す。
         // @xyz の後の空白・改行はキャレットの前の文字で分かるので、そこで普通の入力に戻る (ずっと素通しにならない)
         foreach (var before in new[] { "@xyz ", "@xyz\r\n", "@xyz\n" })
         {

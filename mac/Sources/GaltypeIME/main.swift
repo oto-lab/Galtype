@@ -6,7 +6,7 @@ import InputMethodKit
 
 if CommandLine.arguments.contains("--version") {
     let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?"
-    print("Meltype \(version)")
+    print("Galtype \(version)")
     exit(0)
 }
 
@@ -27,12 +27,12 @@ if CommandLine.arguments.contains("--register-input-source") {
     exit(0)
 }
 
-// Input Method Kit のサーバーを起動する。入力欄 (クライアント) ごとに MeltypeInputController が作られる。
+// Input Method Kit のサーバーを起動する。入力欄 (クライアント) ごとに GaltypeInputController が作られる。
 
 /// 変換の候補の一覧 (すべての入力欄で共有する)。
 var candidatesWindow: IMKCandidates?
 
-// 本体 (libMeltypeNative.dylib) を読み込み、漢字変換・英単語の判定の関数を登録しておく。
+// 本体 (libGaltypeNative.dylib) を読み込み、漢字変換・英単語の判定の関数を登録しておく。
 NativeCore.shared.initialize()
 
 if CommandLine.arguments.contains("--self-test") || CommandLine.arguments.contains("--check-inputs") {
@@ -201,10 +201,10 @@ if CommandLine.arguments.contains("--self-test") || CommandLine.arguments.contai
     exit(failures == 0 ? 0 : 1)
 }
 
-let connectionName = Bundle.main.object(forInfoDictionaryKey: "InputMethodConnectionName") as? String ?? "Meltype_Connection"
+let connectionName = Bundle.main.object(forInfoDictionaryKey: "InputMethodConnectionName") as? String ?? "Galtype_Connection"
 guard let bundleIdentifier = Bundle.main.bundleIdentifier,
       let server = IMKServer(name: connectionName, bundleIdentifier: bundleIdentifier) else {
-    NSLog("Meltype: IMKServer を起動できませんでした (Meltype.app から起動してください)")
+    NSLog("Galtype: IMKServer を起動できませんでした (Galtype.app から起動してください)")
     exit(1)
 }
 candidatesWindow = IMKCandidates(server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)

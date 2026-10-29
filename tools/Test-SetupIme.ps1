@@ -1,4 +1,4 @@
-﻿# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 MuNeNICK
 
 $ErrorActionPreference = 'Stop'
@@ -10,7 +10,7 @@ New-Item -ItemType Directory -Path $fixture -Force | Out-Null
 try {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot '..\packaging\setup-ime.ps1') -Destination $fixture
     $env:TEMP = $testRoot
-    $helper = Join-Path $fixture 'meltype-ime.ps1'
+    $helper = Join-Path $fixture 'galtype-ime.ps1'
     $log = Join-Path $testRoot 'Meltype-setup-ime.log'
     foreach ($case in @(
         @{ Ask = $true; Registered = '$false'; Result = '$true' },
@@ -20,8 +20,8 @@ try {
         @{ Ask = $false; Registered = '$false'; Result = '$true' }
     )) {
         $stub = @'
-function Test-MeltypeImeRegistered { return REGISTERED }
-function Install-MeltypeIme([string]$Source, [switch]$Ask) {
+function Test-GaltypeImeRegistered { return REGISTERED }
+function Install-GaltypeIme([string]$Source, [switch]$Ask) {
     if ([bool]$Ask -ne EXPECTEDASK) { throw 'Incorrect -Ask value' }
     if ($Source -ne (Join-Path $PSScriptRoot 'tip')) { throw 'Incorrect source directory' }
     Set-Content -LiteralPath (Join-Path $PSScriptRoot 'called') -Value 'called'
@@ -50,10 +50,10 @@ function Set-MeltypeImeDeclined { Set-Content -LiteralPath (Join-Path $PSScriptR
     }
     foreach ($result in '$true', '$false') {
         $stub = @'
-function Test-MeltypeImeRegistered { return $true }
-function Install-MeltypeIme { throw 'Install-MeltypeIme called during uninstall' }
+function Test-GaltypeImeRegistered { return $true }
+function Install-GaltypeIme { throw 'Install-GaltypeIme called during uninstall' }
 function Set-MeltypeImeDeclined { throw 'Set-MeltypeImeDeclined called during uninstall' }
-function Uninstall-MeltypeIme {
+function Uninstall-GaltypeIme {
     Set-Content -LiteralPath (Join-Path $PSScriptRoot 'uninstalled') -Value 'uninstalled'
     return RESULT
 }

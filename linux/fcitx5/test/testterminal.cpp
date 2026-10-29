@@ -42,7 +42,7 @@ InputContext *terminal(Instance *instance, AddonInstance *frontend, ICUUID &uuid
     flags |= CapabilityFlag::SurroundingText;
     // foot advertises surrounding text, but a TUI may not supply valid text.
     ic->setCapabilityFlags(flags);
-    instance->setCurrentInputMethod(ic, "meltype", true);
+    instance->setCurrentInputMethod(ic, "galtype", true);
     return ic;
 }
 
@@ -150,9 +150,9 @@ bool triggerKeepsProtection(Instance *instance, AddonInstance *frontend) {
     if (!expect(ic != nullptr, "trigger input context exists")) return false;
     if (!expect(press(frontend, uuid, "Control+space"), "Fcitx trigger disables current IM")) return false;
     frontend->call<ITestFrontend::sendKeyEvent>(uuid, Key("Control_L"), true);
-    if (!expect(press(frontend, uuid, "Control+space"), "Fcitx trigger enables Meltype")) return false;
+    if (!expect(press(frontend, uuid, "Control+space"), "Fcitx trigger enables Galtype")) return false;
     frontend->call<ITestFrontend::sendKeyEvent>(uuid, Key("Control_L"), true);
-    if (!expect(instance->inputMethod(ic) == "meltype", "Meltype is selected after the Fcitx trigger")) return false;
+    if (!expect(instance->inputMethod(ic) == "galtype", "Galtype is selected after the Fcitx trigger")) return false;
     for (char c : std::string("kyouha")) {
         if (!expect(!press(frontend, uuid, std::string(1, c)), "Fcitx activation keeps terminal code keys protected")) return false;
     }
@@ -242,11 +242,11 @@ bool quotedEscapeProtection(Instance *instance, AddonInstance *frontend) {
 }
 
 int main() {
-    setupTestingEnvironment(FCITX5_MELTYPE_BINARY_DIR,
-        {FCITX5_MELTYPE_BINARY_DIR, FCITX5_SYSTEM_ADDON_DIR}, {"test"});
+    setupTestingEnvironment(FCITX5_GALTYPE_BINARY_DIR,
+        {FCITX5_GALTYPE_BINARY_DIR, FCITX5_SYSTEM_ADDON_DIR}, {"test"});
     char arg0[] = "testterminal";
     char arg1[] = "--disable=all";
-    char arg2[] = "--enable=testfrontend,testui,testim,meltype";
+    char arg2[] = "--enable=testfrontend,testui,testim,galtype";
     char *argv[] = {arg0, arg1, arg2};
     Instance instance(FCITX_ARRAY_SIZE(argv), argv);
     instance.addonManager().registerDefaultLoader(nullptr);
@@ -254,12 +254,12 @@ int main() {
     dispatcher.attach(&instance.eventLoop());
     dispatcher.schedule([&]() {
         auto *frontend = instance.addonManager().addon("testfrontend");
-        bool loaded = frontend && instance.addonManager().addon("meltype", true);
+        bool loaded = frontend && instance.addonManager().addon("galtype", true);
         if (loaded) {
             auto group = instance.inputMethodManager().currentGroup();
             group.inputMethodList().clear();
             group.inputMethodList().push_back(InputMethodGroupItem("keyboard-us"));
-            group.inputMethodList().push_back(InputMethodGroupItem("meltype"));
+            group.inputMethodList().push_back(InputMethodGroupItem("galtype"));
             group.setDefaultInputMethod("");
             instance.inputMethodManager().setGroup(group);
             bool ok = quotedJapanese(&instance, frontend);

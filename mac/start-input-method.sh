@@ -4,7 +4,7 @@
 
 # Start in the GUI launchd session so terminal teardown cannot stop the IME.
 set -euo pipefail
-app="${1:?Usage: start-input-method.sh /path/to/Meltype.app}"
+app="${1:?Usage: start-input-method.sh /path/to/Galtype.app}"
 label=io.github.yksr-melt.Meltype.manual
 log_dir="${MELTYPE_START_LOG_DIR:-$HOME/Library/Logs}"
 mkdir -p "$log_dir"

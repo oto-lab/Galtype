@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Yukishiro
 #
-# Meltype の Linux 版 (IBus の入力エンジン)。キーを受け取って Meltype の本体 (libMeltypeNative.so、
+# Galtype の Linux 版 (IBus の入力エンジン)。キーを受け取って Galtype の本体 (libGaltypeNative.so、
 # Windows 版と共通の C# の部分を NativeAOT にしたもの) に渡し、返ってきた結果 (確定する文字・変換中の文字・候補) を
 # 入力欄に出す。漢字変換は Mozc の変換ヘルパー (meltype_mozc_helper) を本体が呼ぶ。
-#   ibus-engine-meltype --ibus   IBus から起動されるとき (コンポーネントの <exec>)
-#   ibus-engine-meltype --version  版だけを出して終わる
+#   ibus-engine-galtype --ibus   IBus から起動されるとき (コンポーネントの <exec>)
+#   ibus-engine-galtype --version  版だけを出して終わる
 import json
 import os
 import re
@@ -17,7 +17,7 @@ HERE = os.path.dirname(os.path.realpath(__file__))
 
 
 def _version_from_xml():
-    path = os.path.join(HERE, "meltype.xml")
+    path = os.path.join(HERE, "galtype.xml")
     try:
         with open(path, encoding="utf-8") as f:
             match = re.search(r"<version>([^<]+)</version>", f.read())
@@ -27,28 +27,28 @@ def _version_from_xml():
 
 
 def _version_from_native():
-    so = os.path.join(HERE, "libMeltypeNative.so")
+    so = os.path.join(HERE, "libGaltypeNative.so")
     if not os.path.isfile(so):
         return None
     import ctypes
 
     try:
         lib = ctypes.CDLL(so)
-        lib.meltype_version.restype = ctypes.c_void_p
-        lib.meltype_free.argtypes = [ctypes.c_void_p]
-        pointer = lib.meltype_version()
+        lib.galtype_version.restype = ctypes.c_void_p
+        lib.galtype_free.argtypes = [ctypes.c_void_p]
+        pointer = lib.galtype_version()
         if not pointer:
             return None
         try:
             return ctypes.string_at(pointer).decode("utf-8")
         finally:
-            lib.meltype_free(pointer)
+            lib.galtype_free(pointer)
     except Exception:
         return None
 
 
 if "--version" in sys.argv[1:]:
-    print(f"Meltype {_version_from_native() or _version_from_xml() or '?'}")
+    print(f"Galtype {_version_from_native() or _version_from_xml() or '?'}")
     raise SystemExit(0)
 
 import ctypes
@@ -58,9 +58,8 @@ import gi
 gi.require_version("IBus", "1.0")
 from gi.repository import GLib, GObject, IBus  # noqa: E402
 
-# ---- 本体 (libMeltypeNative.so) ----
-
-_lib = ctypes.CDLL(os.path.join(HERE, "libMeltypeNative.so"))
+# ---- 本体 (libGaltypeNative.so) ----
+_lib = ctypes.CDLL(os.path.join(HERE, "libGaltypeNative.so"))
 _lib.meltype_init_mozc.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
 _lib.meltype_init_mozc.restype = ctypes.c_int
 _lib.meltype_create.restype = ctypes.c_void_p
@@ -74,14 +73,14 @@ _lib.meltype_select_candidate.restype = ctypes.c_void_p
 _lib.meltype_set_direct.argtypes = [ctypes.c_void_p, ctypes.c_int]
 _lib.meltype_set_can_delete.argtypes = [ctypes.c_void_p, ctypes.c_int]
 # コード入力 (コメント・文字列は日本語、それ以外は英字のまま)。ターミナルの入力欄で既定にする (issue #715)
-_set_code_input = getattr(_lib, "meltype_set_code_input", None)
+_set_code_input = getattr(_lib, "galtype_set_code_input", None)
 if _set_code_input is not None:
     _set_code_input.argtypes = [ctypes.c_void_p, ctypes.c_int]
 _lib.meltype_free.argtypes = [ctypes.c_void_p]
 _lib.meltype_report_url.argtypes = [ctypes.c_char_p]
 _lib.meltype_report_url.restype = ctypes.c_void_p
 # 入力中の 変換・無変換・ひらがな/カタカナ キー (設定「入力中のキーの役割を分ける」: issue #199)。古い本体には無い
-_role_key = getattr(_lib, "meltype_role_key", None)
+_role_key = getattr(_lib, "galtype_role_key", None)
 if _role_key is not None:
     _role_key.argtypes = [ctypes.c_void_p, ctypes.c_int]
     _role_key.restype = ctypes.c_void_p
@@ -111,14 +110,14 @@ def _report_url():
     """不具合報告を開く URL (OS・版・実行環境を入れたもの)。"""
     pointer = _lib.meltype_report_url(b"Linux")
     if not pointer:
-        return "https://github.com/yksr-melt/Meltype/issues/new/choose"
+        return "https://github.com/oto-lab/Galtype/issues/new/choose"
     try:
         return ctypes.string_at(pointer).decode("utf-8")
     finally:
         _lib.meltype_free(pointer)
 
 if not _lib.meltype_init_mozc(os.path.join(HERE, "mozc", "meltype_mozc_helper").encode(), None):
-    print("Meltype: Mozc を使えません (漢字変換はひらがなのままになります)", file=sys.stderr)
+    print("Galtype: Mozc を使えません (漢字変換はひらがなのままになります)", file=sys.stderr)
 
 
 def _result(pointer):
@@ -131,7 +130,7 @@ def _result(pointer):
         _lib.meltype_free(pointer)
 
 
-# ---- キー: IBus のキー (keyval) → Meltype の本体が使う Windows の仮想キーコード ----
+# ---- キー: IBus のキー (keyval) → Galtype の本体が使う Windows の仮想キーコード ----
 
 # 文字を入力するキーで、特別な扱いのないもの (記号など)。本体では文字だけを見る。
 OTHER_CHARACTER_KEY = 0x07
@@ -148,7 +147,7 @@ SYMBOL_KEYS = {",": 0xBC, ".": 0xBE, "-": 0xBD, "/": 0xBF, "[": 0xDB, "]": 0xDD}
 
 
 def virtual_key(keyval):
-    """(仮想キーコード, 入力する文字) を返す。Meltype が扱わないキーなら (None, 0)。
+    """(仮想キーコード, 入力する文字) を返す。Galtype が扱わないキーなら (None, 0)。
 
     英字の仮想キーへ写像するのは ASCII の A-Z / a-z だけにする。以前は character.lower() してから
     ord() を呼んでいたため、トルコ語の İ (U+0130) のように小文字化で 1 文字でなくなる (i + 結合ドット)
@@ -174,8 +173,8 @@ def virtual_key(keyval):
 
 # ---- 入力エンジン ----
 
-class MeltypeEngine(IBus.Engine):
-    __gtype_name__ = "MeltypeEngine"
+class GaltypeEngine(IBus.Engine):
+    __gtype_name__ = "GaltypeEngine"
 
     def __init__(self):
         super().__init__()
@@ -239,7 +238,7 @@ class MeltypeEngine(IBus.Engine):
         # 外れたあとで届かない (実 IBus で確認) うえ、届いても順序が壊れる (I love sushi gasuki で
         # がすき のあとに すし が入る)。直前の確定文字列への置換はあきらめ、本体の状態だけを
         # 「今の preedit を確定した」に進めて文書と合わせる (置換を混ぜたまま進めると、本体だけが
-        # 直った前提になり、文書とずれる)。meltype_commit は結果を返すだけでなく本体の状態を
+        # 直った前提になり、文書とずれる)。galtype_commit は結果を返すだけでなく本体の状態を
         # 進めるので、置換を無効にするのは**呼ぶ前**でなければならない (あとからでは取り消せない)。
         replacing = self._preedit_visible
         if replacing:
@@ -283,7 +282,7 @@ class MeltypeEngine(IBus.Engine):
             try:
                 subprocess.Popen(["xdg-open", _report_url()])
             except OSError as error:
-                print(f"Meltype: 報告の画面を開けませんでした: {error}", file=sys.stderr)
+                print(f"Galtype: 報告の画面を開けませんでした: {error}", file=sys.stderr)
 
     def do_reset(self):
         # Reset でも IBus は「表示中の preedit」を確定する。表示は確定される形にしてある。
@@ -318,7 +317,7 @@ class MeltypeEngine(IBus.Engine):
             # 消さずに今打った文字だけを入れる (本体は text が入った前提で状態を進めるので、text を捨てない)。
             length = self._expected_before_caret(edit.get("expect")) if delete_before > 0 else 0
             if delete_before > 0 and not length:
-                print("Meltype: 確定し直す文字を確認できないため、前の文字を消しません", file=sys.stderr)
+                print("Galtype: 確定し直す文字を確認できないため、前の文字を消しません", file=sys.stderr)
             # 消すだけの preedit 更新を確定の前に送らない。Chromium 系 (Wayland text-input-v3) は
             # それを変換中の文字の確定と解釈して挿入し (issue #486 と同じ問題)、確定し直しでは
             # さらに続く削除の位置がずれて壊れる。変換中の表示を消すのは確定のあと (下の else)。
@@ -347,7 +346,7 @@ class MeltypeEngine(IBus.Engine):
             text, cursor, _anchor = self.get_surrounding_text()
             value = text.get_text() if text else ""
         except Exception as error:
-            print(f"Meltype: 確定し直す文字を確認できませんでした: {error}", file=sys.stderr)
+            print(f"Galtype: 確定し直す文字を確認できませんでした: {error}", file=sys.stderr)
             return 0
         # IBus は文字 (コードポイント) 単位。本体の deleteBefore (UTF-16) ではなく、確認できた文字列から数える
         # (絵文字など、2 単位の文字でもそろえる)。
@@ -483,7 +482,7 @@ class MeltypeEngine(IBus.Engine):
         if value[:cursor] == expected:
             return
         _lib.meltype_set_can_delete(self._session, 0)
-        print("Meltype: この入力欄は文字を消せないため、確定し直しをやめます "
+        print("Galtype: この入力欄は文字を消せないため、確定し直しをやめます "
               f"(期待 {expected!r} / 実際 {value[:cursor]!r})", file=sys.stderr)
 
 
@@ -493,19 +492,19 @@ def main():
     IBus.init()
     bus = IBus.Bus()
     if not bus.is_connected():
-        print("Meltype: IBus につながりません", file=sys.stderr)
+        print("Galtype: IBus につながりません", file=sys.stderr)
         sys.exit(1)
     loop = GLib.MainLoop()
     # IBus が終わったら (ログアウト・ibus restart) 一緒に終わる
     bus.connect("disconnected", lambda *_: loop.quit())
     factory = IBus.Factory.new(bus.get_connection())
-    factory.add_engine("meltype", GObject.type_from_name("MeltypeEngine"))
+    factory.add_engine("galtype", GObject.type_from_name("GaltypeEngine"))
     if "--ibus" in sys.argv:
-        bus.request_name("org.freedesktop.IBus.Meltype", 0)
+        bus.request_name("org.freedesktop.IBus.Galtype", 0)
     else:
         # 手で起動したとき (試すとき): コンポーネントを登録する
-        component = IBus.Component.new("org.freedesktop.IBus.Meltype", "Meltype", "1.2.2-pre.2", "GPL-3.0-or-later", "Yukishiro", "https://github.com/yksr-melt/Meltype", "", "")
-        component.add_engine(IBus.EngineDesc.new("meltype", "Meltype", "Meltype", "ja", "GPL-3.0-or-later", "Yukishiro", "", "default"))
+        component = IBus.Component.new("org.freedesktop.IBus.Galtype", "Galtype", "1.2.2-pre.2", "GPL-3.0-or-later", "Yukishiro", "https://github.com/oto-lab/Galtype", "", "")
+        component.add_engine(IBus.EngineDesc.new("galtype", "Galtype", "Galtype", "ja", "GPL-3.0-or-later", "Yukishiro", "", "default"))
         bus.register_component(component)
     loop.run()
 

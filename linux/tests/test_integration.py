@@ -3,7 +3,7 @@
 # Copyright (C) 2026 0924haruto12
 """Test the packaged IBus engine with real GI, NativeAOT and Mozc.
 
-python3 linux/tests/test_integration.py linux/build/Meltype-linux
+python3 linux/tests/test_integration.py linux/build/Galtype-linux
 Requires python3-gi and gir1.2-ibus-1.0. Outputs go to a synthetic client;
 daemon event delivery and desktop IME registration are outside this test.
 All settings and learning data are temporary.
@@ -30,20 +30,20 @@ class IntegrationTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.data = tempfile.TemporaryDirectory(prefix="meltype-ibus-integration-")
+        cls.data = tempfile.TemporaryDirectory(prefix="galtype-ibus-integration-")
         cls.addClassCleanup(cls.data.cleanup)
-        os.environ["MELTYPE_DATA_DIR"] = cls.data.name
+        os.environ["GALTYPE_DATA_DIR"] = cls.data.name
         (Path(cls.data.name) / "config.json").write_text(json.dumps({
             "SpaceAroundEnglish": True, "LiveConversion": False, "SigilWordsDirect": False}), encoding="utf-8")
         loader = importlib.machinery.SourceFileLoader(
-            "meltype_integration_product", str(cls.package / "ibus-engine-meltype"))
+            "galtype_integration_product", str(cls.package / "ibus-engine-galtype"))
         spec = importlib.util.spec_from_loader(loader.name, loader)
         cls.product = importlib.util.module_from_spec(spec)
         loader.exec_module(cls.product)
         IBus.init()
 
-        class ClientEngine(cls.product.MeltypeEngine):
-            __gtype_name__ = "MeltypeIntegrationClientEngine"
+        class ClientEngine(cls.product.GaltypeEngine):
+            __gtype_name__ = "GaltypeIntegrationClientEngine"
 
             def __init__(self):
                 self.document = ""
@@ -143,8 +143,8 @@ class IntegrationTests(unittest.TestCase):
         return self.engine.do_process_key_event(key, 0, state)
 
     def test_helper_ready_and_real_candidates(self):
-        with tempfile.TemporaryDirectory(prefix="meltype-mozc-protocol-") as profile:
-            process = subprocess.Popen([str(self.package / "mozc/meltype_mozc_helper"), profile],
+        with tempfile.TemporaryDirectory(prefix="galtype-mozc-protocol-") as profile:
+            process = subprocess.Popen([str(self.package / "mozc/galtype_mozc_helper"), profile],
                                        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             self.addCleanup(lambda: process.kill() if process.poll() is None else None)
             selector = selectors.DefaultSelector()
@@ -369,7 +369,7 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual("I love すしがすき", self.engine.document)
 
     def test_focus_out_disables_replacement_before_committing(self):
-        # 作者のレビューより: meltype_commit は結果を返すだけでなく本体の状態を進めるので、
+        # 作者のレビューより: galtype_commit は結果を返すだけでなく本体の状態を進めるので、
         # 置換を無効にするのは呼ぶ前でなければならない (あとからでは取り消せない)。
         # あわせて、本体が確定した内容 (commit の戻り値) が実際の文書と一致することも確かめる。
         import ctypes
@@ -380,12 +380,12 @@ class IntegrationTests(unittest.TestCase):
         class Spy:
             def __getattr__(self, name):
                 attribute = getattr(original, name)
-                if name == "meltype_set_can_delete":
+                if name == "galtype_set_can_delete":
                     def set_can_delete(session, value):
                         calls.append(("can_delete", value))
                         return attribute(session, value)
                     return set_can_delete
-                if name == "meltype_commit":
+                if name == "galtype_commit":
                     def commit(session):
                         calls.append(("commit", None))
                         pointer = attribute(session)

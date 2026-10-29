@@ -1,4 +1,4 @@
-﻿# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Yukishiro
 
 param(
@@ -15,11 +15,11 @@ foreach ($folderName in 'Startup', 'Programs') {
 $system = [Environment]::SystemDirectory
 & "$system\cmd.exe" /c "`"$system\schtasks.exe`" /Delete /TN Meltype /F >nul 2>&1"
 # 強制終了の前に終了の合図を送り、まだ書いていない学習データを書かせる
-$running = Join-Path $PSScriptRoot 'app-build\Meltype.exe'
+$running = Join-Path $PSScriptRoot 'app-build\Galtype.exe'
 if (Test-Path -LiteralPath $running) { Start-Process -FilePath $running -ArgumentList '--exit' -Wait -ErrorAction SilentlyContinue }
 Get-Process Meltype, meltype_mozc_helper -ErrorAction SilentlyContinue | Stop-Process -Force
-. (Join-Path $PSScriptRoot 'packaging\meltype-ime.ps1')
-if (-not (Uninstall-MeltypeIme)) {
+. (Join-Path $PSScriptRoot 'packaging\galtype-ime.ps1')
+if (-not (Uninstall-GaltypeIme)) {
     Write-Warning 'Meltype IME の登録を外せませんでした (管理者権限の確認で「いいえ」を選んだときなど)。もう一度このスクリプトを実行してください。続けて外せないときは、管理者の PowerShell で native\tip\Register-Tip.ps1 -Unregister を実行してください。'
 }
 

@@ -6,14 +6,14 @@ import KanaKanjiConverterModuleWithDefaultDictionary
 
 /// azooKey の変換エンジン (AzooKeyKanaKanjiConverter) で、ひらがなを漢字かな混じりに変換する。
 /// azooKey の API が変わったときは、このファイルだけ直せばよいようにしてある。
-final class MeltypeConverter {
-    static let shared = MeltypeConverter()
+final class GaltypeConverter {
+    static let shared = GaltypeConverter()
 
     // 同梱の辞書 (KanaKanjiConverterModuleWithDefaultDictionary) を使う変換エンジン。
-    // azooKey の withDefaultDictionary() は辞書を Bundle.module で探すが、Bundle.module は Meltype.app の直下か
+    // azooKey の withDefaultDictionary() は辞書を Bundle.module で探すが、Bundle.module は Galtype.app の直下か
     // ビルドしたマシンのフォルダーしか見ない。辞書のバンドルは Contents/Resources に入れているので、見つからずに落ちていた (#26)。
-    // (Meltype.app の直下には置けない: 署名が通らない)。なので、辞書の場所をこちらで渡す。
-    private let converter = KanaKanjiConverter(dicdataStore: DicdataStore(dictionaryURL: MeltypeConverter.resource("Dictionary")))
+    // (Galtype.app の直下には置けない: 署名が通らない)。なので、辞書の場所をこちらで渡す。
+    private let converter = KanaKanjiConverter(dicdataStore: DicdataStore(dictionaryURL: GaltypeConverter.resource("Dictionary")))
     private let options: ConvertRequestOptions
     private var resultCache: [String: [Candidate]] = [:]
     private var cacheOrder: [String] = []
@@ -34,10 +34,10 @@ final class MeltypeConverter {
     }
 
     private init() {
-        // azooKey の学習データ・ユーザー辞書の置き場所 (Meltype では学習しない設定にしているので、ほぼ使わない)。
+        // azooKey の学習データ・ユーザー辞書の置き場所 (Galtype では学習しない設定にしているので、ほぼ使わない)。
         let directory = (NativeCore.shared.dataDirectory.map { URL(fileURLWithPath: $0, isDirectory: true) }
             ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-                .appendingPathComponent("Meltype", isDirectory: true))
+                .appendingPathComponent("Galtype", isDirectory: true))
             .appendingPathComponent("azooKey", isDirectory: true)
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         options = ConvertRequestOptions(
@@ -47,9 +47,9 @@ final class MeltypeConverter {
             learningType: .nothing,
             memoryDirectoryURL: directory,
             sharedContainerURL: directory,
-            textReplacer: TextReplacer(emojiDataProvider: { MeltypeConverter.emojiDictionary() }),
+            textReplacer: TextReplacer(emojiDataProvider: { GaltypeConverter.emojiDictionary() }),
             specialCandidateProviders: KanaKanjiConverter.defaultSpecialCandidateProviders,
-            metadata: .init(versionString: "Meltype \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "unknown")")
+            metadata: .init(versionString: "Galtype \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "unknown")")
         )
     }
 

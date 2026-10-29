@@ -1,4 +1,4 @@
-LIBRARY MeltypeTip
+LIBRARY GaltypeTip
 EXPORTS
     DllGetClassObject PRIVATE
     DllCanUnloadNow PRIVATE
